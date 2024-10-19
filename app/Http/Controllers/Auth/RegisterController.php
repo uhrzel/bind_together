@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterUserRequest;
+use App\Mail\VerifyUserEmail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
@@ -43,8 +47,21 @@ class RegisterController extends Controller
 
         $user->assignRole('student');
 
-        auth()->login($user);
+        $verificationUrl = $this->generateVerificationUrl($user);
 
-        return redirect($this->redirectTo);
+        Mail::to($user->email)->send(new VerifyUserEmail($user->firstname, $verificationUrl));
+
+        alert()->success('Email verification has been sent');
+        return redirect()->route('register');
+    }
+
+
+    protected function generateVerificationUrl($user)
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())]
+        );
     }
 }

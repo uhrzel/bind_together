@@ -14,6 +14,7 @@
 <body>
     <main>
         @include('layouts.guest-topbar')
+        @include('sweetalert::alert')
         <section class="mt-lg-5 bg-soft d-flex align-items-center">
             @yield('content')
         </section>
