@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('middlename');
             $table->string('lastname');
             $table->string('suffix')->nullable();
-            $table->string('birthdate');
+            $table->string('birthdate')->nullable();
             $table->string('gender');
             $table->string('address')->nullable();
             $table->string('contact')->nullable();

@@ -27,19 +27,24 @@ class Activity extends Model
         'status',
     ];
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function sport() : BelongsTo
+    public function sport(): BelongsTo
     {
         return $this->belongsTo(Sport::class);
     }
 
-    public function organization() : BelongsTo
+    public function organization(): BelongsTo
     {
         return $this->belongsTo(Organization::class);
+    }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'activity_registrations', 'activity_id', 'user_id');
     }
 
 }

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Enums\UserTypeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -100,6 +101,16 @@ class User extends Authenticatable
     public function likedComments(): BelongsToMany
     {
         return $this->belongsToMany(Comments::class, 'comment_likes', 'user_id', 'comments_id');
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function joinedActivities()
+    {
+        return $this->belongsToMany(Activity::class, 'activity_registrations', 'user_id', 'activity_id');
     }
 
 }

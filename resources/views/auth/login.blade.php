@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 @section('content')
-    <div class="container my-5">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 d-flex align-items-center justify-content-center">
                 <div class="bg-white rounded p-5 w-100 fmxw-500">

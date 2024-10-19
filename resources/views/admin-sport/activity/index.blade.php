@@ -106,11 +106,27 @@
                             <textarea class="form-control" name="content" placeholder="Content" rows="3" required></textarea>
                         </div>
 
-                        <div class="">
-                            <label for="activity_type" class="form-label">Activity Type</label>
-                            <select class="form-select" name="type" required>
-                                <option value="3" selected>Competition</option>
-                            </select>
+                        <div class="row">
+                            <div class="form-group col">
+                                <label for="activity_type" class="form-label">Activity Type</label>
+                                <select class="form-select" name="type" required>
+                                    @if (auth()->user()->hasRole('adviser'))
+                                        <option value="0">Audition</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole('coach'))
+                                        <option value="1">Tryout</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole(['admin_sport', 'admin_org']))
+                                        <option value="3" selected>Competition</option>
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="form-group col">
+                                <label for="organization">Organization</label>
+                                <input type="text" value="{{ $user->organization->name }}" class="form-control" placeholder="Organization" readonly>
+                            </div>
                         </div>
                         <div class="row mb-3 mt-3">
                             <!-- Activity Start Date -->
@@ -137,7 +153,7 @@
                         <div class="mb-3">
                             <!-- Address -->
                             <label for="address" class="form-label">Address</label>
-                            <input type="text" class="form-control name="address" placeholder="Address" required>
+                            <input type="text" class="form-control" name="address" placeholder="Address" required>
                         </div>
 
                         <div class="mb-3">

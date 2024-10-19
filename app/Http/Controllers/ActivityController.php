@@ -14,7 +14,7 @@ class ActivityController extends Controller
      */
     public function index()
     {
-        return view('admin-sport.activity.index', ['activities' => Activity::all()]);
+        return view('admin-sport.activity.index', ['activities' => Activity::where('user_id', Auth::id())->get(), 'user' => Auth::user()->load('organization')]);
     }
 
     /**

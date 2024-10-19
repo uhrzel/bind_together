@@ -58,7 +58,7 @@
             class="text-white">bpsu.bindtogether@gmail.com</a>
     </div>
 </div>
-<header class="py-3 bg-white shadow-sm">
+<header class=" bg-white shadow-sm">
     <div class="container d-flex align-items-center justify-content-between">
         <!-- Logo and Site Name -->
         <a href="#" class="logo d-flex align-items-center">

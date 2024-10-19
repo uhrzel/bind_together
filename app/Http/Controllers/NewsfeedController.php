@@ -16,10 +16,6 @@ class NewsfeedController extends Controller
      */
     public function index()
     {
-        // $reportedComments = ReportedComment::where('user_id', Auth::id())
-        //                                ->whereIn('comments_id', $newsfeed->comments->pluck('id'))
-        //                                ->get();
-
         return view('student.newsfeed.index', ['newsfeeds' => Newsfeed::with('user', 'newsfeedFiles', 'comments.user')->get()]);
     }
 
@@ -43,13 +39,10 @@ class NewsfeedController extends Controller
 
         if ($request->hasFile('media')) {
             foreach ($request->file('media') as $file) {
-                // Generate a unique file name
                 $filePath = $file->store('newsfeed_files', 'public'); // Storing in 'public/newsfeed_files'
     
-                // Determine the file type (image, video, etc.)
                 $fileType = $file->getMimeType();
     
-                // Save the file information in the newsfeed_files table
                 NewsfeedFile::create([
                     'newsfeed_id' => $newsfeed->id,
                     'file_path' => $filePath,
