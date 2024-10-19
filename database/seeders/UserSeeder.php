@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserTypeEnum;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
@@ -14,12 +16,26 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (Role::all() as $role) {
-            $users = User::factory(2)
-                ->create();
-            foreach ($users as $user) {
-                $user->assignRole($role);
-            }
+        // Map roles to their corresponding email addresses
+        $roleEmails = [
+            UserTypeEnum::SUPERADMIN => 'superadmin@gmail.com',
+            UserTypeEnum::ADMINSPORT => 'adminsport@gmail.com',
+            UserTypeEnum::ADMINORG => 'adminorg@gmail.com',
+            UserTypeEnum::COACH => 'coach@gmail.com',
+            UserTypeEnum::ADVISER => 'adviser@gmail.com',
+            UserTypeEnum::STUDENT => 'student@gmail.com',
+        ];
+
+        // Loop through each role and create a user
+        foreach ($roleEmails as $roleName => $email) {
+            // Create the user with a specific email and default password
+            $user = User::factory()->create([
+                'email' => $email,
+                'password' => Hash::make('password'), // Set password to 'password'
+            ]);
+
+            // Assign the role to the user
+            $user->assignRole($roleName);
         }
     }
 }

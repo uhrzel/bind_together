@@ -13,6 +13,16 @@ class OrganizationSeeder extends Seeder
      */
     public function run(): void
     {
-        Organization::factory(10)->create();
+        $organizations = [
+            'BPSU Chorale',
+            'Griffin Prime Groovers',
+            'Stallion Dance Squad',
+        ];
+
+        foreach ($organizations as $organization) {
+            Organization::create([
+                'name' => $organization,
+            ]);
+        }
     }
 }
