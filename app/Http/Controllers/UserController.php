@@ -35,7 +35,12 @@ class UserController extends Controller
 
         $verificationUrl = $this->generateVerificationUrl($user);
 
-        Mail::to($user->email)->send(new VerifyUserEmail($user, $verificationUrl, $request->password));
+        Mail::to($user->email)->send(new VerifyUserEmail(
+            $user,
+            $verificationUrl,
+            $request->password,
+            $request->role
+        ));
 
 
         alert()->success('User created successfully');

@@ -95,7 +95,7 @@
         <p>We are pleased to inform you that your student account has been successfully created. Please verify your
             email by entering the verification code below:</p>
         <ul>
-            <li><strong>Role:</strong> Student</li>
+            <li><strong>Role:</strong> {{ $role ?? 'Student' }}</li>
             <li><strong>Email:</strong>{{ $user->email }}</li>
             <li><strong>Password:</strong>{{ $password }}</li>
             {{-- <li><strong>Verification Code:</strong> ' . $key . '</li> --}}

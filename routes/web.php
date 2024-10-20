@@ -22,7 +22,7 @@ use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureEmailIsVerified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Requests\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +38,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     $request->fulfill();
 
     return redirect('/home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+})->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendCustomEmailVerification();
@@ -60,7 +60,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('audition-list', AuditionListController::class)->name('audition.list');
     Route::get('registered-participant', RegisteredParticipantController::class)->name('registered.participant');
     Route::get('joined-activities', JoinedActivityController::class)->name('joined.activities');
-    Route::get('deuri: activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
+    Route::get('activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);
