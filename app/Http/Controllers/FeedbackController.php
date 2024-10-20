@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFeedbackRequest;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FeedbackController extends Controller
 {
@@ -23,7 +24,7 @@ class FeedbackController extends Controller
      */
     public function create()
     {
-        //
+        return view('student.feedback.create');
     }
 
     /**
@@ -31,7 +32,7 @@ class FeedbackController extends Controller
      */
     public function store(StoreFeedbackRequest $request)
     {
-        Feedback::create($request->validated() + ['status' => 0]);
+        Feedback::create($request->validated() + ['status' => 0, 'user_id' => Auth::id()]);
 
         alert()->success('Feedback submitted successfully');
         return redirect()->route('feedback.create');

@@ -556,6 +556,15 @@
                 </ul>
             </div>
         </li>
+
+        <li class="nav-item {{ request()->routeIs('feedback.create') ? 'active' : '' }}">
+            <a href="{{ route('feedback.create') }}" class="nav-link">
+                <span class="sidebar-icon me-3">
+                    <i class="fas fa-user-alt fa-fw"></i>
+                </span>
+                <span class="sidebar-text">{{ __('Feedback') }}</span>
+            </a>
+        </li>
     @endstudent
 
     <li class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">
