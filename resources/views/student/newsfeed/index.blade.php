@@ -78,6 +78,22 @@
                                             href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
                                     </li>
                                 @endadmin_sport
+                                @adviser
+                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    </li>
+                                    {{-- <li><a class="dropdown-item"
+                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
+                                    </li> --}}
+                                @endadviser
+                                @coach
+                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    </li>
+                                    {{-- <li><a class="dropdown-item"
+                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
+                                    </li> --}}
+                                @endcoach
                             @endif
                         </ul>
                     </div>

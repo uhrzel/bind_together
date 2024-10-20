@@ -54,9 +54,9 @@
                         <tbody>
                             @foreach ($reportedNewsfeeds as $reportedNewsfeed)
                                 <tr>
-                                    <td>{{ $reportedNewsfeed->comments->description }}</td>
-                                    <td>{{ $reportedNewsfeed->comments->user->firstname }}
-                                        {{ $reportedNewsfeed->comments->user->lastname }}</td>
+                                    <td>{{ $reportedNewsfeed->newsfeed->description }}</td>
+                                    <td>{{ $reportedNewsfeed->newsfeed->user->firstname }}
+                                        {{ $reportedNewsfeed->newsfeed->user->lastname }}</td>
                                     <td>{{ $reportedNewsfeed->user->firstname }} {{ $reportedNewsfeed->user->lastname }} </td>
                                     <td>{{ $reportedNewsfeed->reason }}</td>
                                     <td>
