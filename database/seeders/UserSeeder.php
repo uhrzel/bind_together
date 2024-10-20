@@ -18,20 +18,18 @@ class UserSeeder extends Seeder
     {
         // Map roles to their corresponding email addresses
         $roleEmails = [
-            UserTypeEnum::SUPERADMIN => 'superadmin@gmail.com',
-            UserTypeEnum::ADMINSPORT => 'adminsport@gmail.com',
-            UserTypeEnum::ADMINORG => 'adminorg@gmail.com',
-            UserTypeEnum::COACH => 'coach@gmail.com',
-            UserTypeEnum::ADVISER => 'adviser@gmail.com',
-            UserTypeEnum::STUDENT => 'student@gmail.com',
+            UserTypeEnum::SUPERADMIN => 'superadmin@bpsu.edu.ph',
+            UserTypeEnum::ADMINSPORT => 'adminsport@bpsu.edu.ph',
+            UserTypeEnum::ADMINORG => 'adminorg@bpsu.edu.ph',
+            UserTypeEnum::COACH => 'coach@bpsu.edu.ph',
+            UserTypeEnum::ADVISER => 'adviser@bpsu.edu.ph',
+            UserTypeEnum::STUDENT => 'student@bpsu.edu.ph',
         ];
 
-        // Loop through each role and create a user
         foreach ($roleEmails as $roleName => $email) {
-            // Create the user with a specific email and default password
             $user = User::factory()->create([
                 'email' => $email,
-                'password' => Hash::make('password'), // Set password to 'password'
+                'password' => Hash::make('password'),
             ]);
 
             // Assign the role to the user

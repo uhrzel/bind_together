@@ -318,8 +318,8 @@
                         </div>
 
                         <div id="editPostFiles" class="mb-3 row">
-                            <!-- Existing files will be dynamically loaded here -->
                         </div>
+                        <input type="hidden" name="deleted_files" id="deletedFiles" value="">
 
                         <div class="add-photos">
                             <input type="file" name="attachments[]" id="editAttachments" class="d-none" multiple
@@ -401,6 +401,16 @@
                         $('#editPostForm').attr('action', '/newsfeed/' + $(this).data('id'));
                     })
             })
+
+            const deletedFiles = [];
+
+            function removeFile(fileId) {
+                deletedFiles.push(fileId);
+
+                $('#deletedFiles').val(deletedFiles.join(','));
+
+                $('.file-preview-' + fileId).hide();
+            }
 
             $('.deleteBtn').click(function() {
                 $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
