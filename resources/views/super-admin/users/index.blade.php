@@ -64,7 +64,7 @@
                             <td><span class="fw-normal">{{ $user->gender }}</span></td>
                             <td><span class="fw-normal">{{ $user->email }}</span></td>
                             @if ($role == 'coach')
-                                <td class="border-gray-200">{{ $user->sport->name }}</td>
+                                <td class="border-gray-200">{{ $user->sport->name ?? 'N/A' }}</td>
                             @elseif ($role == 'adviser')
                                 <td class="border-gray-200">{{ $user->organization->name }}</td>
                             @endif
