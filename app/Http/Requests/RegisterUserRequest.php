@@ -29,10 +29,17 @@ class RegisterUserRequest extends FormRequest
             'suffix' => ['nullable', 'string', 'max:10'],
             'gender' => ['required', 'in:male,female,other'],
             'contact' => ['required', 'string'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'profile' => ['nullable', 'file', 'image', 'max:5120'], // 5MB max
-            'terms' => ['accepted'], // Checkbox must be accepted
+            'email' => ['required', 'string', 'email', 'max:255', 'regex:/^[a-zA-Z0-9._%+-]+@bpsu\.edu\.ph$/', 'unique:users'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/',
+                'confirmed'
+            ],
+            'profile' => ['nullable', 'file', 'image', 'max:5120'],
+            'terms' => ['accepted'],
         ];
+
     }
 }

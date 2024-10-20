@@ -60,7 +60,9 @@ class NewsfeedController extends Controller
      */
     public function show(Newsfeed $newsfeed)
     {
-        //
+        $newsfeed->load('newsfeedFiles');
+
+        return response()->json($newsfeed);
     }
 
     /**
@@ -84,6 +86,9 @@ class NewsfeedController extends Controller
      */
     public function destroy(Newsfeed $newsfeed)
     {
-        //
+        $newsfeed->delete();
+
+        alert()->success('Post deleted successfully');
+        return redirect()->route('newsfeed.index');
     }
 }

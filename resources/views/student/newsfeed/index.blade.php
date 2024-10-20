@@ -39,7 +39,40 @@
                             <small>{{ $newsfeed->created_at->diffForHumans() }}</small>
                         </div>
                     </div>
-                    <button class="btn btn-link text-muted"><i class="fas fa-ellipsis-h"></i></button>
+                    <div class="dropdown">
+                        <button class="btn btn-link text-muted" type="button" id="dropdownMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            @if ($newsfeed->user_id == auth()->id())
+                                <li>
+                                    <button type="button" class="dropdown-item editBtn" data-bs-toggle="modal"
+                                        data-bs-target="#editPostModal" data-id="{{ $newsfeed->id }}">
+                                        Edit
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item text-danger deleteBtn" data-bs-toggle="modal"
+                                        data-bs-target="#deleteNewsfeedModal" data-id="{{ $newsfeed->id }}">
+                                        Delete
+                                    </button>
+                                </li>
+                            @else
+                                @student
+                                    <li><a class="dropdown-item" href="#">Report</a></li>
+                                @endstudent
+                                @admin_org
+                                    <li><a class="dropdown-item" href="#">Report</a></li>
+                                    <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                @endadmin_org
+                                @admin_sport
+                                    <li><a class="dropdown-item" href="#">Report</a></li>
+                                    <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                @endadmin_sport
+                            @endif
+                        </ul>
+                    </div>
                 </div>
                 <div class="card-body">
                     <p>{{ $newsfeed->description }}</p>
@@ -88,11 +121,14 @@
                                                 onclick="toggleLike({{ $comments->id }})">
                                                 <b><i class="far fa-thumbs-up"></i> Like</b>
                                             </a>
-                                            <button class="border-0 bg-transparent text-danger" type="button"
-                                                data-bs-toggle="modal" data-bs-target="#reportCommentModal"
-                                                onclick="setCommentId({{ $comments->id }})" {{ $isDisabled }}>
-                                                <i class="fas fa-flag"></i> {{ $userHasReported ? 'Reported' : 'Report' }}
-                                            </button>
+                                            @if ($comments->user_id != auth()->id())
+                                                <button class="border-0 bg-transparent text-danger" type="button"
+                                                    data-bs-toggle="modal" data-bs-target="#reportCommentModal"
+                                                    onclick="setCommentId({{ $comments->id }})" {{ $isDisabled }}>
+                                                    <i class="fas fa-flag"></i>
+                                                    {{ $userHasReported ? 'Reported' : 'Report' }}
+                                                </button>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -237,6 +273,72 @@
             </div>
         </div>
     </div>
+
+    {{-- delete modal --}}
+    <div class="modal fade" id="deleteNewsfeedModal" tabindex="-1" aria-labelledby="deleteNewsfeedModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="" id="newsfeedDelete" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteNewsfeedModalLabel">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this post?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Edit Post Modal -->
+    <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background-color: #2E3236; color: white;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        style="filter: invert(1);"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPostForm" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="form-group mb-3">
+                            <textarea class="form-control" name="description" id="description" rows="3"
+                                style="background-color: #3E4348; color: white; border: none;"></textarea>
+                        </div>
+
+                        <div id="editPostFiles" class="mb-3 row">
+                            <!-- Existing files will be dynamically loaded here -->
+                        </div>
+
+                        <div class="add-photos">
+                            <input type="file" name="attachments[]" id="editAttachments" class="d-none" multiple
+                                accept="image/*,video/*">
+                            <button type="button" class="btn btn-secondary w-100 py-3"
+                                style="background-color: #4B4F54; color: white; border: none;"
+                                onclick="document.getElementById('editAttachments').click();">
+                                <i class="fas fa-plus-circle"></i> Add Photos/Videos
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editPostForm" class="btn btn-danger">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -271,6 +373,39 @@
         }
 
         $(document).ready(function() {
+
+            $('.editBtn').click(function() {
+                fetch('/newsfeed/' + $(this).data('id'))
+                    .then(response => response.json())
+                    .then(newsfeed => {
+                        $('#description').val(newsfeed.description)
+
+                        var filesContainer = $('#editPostFiles');
+                        // filesContainer.empty();
+
+                        if (Array.isArray(newsfeed.newsfeed_files)) {
+                            newsfeed.newsfeed_files.forEach(function(file) {
+                                if (file.file_type.startsWith('image')) {
+                                    filesContainer.append(`
+                                    <div class="col-4 mb-3 position-relative">
+                                    <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
+                                    <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            `);
+                                }
+                            });
+                        }
+
+                        $('#editPostForm').attr('action', '/newsfeed/' + $(this).data('id'));
+                    })
+            })
+
+            $('.deleteBtn').click(function() {
+                $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
+            })
+
             $('#attachments').on('change', function(event) {
                 const preview = $('#preview');
                 preview.empty(); // Clear previous previews

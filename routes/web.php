@@ -7,6 +7,8 @@ use App\Http\Controllers\AuditionListController;
 use App\Http\Controllers\CalendarOfActivityController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DeletedCommentController;
+use App\Http\Controllers\DeletedPostController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
 use App\Http\Controllers\NewsfeedController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegisteredParticipantController;
 use App\Http\Controllers\ReportedCommentController;
+use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureEmailIsVerified;
@@ -64,8 +67,11 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('newsfeed', NewsfeedController::class);
     Route::resource('comments', CommentController::class);
     Route::resource('reported-comment', ReportedCommentController::class);
+    Route::resource('reported-post', ReportedPostController::class);
     Route::resource('activity', ActivityController::class);
     Route::resource('activity-registration', ActivityRegistrationController::class);
+    Route::resource('deleted-post', DeletedPostController::class);
+    Route::resource('deleted-comment', DeletedCommentController::class);
 
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

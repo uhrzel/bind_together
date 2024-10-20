@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->string('student_number')->nullable();
             $table->string('firstname');
-            $table->string('middlename');
+            $table->string('middlename')->nullable();
             $table->string('lastname');
             $table->string('suffix')->nullable();
             $table->string('birthdate')->nullable();

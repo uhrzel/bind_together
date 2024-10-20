@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserTypeEnum;
 use App\Http\Requests\StoreUserRequest;
+use App\Mail\VerifyUserEmail;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class UserController extends Controller
 {
@@ -28,8 +32,22 @@ class UserController extends Controller
 
         $user->assignRole($request->role);
 
+        $verificationUrl = $this->generateVerificationUrl($user);
+
+        Mail::to($user->email)->send(new VerifyUserEmail($user->firstname, $verificationUrl));
+
+
         alert()->success('User created successfully');
         return redirect()->route('users.index', ['role' => $request->role]);
+    }
+
+    protected function generateVerificationUrl($user)
+    {
+        return URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->getEmailForVerification())]
+        );
     }
 
     public function show(User $user)

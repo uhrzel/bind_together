@@ -1,6 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+    .active-status {
+    background-color: #007bff; /* Blue */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.deactivated-status {
+    background-color: #6c757d; /* Grey */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+</style>
+
     <div class="main py-4">
         <div class="card card-body border-0 shadow table-wrapper table-responsive">
             <div class="row">
@@ -19,6 +36,7 @@
                         <th class="border-gray-200">{{ __('Name') }}</th>
                         <th class="border-gray-200">{{ __('Gender') }}</th>
                         <th class="border-gray-200">{{ __('Email') }}</th>
+                        <th class="border-gray-200">{{ __('Status') }}</th>
                         <th class="border-gray-200">{{ __('Role') }}</th>
                         <th class="border-gray-200">{{ __('Actions') }}</th>
                     </tr>
@@ -33,6 +51,13 @@
                             <td><span class="fw-normal">{{ $user->firstname }} {{ $user->lastname }}</span></td>
                             <td><span class="fw-normal">{{ $user->gender }}</span></td>
                             <td><span class="fw-normal">{{ $user->email }}</span></td>
+                            <td>
+                                @if($user->status == 1)
+                                    <span class="active-status">Active</span>
+                                @else
+                                    <span class="deactivated-status">Deactivated</span>
+                                @endif
+                            </td>
                             <td><span
                                     class="fw-normal">{{ ucfirst(str_replace('_', ' ', $user->getRoleNames()->first())) }}</span>
                             </td>
