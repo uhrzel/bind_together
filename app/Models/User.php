@@ -124,6 +124,26 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Organization::class);
     }
 
+    public function sport() : BelongsTo
+    {
+        return $this->belongsTo(Sport::class);
+    }
+
+    public function campus() : BelongsTo
+    {
+        return $this->belongsTo(Campus::class);
+    }
+
+    public function program() : BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    public function course() : BelongsTo
+    {
+        return $this->belongsTo(Course::class);
+    }
+
     public function joinedActivities()
     {
         return $this->belongsToMany(Activity::class, 'activity_registrations', 'user_id', 'activity_id');

@@ -16,7 +16,7 @@ class NewsfeedController extends Controller
      */
     public function index()
     {
-        return view('student.newsfeed.index', ['newsfeeds' => Newsfeed::with('user', 'newsfeedFiles', 'comments.user')->get()]);
+        return view('student.newsfeed.index', ['newsfeeds' => Newsfeed::with('user', 'newsfeedFiles', 'comments.user')->where('status', 1)->get()]);
     }
 
     /**
@@ -37,12 +37,12 @@ class NewsfeedController extends Controller
             'description' => $request->description,
         ]);
 
-        if ($request->hasFile('media')) {
+    if ($request->hasFile('media')) {
             foreach ($request->file('media') as $file) {
                 $filePath = $file->store('newsfeed_files', 'public'); // Storing in 'public/newsfeed_files'
-    
+
                 $fileType = $file->getMimeType();
-    
+
                 NewsfeedFile::create([
                     'newsfeed_id' => $newsfeed->id,
                     'file_path' => $filePath,
@@ -77,8 +77,31 @@ class NewsfeedController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Newsfeed $newsfeed)
-    {
-        //
+    {        
+        $newsfeed->update([
+            'description' => $request->input('description'),
+        ]);
+
+        if ($request->has('deleted_files')) {
+            $deletedFiles = explode(',', $request->input('deleted_files'));
+
+            NewsfeedFile::whereIn('id', $deletedFiles)->delete();
+        }
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('newsfeed_files', 'public');
+
+                NewsfeedFile::create([
+                    'newsfeed_id' => $newsfeed->id,
+                    'file_path' => $path,
+                    'file_type' => $file->getClientMimeType()
+                ]);
+            }
+        }
+
+        alert()->success('Post updated successfully');
+        return redirect()->route('newsfeed.index')->with('success', 'Post updated successfully');
     }
 
     /**

@@ -42,7 +42,7 @@ class ReportedPostController extends Controller
 
         // Save the report to the database
         ReportedPost::create([
-            'comments_id' => $request->comments_id,
+            'newsfeed_id' => $request->newsfeed_id,
             'user_id' => Auth::id(),
             'reason' => $reasons,
             'other_reason' => $otherReason,
@@ -50,7 +50,7 @@ class ReportedPostController extends Controller
         ]);
 
         alert()->success('Success', 'Post reported successfully!');
-        return response()->json(['success' => true, 'message' => 'Post reported successfully!']);
+        return redirect()->route('newsfeed.index');
     }
 
     /**

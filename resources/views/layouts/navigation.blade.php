@@ -1,12 +1,13 @@
 <ul class="nav flex-column pt-3 pt-md-0">
     <li class="nav-item">
         <a href="{{ route('home') }}" class="nav-link d-flex align-items-center">
-            <span class="sidebar-icon me-3">
-                <img src="{{ asset('images/brand/light.svg') }}" height="20" width="20" alt="Volt Logo">
-            </span>
-            <span class="mt-1 ms-1 sidebar-text">
-                Volt Laravel
-            </span>
+            <!-- Logo (Image) -->
+            <img src="{{ asset('images/bindtogether-logo.png') }}" height="40" width="40" alt="Logo" class="me-3">
+            <!-- Text -->
+            <div>
+                <span class="sidebar-text" style="font-size: 18px; font-weight: bold;">Bind Together</span> <br>
+                <small class="text-muted" style="font-size: 10px">Bataan Peninsula State University</small>
+            </div>
         </a>
     </li>
 
@@ -238,6 +239,16 @@
                 </ul>
             </div>
         </li>
+
+        <li class="nav-item {{ request()->routeIs('feedback.index') ? 'active' : '' }}">
+            <a href="{{ route('feedback.index') }}" class="nav-link">
+                <span class="sidebar-icon me-3">
+                    <i class="fas fa-user-alt fa-fw"></i>
+                </span>
+                <span class="sidebar-text">{{ __('Feedback') }}</span>
+            </a>
+        </li>
+
     @endsuper_admin
 
     @admin_sport

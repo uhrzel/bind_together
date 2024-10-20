@@ -49,7 +49,7 @@ class RegisterController extends Controller
 
         $verificationUrl = $this->generateVerificationUrl($user);
 
-        Mail::to($user->email)->send(new VerifyUserEmail($user->firstname, $verificationUrl));
+        Mail::to($user->email)->send(new VerifyUserEmail($user, $verificationUrl, $request->password));
 
         alert()->success('Email verification has been sent');
         return redirect()->route('register');

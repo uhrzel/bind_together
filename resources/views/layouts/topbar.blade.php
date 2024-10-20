@@ -4,44 +4,47 @@
             <!-- Navbar links -->
             <ul class="navbar-nav align-items-center">
                 <li class="nav-item dropdown ms-lg-3">
-                    <a class="nav-link dropdown-toggle pt-1 px-0" href="#" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                    <a class="nav-link dropdown-toggle pt-1 px-0" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="media d-flex align-items-center">
-                            <img class="avatar rounded-circle"
-                                src="https://ui-avatars.com/api/?background=random&name={{ Auth::user()->firstname }}"
-                                alt="{{ Auth::user()->firstname }}">
+                            <!-- Avatar Image -->
+                            <img class="avatar rounded-circle" 
+                                src="https://ui-avatars.com/api/?background=random&name={{ Auth::user()->firstname }}" 
+                                alt="{{ Auth::user()->firstname }}" 
+                                style="width: 40px; height: 40px;">
+                            <!-- Username -->
                             <div class="media-body ms-2 text-dark align-items-center d-none d-lg-block">
                                 <span class="mb-0 font-small fw-bold text-gray-900">{{ auth()->user()->firstname }}</span>
                             </div>
                         </div>
                     </a>
-                    <div class="dropdown-menu dashboard-dropdown dropdown-menu-end mt-2 py-1">
-                        <a class="dropdown-item d-flex align-items-center" href="{{ route('profile.show') }}">
-                            <svg class="dropdown-icon text-gray-400 me-2" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd"
-                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                                    clip-rule="evenodd"></path>
-                            </svg>
-
-                            {{ __('My Profile') }}
-                        </a>
-                        <div role="separator" class="dropdown-divider my-1"></div>
-                        <a class="dropdown-item d-flex align-items-center" href="{{ route('logout') }}" onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">
-                            <form method="POST" id="logout-form" action="{{ route('logout') }}">
-                                @csrf
-                            </form>
-                            <svg class="dropdown-icon text-danger me-2" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                                </path>
-                            </svg>
-                            {{ __('Log Out') }}
-                        </a>
+                
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu dropdown-menu-end mt-2 py-1" style="width: 250px; padding: 0;">
+                        <!-- Profile Header Section -->
+                        <div class="p-3 text-center" style="background-color: #a40000; color: white;">
+                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Profile" class="rounded-circle mb-2" width="70" height="70" style="border: 3px solid white;">
+                            <h5 class="mb-0">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
+                            <small style="color: #fff;">{{ ucfirst(str_replace('_', ' ',auth()->user()->getRoleNames()->first())) }}</small>
+                        </div>
+                
+                        <!-- Member Information -->
+                        <div class="text-center my-2">
+                            <small style="color: #6c757d;">Member since {{ Auth::user()->created_at->format('F d, Y') }}</small>
+                        </div>
+                
+                        <div class="dropdown-divider"></div>
+                
+                        <!-- Profile Button -->
+                        <a class="dropdown-item text-center" href="{{ route('profile.show') }}" style="padding: 10px 0;">Profile</a>
+                
+                        <!-- Sign Out Button -->
+                        <a class="dropdown-item text-center text-danger" href="{{ route('logout') }}" style="padding: 10px 0;" onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">Sign out</a>
+                        <form method="POST" id="logout-form" action="{{ route('logout') }}" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
-                </li>
+                </li>                
             </ul>
         </div>
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -16,7 +17,7 @@ class VerifyUserEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private string $name, public string $verificationUrl)
+    public function __construct(public User $user, public string $verificationUrl, public string $password)
     {
         //
     }
@@ -38,7 +39,7 @@ class VerifyUserEmail extends Mailable
     {
         return new Content(
             view: 'mail.verify-email',
-            with: ['name' => $this->name, 'verificationUrl' => $this->verificationUrl],
+            with: ['user' => $this->user, 'verificationUrl' => $this->verificationUrl, 'password' => $this->password],
         );
     }
 

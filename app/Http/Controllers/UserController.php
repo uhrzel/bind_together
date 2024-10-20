@@ -23,6 +23,7 @@ class UserController extends Controller
             $users = User::role($role)->get();
         }
 
+
         return view('super-admin.users.index', compact('users', 'role'));
     }
 
@@ -34,7 +35,7 @@ class UserController extends Controller
 
         $verificationUrl = $this->generateVerificationUrl($user);
 
-        Mail::to($user->email)->send(new VerifyUserEmail($user->firstname, $verificationUrl));
+        Mail::to($user->email)->send(new VerifyUserEmail($user->firstname, $verificationUrl, $request->password));
 
 
         alert()->success('User created successfully');
@@ -52,7 +53,9 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        return response()->json($user);
+        $user->load('sport', 'organization', 'campus', 'program', 'course', 'roles');
+
+        return response()->json(['user' => $user, 'roles' => $user->getRoleNames()]);
     }
 
     public function update(Request $request, User $user)

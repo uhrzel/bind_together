@@ -23,9 +23,9 @@
                         data-bs-toggle="modal" data-bs-target="#newsfeedModal"
                         placeholder="What's on your mind, {{ auth()->user()->firstname }}?">
                 </div>
-                <div class="text-end mt-2">
+                {{-- <div class="text-end mt-2">
                     <button class="btn btn-danger rounded-pill "><i class="fas fa-image"></i> Create Post</button>
-                </div>
+                </div> --}}
             </div>
         </div>
 
@@ -60,15 +60,23 @@
                                 </li>
                             @else
                                 @student
-                                    <li><a class="dropdown-item" href="#">Report</a></li>
+                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button></li>
                                 @endstudent
                                 @admin_org
-                                    <li><a class="dropdown-item" href="#">Report</a></li>
-                                    <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button></li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
+                                    </li>
                                 @endadmin_org
                                 @admin_sport
-                                    <li><a class="dropdown-item" href="#">Report</a></li>
-                                    <li><a class="dropdown-item" href="#">Deactivate</a></li>
+                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
+                                    </li>
                                 @endadmin_sport
                             @endif
                         </ul>
@@ -144,7 +152,8 @@
                         <div class="d-flex align-items-center">
                             <input type="text" class="form-control" name="description"
                                 placeholder="Comment as {{ auth()->user()->firstname }}">
-                            <button class="btn btn-danger ms-2" type="submit"><i class="fas fa-paper-plane"></i></button>
+                            <button class="btn btn-danger ms-2" type="submit"><i
+                                    class="fas fa-paper-plane"></i></button>
                         </div>
                     </form>
                     <div class="d-flex justify-content-between mt-2">
@@ -274,6 +283,76 @@
         </div>
     </div>
 
+
+    <!-- Report Post Modal -->
+    <div class="modal fade" id="reportPostModal" tabindex="-1" aria-labelledby="reportPostModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportPostModalLabel">Report Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reportPostForm" action="" method="POST">
+                        @csrf
+                        <input type="hidden" name="newsfeed_id" id="newsfeedReportId">
+
+                        <div class="form-group">
+                            <label for="reason">Reason for Reporting:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Nudity"
+                                    id="nudity">
+                                <label class="form-check-label" for="nudity">Nudity</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Hate Speech"
+                                    id="hateSpeech">
+                                <label class="form-check-label" for="hateSpeech">Hate Speech</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Threats"
+                                    id="threats">
+                                <label class="form-check-label" for="threats">Threats</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Vulgar"
+                                    id="vulgar">
+                                <label class="form-check-label" for="vulgar">Vulgar</label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input
+                                <input class="form-check-input"
+                                    type="checkbox" name="reasons[]" value="Abusive" id="abusive">
+                                <label class="form-check-label" for="abusive">Abusive</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Violence"
+                                    id="violence">
+                                <label class="form-check-label" for="violence">Violence</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="reasons[]" value="Others"
+                                    id="othersPost">
+                                <label class="form-check-label" for="others">Others</label>
+                            </div>
+
+                            <div id="othersPostTextArea" class="form-group mt-3" style="display: none;">
+                                <label for="otherReason">Please specify:</label>
+                                <textarea class="form-control" name="other_reason" id="otherReason" rows="3" placeholder="Enter reason"></textarea>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Submit Report</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     {{-- delete modal --}}
     <div class="modal fade" id="deleteNewsfeedModal" tabindex="-1" aria-labelledby="deleteNewsfeedModalLabel"
         aria-hidden="true">
@@ -353,11 +432,10 @@
                 method: 'POST',
                 data: {
                     comments_id: commentId,
-                    _token: '{{ csrf_token() }}' // Include CSRF token for security
+                    _token: '{{ csrf_token() }}'
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Update the button text or appearance based on the response
                         const likeButton = $('a[data-comment-id="' + commentId + '"]');
                         likeButton.html('<b><i class="far fa-thumbs-up"></i> ' + (response.liked ? 'Unlike' :
                             'Like') + '</b>');
@@ -372,7 +450,22 @@
             });
         }
 
+        const deletedFiles = [];
+
+        function removeFile(fileId) {
+            deletedFiles.push(fileId);
+
+            $('#deletedFiles').val(deletedFiles.join(','));
+
+            $('.file-preview-' + fileId).hide();
+        }
+
         $(document).ready(function() {
+
+            $('.reportBtn').click(function() {
+                $('#newsfeedReportId').val($(this).data('id'))
+                $('#reportPostForm').attr('action', '/reported-post/')
+            })
 
             $('.editBtn').click(function() {
                 fetch('/newsfeed/' + $(this).data('id'))
@@ -387,7 +480,7 @@
                             newsfeed.newsfeed_files.forEach(function(file) {
                                 if (file.file_type.startsWith('image')) {
                                     filesContainer.append(`
-                                    <div class="col-4 mb-3 position-relative">
+                                    <div class="col-4 mb-3 position-relative file-preview-${file.id}">
                                     <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
                                     <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
                                         <i class="fas fa-times"></i>
@@ -401,16 +494,6 @@
                         $('#editPostForm').attr('action', '/newsfeed/' + $(this).data('id'));
                     })
             })
-
-            const deletedFiles = [];
-
-            function removeFile(fileId) {
-                deletedFiles.push(fileId);
-
-                $('#deletedFiles').val(deletedFiles.join(','));
-
-                $('.file-preview-' + fileId).hide();
-            }
 
             $('.deleteBtn').click(function() {
                 $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
@@ -515,6 +598,14 @@
                     $('#othersTextArea').show();
                 } else {
                     $('#othersTextArea').hide();
+                }
+            });
+
+            $('#othersPost').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('#othersPostTextArea').show();
+                } else {
+                    $('#othersPostTextArea').hide();
                 }
             });
         });

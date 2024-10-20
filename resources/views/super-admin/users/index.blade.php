@@ -1,28 +1,35 @@
 @extends('layouts.app')
 
 @section('content')
+    <style>
+        .active-status {
+            background-color: #007bff;
+            /* Blue */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
 
-<style>
-    .active-status {
-    background-color: #007bff; /* Blue */
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.deactivated-status {
-    background-color: #6c757d; /* Grey */
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-</style>
+        .deactivated-status {
+            background-color: #6c757d;
+            /* Grey */
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+    </style>
 
     <div class="main py-4">
         <div class="card card-body border-0 shadow table-wrapper table-responsive">
             <div class="row">
                 <div class="col">
-                    <h2 class="mb-4 h5" style="text-transform: uppercase">{{ ucfirst(str_replace('_', ' ', $role)) }}</h2>
+                    <h2 class="mb-4 h5" style="text-transform: uppercase">
+                        @if ($role == 'admin_org')
+                            Administrators
+                        @else
+                            {{ ucfirst(str_replace('_', ' ', $role)) }}
+                        @endif
+                    </h2>
                 </div>
                 <div class="col text-end">
                     <!-- Trigger the Create Modal -->
@@ -36,6 +43,11 @@
                         <th class="border-gray-200">{{ __('Name') }}</th>
                         <th class="border-gray-200">{{ __('Gender') }}</th>
                         <th class="border-gray-200">{{ __('Email') }}</th>
+                        @if ($role == 'coach')
+                            <th class="border-gray-200">{{ __('Sport') }}</th>
+                        @elseif ($role == 'adviser')
+                            <th class="border-gray-200">{{ __('Organization') }}</th>
+                        @endif
                         <th class="border-gray-200">{{ __('Status') }}</th>
                         <th class="border-gray-200">{{ __('Role') }}</th>
                         <th class="border-gray-200">{{ __('Actions') }}</th>
@@ -51,8 +63,13 @@
                             <td><span class="fw-normal">{{ $user->firstname }} {{ $user->lastname }}</span></td>
                             <td><span class="fw-normal">{{ $user->gender }}</span></td>
                             <td><span class="fw-normal">{{ $user->email }}</span></td>
+                            @if ($role == 'coach')
+                                <td class="border-gray-200">{{ $user->sport->name }}</td>
+                            @elseif ($role == 'adviser')
+                                <td class="border-gray-200">{{ $user->organization->name }}</td>
+                            @endif
                             <td>
-                                @if($user->status == 1)
+                                @if ($user->status == 1)
                                     <span class="active-status">Active</span>
                                 @else
                                     <span class="deactivated-status">Deactivated</span>
@@ -61,19 +78,18 @@
                             <td><span
                                     class="fw-normal">{{ ucfirst(str_replace('_', ' ', $user->getRoleNames()->first())) }}</span>
                             </td>
-                            <td class="row">
+                            <td class="d-flex gap-2">
                                 @if ($user->is_active != 0)
-                                    <button class="col-4 btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#deleteUserModal"
+                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
                                         onclick="deleteUser({{ $user->id }})">Deactivate</button>
                                 @else
-                                    <button class="col-4 btn btn-primary" data-bs-toggle="modal"
+                                    <button class="btn btn-primary" data-bs-toggle="modal"
                                         data-bs-target="#activateUserModal"
                                         onclick="activateUser({{ $user->id }})">Activate</button>
                                 @endif
-                                <button class="col-3 mx-3 btn btn-secondary" data-bs-toggle="modal"
-                                    data-bs-target="#viewUserModal" onclick="viewUser({{ $user->id }})">View</button>
-                                <button class="col-3 btn btn-info" data-bs-toggle="modal" data-bs-target="#editUserModal"
+                                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#viewUserModal"
+                                    onclick="viewUser({{ $user->id }})">View</button>
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#editUserModal"
                                     onclick="editUser({{ $user->id }})">Edit</button>
                             </td>
                         </tr>
@@ -90,7 +106,13 @@
                 <form action="{{ route('users.store') }}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createUserModalLabel">New Superadmin</h5>
+                        <h5 class="modal-title" id="createUserModalLabel">
+                            @if ($role == 'admin_org')
+                                New Administrator
+                            @else
+                                New {{ ucfirst(str_replace('_', ' ', $role)) }}
+                            @endif
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -105,8 +127,8 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="middlename" class="form-label">Middle Name</label>
-                                <input type="text" class="form-control" name="middlename" placeholder="Enter Middle Name"
-                                    required>
+                                <input type="text" class="form-control" name="middlename"
+                                    placeholder="Enter Middle Name">
                                 @error('middlename')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -129,8 +151,8 @@
                             </div>
                             <div class="col-md-6 mt-3">
                                 <label for="birthdate" class="form-label">Birthday</label>
-                                <input type="date" class="form-control" name="birthdate" placeholder="DD/MM/YYYY"
-                                    required>
+                                <input type="date" class="form-control" name="birthdate" id="birthdate"
+                                    placeholder="DD/MM/YYYY" required>
                                 @error('birthdate')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -145,31 +167,41 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <input type="hidden" name="role" value="{{ $role }}">
+                            @if ($role != 'admin_org')
+                                <input type="hidden" name="role" value="{{ $role }}">
+                            @endif
                         </div>
-                        <div class="mt-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" name="email" placeholder="Enter Email"
-                                required>
-                            @error('email')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                        <div class="mt-3 row">
+                            <div class="form-group col">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="Enter Email"
+                                    required>
+                                @error('email')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group col">
+                                <label for="role">Role</label>
+                                <select name="role" id="" class="form-select">
+                                    <option value="admin_org">Admin Org</option>
+                                    <option value="admin_sport">Admin Sport</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="mt-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Enter Password"
-                                required>
-                            @error('password')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mt-3">
-                            <label for="password_confirmation" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" name="password_confirmation"
-                                placeholder="Retype Password" required>
-                            @error('password_confirmation')
-                                <div class="text-danger">{{ $message }}</div>
-                            @enderror
+                        <div class="row">
+                            <div class="col-md-6 mt-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Enter Password" required>
+                                <div id="passwordError" class="text-danger"></div>
+                            </div>
+
+                            <div class="col-md-6 mt-3">
+                                <label for="password_confirmation" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="password_confirmation"
+                                    name="password_confirmation" placeholder="Retype Password" required>
+                                <div id="confirmPasswordError" class="text-danger"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -189,7 +221,13 @@
                     @csrf
                     @method('PUT')
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editUserModalLabel">Edit Superadmin</h5>
+                        <h5 class="modal-title" id="editUserModalLabel">
+                            @if ($role == 'admin_org')
+                                Edit Administrator
+                            @else
+                                Edit {{ ucfirst(str_replace('_', ' ', $role)) }}
+                            @endif
+                        </h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -246,13 +284,23 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class=" mt-3">
-                            <label for="editEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="editEmail" name="email"
-                                placeholder="Enter Email" required>
+                        <div class=" mt-3 row">
+                            <div class="form-group col">
+                                <label for="editEmail" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="editEmail" name="email"
+                                    placeholder="Enter Email" required>
+                            </div>
                             @error('email')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
+
+                            <div class="form-group col">
+                                <label for="role">Role</label>
+                                <select name="role" id="roleId" class="form-select">
+                                    <option value="admin_org">Admin Org</option>
+                                    <option value="admin_sport">Admin Sport</option>
+                                </select>
+                            </div>
                         </div>
                         <div class=" mt-3">
                             <label for="editPassword" class="form-label">Password</label>
@@ -282,51 +330,55 @@
 
     <!-- View User Modal -->
     <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewUserModalLabel">View Superadmin</h5>
+                    <h5 class="modal-title" id="viewUserModalLabel">
+                        {{ $role == 'admin_org' ? 'Administrator' : ucfirst(str_replace('_', ' ', $role)) }} Details
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="viewUserId" name="id">
                     <div class="row">
-                        <div class="col-md-6">
-                            <label for="viewFirstname" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="viewFirstname" name="firstname" readonly>
+                        <!-- Avatar Section -->
+                        <div class="col-md-4 text-center">
+                            <img src="" id="viewAvatar" class="img-fluid rounded-circle mb-3" alt="User Avatar"
+                                width="120">
+                            <h4 id="viewFullname"></h4>
+                            <span class="badge bg-secondary">
+                                {{ $role == 'admin_org' ? 'Administrator' : ucfirst(str_replace('_', ' ', $role)) }}
+                            </span>
+
+                            <p class="mt-2"><strong>Birthday:</strong> <span id="viewBirthdate">YYYY-MM-DD</span></p>
+                            <p><strong>Age:</strong> <span id="viewAge">XX</span></p>
                         </div>
-                        <div class="col-md-6">
-                            <label for="viewMiddlename" class="form-label">Middle Name</label>
-                            <input type="text" class="form-control" id="viewMiddlename" name="middlename" readonly>
+
+                        <!-- Details Section -->
+                        <div class="col-md-8">
+                            <h6 class="text-primary">Basic Information</h6>
+                            <hr>
+                            <p><strong>Gender:</strong> <span id="viewGender">Female</span></p>
+                            <p><strong>Address:</strong> <span id="viewAddress">Address Details</span></p>
+
+                            <h6 class="text-primary">Contact Details</h6>
+                            <hr>
+                            <p><strong>Contact:</strong> <span id="viewContact">+XX XXXXXXXXXX</span></p>
+                            <p><strong>Email:</strong> <span id="viewEmail">example@domain.com</span></p>
+
+                            <h6 class="text-primary">Assigned Sport</h6>
+                            <hr>
+                            <p><strong>Sport Name:</strong> <span id="viewSport">Sport Details</span></p>
                         </div>
-                        <div class="col-md-6 mt-3">
-                            <label for="viewLastname" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="viewLastname" name="lastname" readonly>
-                        </div>
-                        <div class="col-md-6 mt-3">
-                            <label for="viewSuffix" class="form-label">Suffix</label>
-                            <input type="text" class="form-control" id="viewSuffix" name="suffix" readonly>
-                        </div>
-                        <div class="col-md-6 mt-3">
-                            <label for="viewBirthdate" class="form-label">Birthday</label>
-                            <input type="date" class="form-control" id="viewBirthdate" name="birthdate" readonly>
-                        </div>
-                        <div class="col-md-6 mt-3">
-                            <label for="viewGender" class="form-label">Gender</label>
-                            <input type="text" class="form-control" id="viewGender" name="gender" readonly>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <label for="viewEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="viewEmail" name="email" readonly>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
+
+
 
 
     <!-- Delete User Modal -->
@@ -382,21 +434,25 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-            $('#datatable').DataTable();
+            $('#datatable').DataTable({
+                // scrollX: true
+            });
         });
 
         // Define the editUser function globally so it's accessible on button click
         function editUser(id) {
             $.get('/users/' + id, function(user) {
-                $('#editUserId').val(user.id);
-                $('#editFirstname').val(user.firstname);
-                $('#editMiddlename').val(user.middlename);
-                $('#editLastname').val(user.lastname);
-                $('#editSuffix').val(user.suffix);
-                const birthdate = user.birthdate.split(' ')[0]; // Extracts "2024-05-03"
+                $('#editUserId').val(user.user.id);
+                $('#viewFullname').text(user.user.firstname + user.user.lastname);
+                $('#editFirstname').val(user.user.firstname);
+                $('#editMiddlename').val(user.user.middlename);
+                $('#editLastname').val(user.user.lastname);
+                $('#editSuffix').val(user.user.suffix);
+                $('#roleId').val(user.roles[0]);
+                const birthdate = user.user.birthdate.split(' ')[0]; // Extracts "2024-05-03"
                 $('#editBirthdate').val(birthdate);
-                $('#editEmail').val(user.email);
-                $('#editGender').val(user.gender);
+                $('#editEmail').val(user.user.email);
+                $('#editGender').val(user.user.gender);
 
                 $('#editPassword').val('');
                 $('#editPasswordConfirmation').val('');
@@ -407,19 +463,51 @@
 
         function viewUser(id) {
             $.get('/users/' + id, function(user) {
-                $('#viewUserId').val(user.id);
-                $('#viewFirstname').val(user.firstname);
-                $('#viewMiddlename').val(user.middlename);
-                $('#viewLastname').val(user.lastname);
-                $('#viewSuffix').val(user.suffix);
-                const birthdate = user.birthdate.split(' ')[0]; // Extracts the date part
-                $('#viewBirthdate').val(birthdate);
-                $('#viewEmail').val(user.email);
-                $('#viewGender').val(user.gender);
+                // console.log(user.roles[0])
+                $('#viewUserId').val(user.user.id);
+                $('#viewFullname').text(user.user.firstname + ' ' + user.user.lastname);
+                $('#viewMiddlename').val(user.user.middlename || 'N/A');
+                $('#viewLastname').val(user.user.lastname);
+                $('#viewSuffix').val(user.user.suffix || '');
+
+                // Split the birthdate to get the date part only
+                const birthdate = user.user.birthdate.split(' ')[0];
+                $('#viewBirthdate').text(birthdate);
+
+                $('#viewEmail').text(user.user.email);
+
+                if (user.avatar) {
+                    $('#viewAvatar').attr('src', '/storage/' + user.user.avatar);
+                } else {
+                    $('#viewAvatar').attr('src',
+                        '/path-to-default-avatar/default-avatar.png');
+                }
+
+                const age = calculateAge(birthdate);
+                $('#viewAge').text(age);
+
+                $('#viewGender').text(user.user.gender);
+                $('#viewContact').text(user.user.contact || 'N/A');
+                $('#viewAddress').text(user.user.address || 'N/A');
+
+                $('#viewSport').text(user.user.sport ? user.user.sport.name : 'N/A');
 
                 // Show the modal
                 $('#viewUserModal').modal('show');
             });
+        }
+
+        function calculateAge(birthdate) {
+            const birthDate = new Date(birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+
+            // If the birthdate has not yet occurred this year, subtract one from the age
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
         }
 
         function deleteUser(id) {
@@ -429,5 +517,51 @@
         function activateUser(id) {
             $('#activateUserForm').attr('action', '/users/activate/' + id);
         }
+
+        const birthdateInput = $('#birthdate');
+
+        const today = new Date();
+        const eighteenYearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+
+        const day = ('0' + eighteenYearsAgo.getDate()).slice(-2);
+        const month = ('0' + (eighteenYearsAgo.getMonth() + 1)).slice(-2); // Months are zero-based
+        const year = eighteenYearsAgo.getFullYear();
+
+        const maxDate = `${year}-${month}-${day}`;
+
+        birthdateInput.attr('max', maxDate);
+
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+        // Real-time password validation
+        $('#password').on('input', function() {
+            const password = $(this).val();
+            const passwordError = $('#passwordError');
+
+            if (!passwordRegex.test(password)) {
+                passwordError.text(
+                    "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character."
+                );
+                $(this).addClass('is-invalid');
+            } else {
+                passwordError.text(""); // Clear error if valid
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        // Real-time confirm password validation
+        $('#password_confirmation').on('input', function() {
+            const password = $('#password').val();
+            const confirmPassword = $(this).val();
+            const confirmPasswordError = $('#confirmPasswordError');
+
+            if (password !== confirmPassword) {
+                confirmPasswordError.text("Passwords do not match.");
+                $(this).addClass('is-invalid');
+            } else {
+                confirmPasswordError.text(""); // Clear error if passwords match
+                $(this).removeClass('is-invalid');
+            }
+        });
     </script>
 @endpush

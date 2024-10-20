@@ -27,8 +27,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="middlename">{{ 'Middle Name' }}</label>
                                 <input type="text" name="middlename" id="middlename" class="form-control"
-                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name"
-                                    nullable>
+                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name">
                                 @error('middlename')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
@@ -138,6 +137,26 @@
                             </div>
                         </div>
 
+                        <h5 class="my-3 text-primary">Password Update</h5>
+
+                        <div class="row">
+                            <!-- Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password">{{ 'Password' }}</label>
+                                <input type="password" name="password" id="password" class="form-control"
+                                    placeholder="New Password">
+                                <div id="passwordError" class="invalid-feedback" style="display: block;"></div>
+                            </div>
+
+                            <!-- Confirm Password -->
+                            <div class="col-md-6 mb-3">
+                                <label for="password_confirmation">{{ 'Confirm Password' }}</label>
+                                <input type="password" name="password_confirmation" id="password_confirmation"
+                                    class="form-control" placeholder="Confirm Password" required>
+                                <div id="confirmPasswordError" class="invalid-feedback" style="display: block;"></div>
+                            </div>
+                        </div>
+
                         <!-- Submit Button -->
                         <div class="mt-3">
                             <button type="submit" class="btn btn-danger">{{ __('Submit') }}</button>
@@ -160,3 +179,36 @@
         </script>
     @endif
 @endsection
+
+@push('scripts')
+    <script>
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+        $('#password').on('input', function() {
+            const password = $(this).val();
+            const passwordError = $('#passwordError');
+            if (!passwordRegex.test(password)) {
+                passwordError.text(
+                    "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+                );
+                $(this).addClass('is-invalid');
+            } else {
+                passwordError.text("");
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        $('#password_confirmation').on('input', function() {
+            const password = $('#password').val();
+            const confirmPassword = $(this).val();
+            const confirmPasswordError = $('#confirmPasswordError');
+            if (password !== confirmPassword) {
+                confirmPasswordError.text("Passwords do not match.");
+                $(this).addClass('is-invalid');
+            } else {
+                confirmPasswordError.text("");
+                $(this).removeClass('is-invalid');
+            }
+        });
+    </script>
+@endpush

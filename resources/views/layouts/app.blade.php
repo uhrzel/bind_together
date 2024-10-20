@@ -38,6 +38,13 @@
 </head>
 
 <body>
+
+    <style>
+        .swal2-actions .swal2-confirm {
+            margin: 20px auto;
+        }
+    </style>
+
     @include('layouts.nav')
     @include('layouts.sidenav')
     @include('sweetalert::alert')

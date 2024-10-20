@@ -7,8 +7,10 @@ use App\Http\Controllers\AuditionListController;
 use App\Http\Controllers\CalendarOfActivityController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DeactivatePostController;
 use App\Http\Controllers\DeletedCommentController;
 use App\Http\Controllers\DeletedPostController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
 use App\Http\Controllers\NewsfeedController;
@@ -58,6 +60,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('audition-list', AuditionListController::class)->name('audition.list');
     Route::get('registered-participant', RegisteredParticipantController::class)->name('registered.participant');
     Route::get('joined-activities', JoinedActivityController::class)->name('joined.activities');
+    Route::get('deuri: activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);
@@ -72,6 +75,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('activity-registration', ActivityRegistrationController::class);
     Route::resource('deleted-post', DeletedPostController::class);
     Route::resource('deleted-comment', DeletedCommentController::class);
+    Route::resource('feedback', FeedbackController::class);
 
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
