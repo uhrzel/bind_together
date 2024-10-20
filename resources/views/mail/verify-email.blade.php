@@ -102,7 +102,7 @@
         </ul>
         <p>Please keep this information confidential and do not share it with others.</p>
         <p>To verify your account, please visit the following link: 
-            <a href="{{ $verificationUrl }}" style="padding: 10px 15px; background-color: #3498db; color: white; text-decoration: none;">
+            <a href="{{ $verificationUrl }}">
                 Verify Email Address
             </a>
             </p>

@@ -40,12 +40,12 @@
                             @enderror
                         </div>
 
-                        <!-- Remember Me & Forgot Password -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        <!-- Show Password -->
+                        {{-- <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                                <label class="form-check-label mb-0" for="remember">
-                                    {{ __('Remember me') }}
+                                <input class="form-check-input" type="checkbox" id="showPassword">
+                                <label class="form-check-label mb-0" for="showPassword">
+                                    {{ __('Show Password') }}
                                 </label>
                             </div>
                             <div>
@@ -53,7 +53,7 @@
                                     {{ __('Forgot password?') }}
                                 </a>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Sign In Button -->
                         <div class="d-grid">
@@ -75,3 +75,13 @@
         </div>
     </div>
 @endsection
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $('#showPassword').on('click', function() {
+        const passwordField = $('#password');
+        const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+        passwordField.attr('type', type);
+    });
+</script>
