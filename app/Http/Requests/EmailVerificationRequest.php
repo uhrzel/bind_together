@@ -29,7 +29,7 @@ class EmailVerificationRequest extends FormRequest
 
     public function fulfill()
     {
-        if (! $this->user()->hasVerifiedEmail()) {
+        if (!$this->user()->hasVerifiedEmail()) {
             $this->user()->markEmailAsVerified();
 
             event(new Verified($this->user()));

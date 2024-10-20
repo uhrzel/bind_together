@@ -18,7 +18,7 @@
                                 <label for="firstname">{{ 'First Name' }}</label>
                                 <input type="text" name="firstname" id="firstname" class="form-control"
                                     value="{{ old('firstname', auth()->user()->firstname) }}" placeholder="First Name"
-                                    required>
+                                    readonly>
                                 @error('firstname')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
@@ -27,7 +27,7 @@
                             <div class="col-md-4 mb-3">
                                 <label for="middlename">{{ 'Middle Name' }}</label>
                                 <input type="text" name="middlename" id="middlename" class="form-control"
-                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name">
+                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name" readonly>
                                 @error('middlename')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
@@ -37,7 +37,7 @@
                                 <label for="lastname">{{ 'Last Name' }}</label>
                                 <input type="text" name="lastname" id="lastname" class="form-control"
                                     value="{{ old('lastname', auth()->user()->lastname) }}" placeholder="Last Name"
-                                    required>
+                                    readonly>
                                 @error('lastname')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
@@ -67,7 +67,7 @@
 
                             <div class="col-md-4 mb-3">
                                 <label for="gender">{{ 'Gender' }}</label>
-                                <select name="gender" id="gender" class="form-select" required>
+                                <select name="gender" id="gender" class="form-select" disabled>
                                     <option value="male" {{ auth()->user()->gender == 'male' ? 'selected' : '' }}>Male
                                     </option>
                                     <option value="female" {{ auth()->user()->gender == 'female' ? 'selected' : '' }}>
@@ -130,7 +130,7 @@
                                 <label for="email">{{ 'Email' }}</label>
                                 <input type="email" name="email" id="email" class="form-control"
                                     value="{{ old('email', auth()->user()->email) }}" placeholder="Email Address"
-                                    required readonly>
+                                    readonly>
                                 @error('email')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
