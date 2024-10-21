@@ -34,16 +34,16 @@ class RegisterController extends Controller
             'lastname' => $request->lastname,
             'suffix' => $request->suffix,
             'gender' => $request->gender,
-            'contact' => $request->contact,
+            // 'contact' => $request->contact,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        if ($request->hasFile('profile')) {
-            $profilePath = $request->file('profile')->store('avatar', 'public');
-            $user->avatar = $profilePath;
-            $user->save();
-        }
+        // if ($request->hasFile('profile')) {
+        //     $profilePath = $request->file('profile')->store('avatar', 'public');
+        //     $user->avatar = $profilePath;
+        //     $user->save();
+        // }
 
         $user->assignRole('student');
 

@@ -12,6 +12,10 @@
         </a>
     </li>
 
+
+
+
+    @super_admin
     <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
         <a href="{{ route('home') }}" class="nav-link">
             <span class="sidebar-icon">
@@ -24,9 +28,6 @@
             <span class="sidebar-text">{{ __('Dashboard') }}</span>
         </a>
     </li>
-
-
-    @super_admin
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                 data-bs-target="#submenu-app">
@@ -240,6 +241,19 @@
     @endsuper_admin
 
     @admin_sport
+
+    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <a href="{{ route('home') }}" class="nav-link">
+            <span class="sidebar-icon">
+                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+            </span>
+            <span class="sidebar-text">{{ __('Dashboard') }}</span>
+        </a>
+    </li>
         <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
             <a href="{{ route('newsfeed.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -365,6 +379,18 @@
 
 
     @admin_org
+    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <a href="{{ route('home') }}" class="nav-link">
+            <span class="sidebar-icon">
+                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+            </span>
+            <span class="sidebar-text">{{ __('Dashboard') }}</span>
+        </a>
+    </li>
         <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
             <a href="{{ route('newsfeed.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -440,6 +466,19 @@
     @endadmin_org
 
     @coach
+
+    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <a href="{{ route('home') }}" class="nav-link">
+            <span class="sidebar-icon">
+                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+            </span>
+            <span class="sidebar-text">{{ __('Dashboard') }}</span>
+        </a>
+    </li>
         <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
             <a href="{{ route('newsfeed.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -523,6 +562,18 @@
     @endcoach
 
     @adviser
+    <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
+        <a href="{{ route('home') }}" class="nav-link">
+            <span class="sidebar-icon">
+                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                </svg>
+            </span>
+            <span class="sidebar-text">{{ __('Dashboard') }}</span>
+        </a>
+    </li>
         <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
             <a href="{{ route('newsfeed.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -654,6 +705,18 @@
                                 <i class="fas fa-user-alt fa-fw"></i>
                             </span>
                             <span class="sidebar-text">{{ __('Joined Activity') }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item {{ request()->routeIs('calendar-of-activities') ? 'active' : '' }}">
+                        <a href="{{ route('calendar-of-activities') }}" class="nav-link">
+                            <span class="sidebar-icon">
+                                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                                </svg>
+                            </span>
+                            <span class="sidebar-text">{{ __('Calendar of Act') }}</span>
                         </a>
                     </li>
                 </ul>

@@ -24,11 +24,11 @@
             <div class="card-body">
                 <div class="mb-2">
                     <label for="subject" class="form-label"><strong>Subject</strong></label>
-                    <textarea type="text" class="form-control" rows="1">{{ $feedback->subject }}</textarea>
+                    <textarea type="text" class="form-control" rows="1" readonly>{{ $feedback->subject }}</textarea>
                 </div>
                 <div class="mb-2">
                     <label for="subject" class="form-label"><strong>Message</strong></label>
-                    <textarea type="text" class="form-control" rows="1">{{ $feedback->message }}</textarea>
+                    <textarea type="text" class="form-control" rows="1" readonly>{{ $feedback->message }}</textarea>
                 </div>
                 <form action="{{ route('feedback.update', $feedback->id) }}" method="POST">
                     @csrf

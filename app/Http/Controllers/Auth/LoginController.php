@@ -25,7 +25,16 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        // Check if the authenticated user has the 'student' role using Spatie's hasRole method
+        if (auth()->user()->hasRole('student')) {
+            return route('newsfeed.index');
+        }
+
+        // Default redirect to home if the user does not have the 'student' role
+        return '/home';
+    }
 
     /**
      * Create a new controller instance.

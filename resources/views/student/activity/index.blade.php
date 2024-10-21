@@ -23,13 +23,12 @@
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label for="search" class="form-label fw-bold">Search</label>
-                            <input type="text" id="search" class="form-control"
-                                placeholder="Search For Activities...">
+                            <input type="text" id="search" class="form-control" placeholder="Search For Activities...">
                         </div>
                     </div>
-
+    
                     <!-- Activities Section -->
-                    <div class="row">
+                    <div class="row" id="activities-container">
                         @foreach ($activities as $activity)
                             @php
                                 $activityTypes = [
@@ -38,13 +37,11 @@
                                     \App\Enums\ActivityType::Practice => 'Practice',
                                     \App\Enums\ActivityType::Competition => 'Competition',
                                 ];
-
-                                $hasJoined = auth()
-                                    ->user()
-                                    ->joinedActivities->contains($activity->id);
+    
+                                $hasJoined = auth()->user()->joinedActivities->contains($activity->id);
                             @endphp
-
-                            <div class="col-md-4 mb-3">
+    
+                            <div class="col-md-4 mb-3 activity-card" data-title="{{ strtolower($activity->title) }}">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ $activity->title }}</h5>
@@ -52,8 +49,7 @@
                                             <strong>Sport name:</strong> {{ $activity->sport->name ?? '' }} <br>
                                             <strong>Type:</strong> {{ $activityTypes[$activity->type] ?? '' }} <br>
                                             <strong>Venue:</strong> {{ $activity->venue }} <br>
-                                            <strong>Duration:</strong> {{ $activity->start_date }} -
-                                            {{ $activity->end_date }}
+                                            <strong>Duration:</strong> {{ $activity->start_date }} - {{ $activity->end_date }}
                                         </p>
                                     </div>
                                     <div class="card-footer d-flex justify-content-between">
@@ -112,7 +108,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="emergency_contact_number" class="form-label">Emergency Contact Number</label>
-                            <input type="text" class="form-control" id="emergency_contact" name="emergency_contact"
+                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact" name="emergency_contact"
                                 placeholder="Enter Emergency Contact Number" required>
                         </div>
                         <div class="mb-3">
@@ -185,29 +181,49 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('activity-registration.store') }}" method="POST"
-                        enctype="multipart/form-data">
+                    <form action="{{ route('activity-registration.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <input type="hidden" id="activity_id" name="activity_id">
+                        <input type="hidden" id="activityId" name="activity_id">
 
                         <div class="mb-3">
-                            <label for="tryout_skill_level" class="form-label">Skill Level</label>
-                            <input type="text" class="form-control" id="tryout_skill_level" name="skill_level"
-                                placeholder="Enter Skill Level" required>
+                            <label for="height" class="form-label">Height (cm)</label>
+                            <input type="number" class="form-control" id="height" name="height"
+                                placeholder="Enter Your Height" required>
                         </div>
-
                         <div class="mb-3">
-                            <label for="tryout_video" class="form-label">Upload Audition/Performance Video</label>
-                            <input type="file" class="form-control" id="tryout_video" name="audition_video"
-                                accept="video/*" required>
+                            <label for="weight" class="form-label">Weight (kg)</label>
+                            <input type="number" class="form-control" id="weight" name="weight"
+                                placeholder="Enter Your Weight" required>
                         </div>
-
                         <div class="mb-3">
-                            <label for="portfolio_link" class="form-label">Portfolio Link</label>
-                            <input type="url" class="form-control" id="portfolio_link" name="portfolio_link"
-                                placeholder="Enter Portfolio Link (if any)">
+                            <label for="contact_person" class="form-label">Person to Contact</label>
+                            <input type="text" class="form-control" id="contact_person" name="contact_person"
+                                placeholder="Enter Name Of Person To Contact" required>
                         </div>
-
+                        <div class="mb-3">
+                            <label for="relationship" class="form-label">Relationship</label>
+                            <input type="text" class="form-control" id="relationship" name="relationship"
+                                placeholder="Enter Relationship" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="emergency_contact_number" class="form-label">Emergency Contact Number</label>
+                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact" name="emergency_contact"
+                                placeholder="Enter Emergency Contact Number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="medical_certificate" class="form-label">Certificate of Registration</label>
+                            <input type="file" class="form-control" id="medical_certificate"
+                                name="certificate_of_registration" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="student_id" class="form-label">Photo Copy of Student ID</label>
+                            <input type="file" class="form-control" id="student_id" name="photo_copy_id" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="other_file" class="form-label">Other File</label>
+                            <input type="file" class="form-control" id="other_file" name="other_file"
+                                required>
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary">Submit</button>
@@ -222,6 +238,21 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+
+            $('#search').on('input', function() {
+            var searchQuery = $(this).val().toLowerCase(); // Get the search input and convert to lowercase
+
+            // Loop through each activity card and show/hide based on the title
+            $('.activity-card').each(function() {
+                var title = $(this).data('title'); // Get the title from the data attribute
+                if (title.includes(searchQuery)) {
+                    $(this).show(); // Show the card if it matches the search
+                } else {
+                    $(this).hide(); // Hide the card if it doesn't match
+                }
+            });
+        });
+
             $('.join-button').on('click', function() {
                 var activityType = $(this).data('activity-type');
                 var activityId = $(this).data('activity-id');
@@ -229,9 +260,11 @@
                 if (activityType == 3) { // Competition
                     $('#activityRegistrationModal').modal('show');
                     $('#activity_id').val(activityId);
-                } else if (activityType == 1 || activityType == 0) { // Tryouts or Audition
+                } else if (activityType == 0) { // Tryouts or Audition
                     $('#tryoutAuditionModal').modal('show');
-                    $('#activity_id').val(activityId); // Set the hidden input for the form
+                    $('#activityId').val(activityId); // Set the hidden input for the form
+                } else if ( activityType == 1) {
+                    
                 } else {
                     alert("Joined successfully!");
                 }
@@ -245,7 +278,7 @@
                     url: '/activity/' + activityId,
                     method: 'GET',
                     success: function(data) {
-                        $('#activity-sport-name').text(data.sport_name);
+                        $('#activity-sport-name').text((data.sport && data.sport.name) || '');
                         $('#activity-title').text(data.title);
                         $('#activity-target-players').text(data.target_player === 1 ?
                             'Official Players' : 'All Student');

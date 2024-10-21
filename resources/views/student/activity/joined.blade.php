@@ -58,4 +58,71 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="activityDetailsModal" tabindex="-1" aria-labelledby="activityDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activityDetailsModalLabel">Activity Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><strong>Sport Name:</strong> <span id="activity-sport-name"></span></li>
+                                <li><strong>Title:</strong> <span id="activity-title"></span></li>
+                                <li><strong>Target Players:</strong> <span id="activity-target-players"></span></li>
+                                <li><strong>Content:</strong> <span id="activity-content"></span></li>
+                                <li><strong>Activity Type:</strong> <span id="activity-type"></span></li>
+                                <li><strong>Activity Duration:</strong> <span id="activity-duration"></span></li>
+                                <li><strong>Venue:</strong> <span id="activity-venue"></span></li>
+                                <li><strong>Address:</strong> <span id="activity-address"></span></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <img id="activity-image" src="" class="img-fluid" alt="Activity Image">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(() => {
+            $('.view-button').on('click', function() {
+                var activityId = $(this).data('activity-id');
+                var baseUrl = "{{ asset('/storage/') }}";
+                $.ajax({
+                    url: '/activity/' + activityId,
+                    method: 'GET',
+                    success: function(data) {
+                        console.log(data)
+                        $('#activity-sport-name').text((data.sport && data.sport.name) || '');
+                        $('#activity-title').text(data.title);
+                        $('#activity-target-players').text(data.target_player === 1 ?
+                            'Official Players' : 'All Student');
+                        $('#activity-content').text(data.content);
+                        $('#activity-type').text(data.type);
+                        $('#activity-duration').text(data.start_date + ' - ' + data.end_date);
+                        $('#activity-venue').text(data.venue);
+                        $('#activity-address').text(data.address);
+                        $('#activity-image').attr('src', data.attachment ? baseUrl + '/' + data
+                            .attachment : '/path-to-placeholder-image.jpg');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching activity details.');
+                    }
+                });
+            });
+        })
+    </script>
+@endpush

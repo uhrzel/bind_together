@@ -55,6 +55,7 @@ class ActivityController extends Controller
      */
     public function show(Activity $activity)
     {
+        $activity->load('sport');
         return response()->json($activity);
     }
 
