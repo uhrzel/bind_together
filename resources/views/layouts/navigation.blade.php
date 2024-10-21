@@ -2,7 +2,8 @@
     <li class="nav-item">
         <a href="{{ route('home') }}" class="nav-link d-flex align-items-center">
             <!-- Logo (Image) -->
-            <img src="{{ asset('images/bindtogether-logo.png') }}" height="40" width="40" alt="Logo" class="me-3">
+            <img src="{{ asset('images/bindtogether-logo.png') }}" height="40" width="40" alt="Logo"
+                class="me-3">
             <!-- Text -->
             <div>
                 <span class="sidebar-text" style="font-size: 18px; font-weight: bold;">Bind Together</span> <br>
@@ -24,18 +25,6 @@
         </a>
     </li>
 
-    <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
-        <a href="{{ route('newsfeed.index') }}" class="nav-link">
-            <span class="sidebar-icon">
-                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                </svg>
-            </span>
-            <span class="sidebar-text">{{ __('Newsfeed') }}</span>
-        </a>
-    </li>
 
     @super_admin
         <li class="nav-item">
@@ -155,7 +144,7 @@
                             <span class="sidebar-text">{{ __('Organization') }}</span>
                         </a>
                     </li>
-                    
+
                 </ul>
             </div>
         </li>
@@ -248,10 +237,22 @@
                 <span class="sidebar-text">{{ __('Feedback') }}</span>
             </a>
         </li>
-
     @endsuper_admin
 
     @admin_sport
+        <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
+            <a href="{{ route('newsfeed.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Newsfeed') }}</span>
+            </a>
+        </li>
+
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                 data-bs-target="#submenu-app">
@@ -314,7 +315,7 @@
                             <span class="sidebar-text">{{ __('Tryout List') }}</span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item {{ request()->query('status') == '1' ? 'active' : '' }}">
                         <a href="{{ route('registered.participant', ['status' => '1']) }}" class="nav-link">
                             <span class="sidebar-icon me-3">
@@ -325,7 +326,7 @@
                     </li>
                 </ul>
             </div>
-        </li>   
+        </li>
 
         <li class="nav-item {{ request()->routeIs('activity.index') ? 'active' : '' }}">
             <a href="{{ route('activity.index') }}" class="nav-link">
@@ -364,6 +365,19 @@
 
 
     @admin_org
+        <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
+            <a href="{{ route('newsfeed.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Newsfeed') }}</span>
+            </a>
+        </li>
+
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                 data-bs-target="#submenu-app">
@@ -426,76 +440,102 @@
     @endadmin_org
 
     @coach
-    <li class="nav-item {{ request()->routeIs('activity.index') ? 'active' : '' }}">
-        <a href="{{ route('activity.index') }}" class="nav-link">
-            <span class="sidebar-icon">
-                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                </svg>
-            </span>
-            <span class="sidebar-text">{{ __('Activity') }}</span>
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-            data-bs-target="#submenu-app">
-            <span>
-                <span class="sidebar-icon me-3">
-                    <i class="fas fa-circle fa-fw"></i>
+        <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
+            <a href="{{ route('newsfeed.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
                 </span>
-                <span class="sidebar-text">Athlete Record</span>
-            </span>
-            <span class="link-arrow">
-                <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd">
-                    </path>
-                </svg>
-            </span>
-        </span>
-        <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false">
-            <ul class="flex-column nav">
-                <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
-                    <a href="{{ route('registered.participant', ['status' => '0']) }}" class="nav-link">
-                        <span class="sidebar-icon me-3">
-                            <i class="fas fa-user-alt fa-fw"></i>
-                        </span>
-                        <span class="sidebar-text">{{ __('Tryout List') }}</span>
-                    </a>
-                </li>
-                
-                <li class="nav-item {{ request()->query('status') == '1' ? 'active' : '' }}">
-                    <a href="{{ route('registered.participant', ['status' => '1']) }}" class="nav-link">
-                        <span class="sidebar-icon me-3">
-                            <i class="fas fa-user-alt fa-fw"></i>
-                        </span>
-                        <span class="sidebar-text">{{ __('Official Player') }}</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>   
+                <span class="sidebar-text">{{ __('Newsfeed') }}</span>
+            </a>
+        </li>
 
-    <li class="nav-item {{ request()->routeIs('calendar-of-activities') ? 'active' : '' }}">
-        <a href="{{ route('calendar-of-activities') }}" class="nav-link">
-            <span class="sidebar-icon">
-                <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                    <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                </svg>
+        <li class="nav-item {{ request()->routeIs('activity.index') ? 'active' : '' }}">
+            <a href="{{ route('activity.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Activity') }}</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
+                data-bs-target="#submenu-app">
+                <span>
+                    <span class="sidebar-icon me-3">
+                        <i class="fas fa-circle fa-fw"></i>
+                    </span>
+                    <span class="sidebar-text">Athlete Record</span>
+                </span>
+                <span class="link-arrow">
+                    <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                            clip-rule="evenodd">
+                        </path>
+                    </svg>
+                </span>
             </span>
-            <span class="sidebar-text">{{ __('Calendar of Act') }}</span>
-        </a>
-    </li>
+            <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false">
+                <ul class="flex-column nav">
+                    <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
+                        <a href="{{ route('registered.participant', ['status' => '0']) }}" class="nav-link">
+                            <span class="sidebar-icon me-3">
+                                <i class="fas fa-user-alt fa-fw"></i>
+                            </span>
+                            <span class="sidebar-text">{{ __('Tryout List') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item {{ request()->query('status') == '1' ? 'active' : '' }}">
+                        <a href="{{ route('registered.participant', ['status' => '1']) }}" class="nav-link">
+                            <span class="sidebar-icon me-3">
+                                <i class="fas fa-user-alt fa-fw"></i>
+                            </span>
+                            <span class="sidebar-text">{{ __('Official Player') }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item {{ request()->routeIs('calendar-of-activities') ? 'active' : '' }}">
+            <a href="{{ route('calendar-of-activities') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Calendar of Act') }}</span>
+            </a>
+        </li>
     @endcoach
 
     @adviser
+        <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
+            <a href="{{ route('newsfeed.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Newsfeed') }}</span>
+            </a>
+        </li>
+
         <li class="nav-item {{ request()->routeIs('activity.index') ? 'active' : '' }}">
             <a href="{{ route('activity.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -551,7 +591,7 @@
                             <span class="sidebar-text">{{ __('Audition List') }}</span>
                         </a>
                     </li>
-                    
+
                     <li class="nav-item {{ request()->query('status') == '1' ? 'active' : '' }}">
                         <a href="{{ route('audition.list', ['status' => '1']) }}" class="nav-link">
                             <span class="sidebar-icon me-3">
@@ -562,10 +602,23 @@
                     </li>
                 </ul>
             </div>
-        </li>   
+        </li>
     @endadviser
 
     @student
+        <li class="nav-item {{ request()->routeIs('newsfeed.index') ? 'active' : '' }}">
+            <a href="{{ route('newsfeed.index') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Newsfeed') }}</span>
+            </a>
+        </li>
+
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
                 data-bs-target="#submenu-app">

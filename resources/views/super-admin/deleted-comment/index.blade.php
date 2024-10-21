@@ -23,11 +23,11 @@
                         @foreach ($deletedComments as $deletedComment)
                             <tr>
                                 <td>{{ $deletedComment->reason }}</td>
-                                <td>{{ $deletedComment->newsfeed->user->firstname }} {{ $deletedComment->newsfeed->user->lastname }} </td>
-                                <td>{{ $deletedComment->other_reason }} </td>
+                                <td>{{ $deletedComment->comments->user->firstname }} {{ $deletedComment->comments->user->lastname }} </td>
+                                <td>{{ $deletedComment->reason }} {{ $deletedComment->other_reason }} </td>
                                 <td>{{ $deletedComment->comments->created_at }} </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger">Restore</button>
+                                    <button type="button" class="btn btn-danger restore" data-bs-toggle="modal" data-bs-target="#restoreModal" data-id="{{ $deletedComment->id }}">Restore</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -38,10 +38,43 @@
     </div>
 </div>
 
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="restoreForm" method="POST" action="">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="restoreModalLabel">Decline Comment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Are you sure you want to restore it?</p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
     <script>
-        $('#datatable').DataTable();
+        $(() => {
+            $('#datatable').DataTable();
+
+            $('.restore').click(function () {
+                $('#restoreForm').attr('action', '/deleted-comment/' + $(this).data('id'));
+            });
+
+        })
     </script>
 @endpush

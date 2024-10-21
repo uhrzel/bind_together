@@ -125,7 +125,7 @@
 
         function setStatus(status, commentId) {
             document.getElementById('statusInput').value = status;
-            document.getElementById('statusForm').action = `/reported-comment/${commentId}`;
+            document.getElementById('statusForm').action = `/reported-post/${commentId}`;
         }
     </script>
 @endpush

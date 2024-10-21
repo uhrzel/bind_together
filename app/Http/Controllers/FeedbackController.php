@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreFeedbackRequest;
+use App\Mail\FeedbackResponse;
 use App\Models\Feedback;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class FeedbackController extends Controller
 {
@@ -60,6 +62,11 @@ class FeedbackController extends Controller
     public function update(Request $request, Feedback $feedback)
     {
         $feedback->update(['message' => $request->message, 'status' => 1]);
+        $feedback->load('user');
+
+        Mail::to($feedback->user->email)->send(new FeedbackResponse(
+            $feedback->user->firstname, Auth::user()->firstname,
+        ));
 
         alert()->success('Response sent successfully');
         return redirect()->back();

@@ -8,7 +8,7 @@
                         <div class="media d-flex align-items-center">
                             <!-- Avatar Image -->
                             <img class="avatar rounded-circle" 
-                                src="https://ui-avatars.com/api/?background=random&name={{ Auth::user()->firstname }}" 
+                                src="{{ asset('storage/' . auth()->user()->avatar) }}" 
                                 alt="{{ Auth::user()->firstname }}" 
                                 style="width: 40px; height: 40px;">
                             <!-- Username -->

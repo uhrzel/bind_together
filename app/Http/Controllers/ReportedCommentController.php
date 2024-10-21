@@ -13,8 +13,15 @@ class ReportedCommentController extends Controller
      */
     public function index()
     {
-        return view('super-admin.reported-comment.index', ['reportedComments' => ReportedComment::with('comments.user', 'user')->get()]);
+        $reportedComments = ReportedComment::with(['comments.user', 'user'])
+            ->whereIn('status', [1, 2])
+            ->selectRaw('id, comments_id, user_id, reason, status, count(user_id) as report_count, min(created_at) as created_at')
+            ->groupBy('id', 'comments_id', 'user_id', 'reason', 'status')
+            ->get();
+
+        return view('super-admin.reported-comment.index', compact('reportedComments'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -75,11 +82,20 @@ class ReportedCommentController extends Controller
      */
     public function update(Request $request, ReportedComment $reportedComment)
     {
-        $reportedComment->update(['status' => $request->status]);
+        $comment = $reportedComment->comments_id;
+        $reports = ReportedComment::where('comments_id', $comment)->get();
+
+        foreach ($reports as $report) {
+            $report->update([
+                'status' => $request->status,
+                'declined_reason' => $request->declined_reason ?? ''
+            ]);
+        }
 
         alert()->success('Reported comment status has been updated');
         return redirect()->route('reported-comment.index');
     }
+
 
     /**
      * Remove the specified resource from storage.

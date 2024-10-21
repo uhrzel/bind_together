@@ -12,7 +12,7 @@
         <div class="card mb-2">
             <div class="card-header d-flex">
                 <div class="me-3">
-                    <img src="https://via.placeholder.com/30" class="rounded-circle" alt="User Avatar">
+                    <img src="{{ asset('storage/' . $feedback->user->avatar) }}" class="rounded-circle" alt="User Avatar">
                 </div>
                 <div>
                     <h5 class="mb-0">{{ $feedback->user->firstname }} {{ $feedback->user->lastname }}</h5>
@@ -25,6 +25,10 @@
                 <div class="mb-2">
                     <label for="subject" class="form-label"><strong>Subject</strong></label>
                     <textarea type="text" class="form-control" rows="1">{{ $feedback->subject }}</textarea>
+                </div>
+                <div class="mb-2">
+                    <label for="subject" class="form-label"><strong>Message</strong></label>
+                    <textarea type="text" class="form-control" rows="1">{{ $feedback->message }}</textarea>
                 </div>
                 <form action="{{ route('feedback.store') }}" method="POST">
                     @csrf

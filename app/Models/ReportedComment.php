@@ -17,6 +17,7 @@ class ReportedComment extends Model
         'reason',
         'other_reason',
         'status',
+        'declined_reason',
     ];
 
     public function comments(): BelongsTo

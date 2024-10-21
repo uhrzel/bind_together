@@ -43,22 +43,33 @@
                             <tr>
                                 <th>Comment</th>
                                 <th>Owner</th>
-                                <th>Reported By</th>
+                                <th>Report Count</th> <!-- New Column for Report Count -->
+                                <th>Reported By</th> <!-- First user who reported the comment -->
                                 <th>Report Reason</th>
                                 <th>Status</th>
-                                <th>Date Reported</th>
-                                {{-- <th>Report Counts</th> --}}
+                                <th>Date Reported</th> <!-- Date when the comment was first reported -->
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($reportedComments as $reportedComment)
                                 <tr>
+                                    <!-- Comment Description -->
                                     <td>{{ $reportedComment->comments->description }}</td>
-                                    <td>{{ $reportedComment->comments->user->firstname }}
-                                        {{ $reportedComment->comments->user->lastname }}</td>
-                                    <td>{{ $reportedComment->user->firstname }} {{ $reportedComment->user->lastname }} </td>
+                    
+                                    <!-- Owner of the Comment -->
+                                    <td>{{ $reportedComment->comments->user->firstname }} {{ $reportedComment->comments->user->lastname }}</td>
+                    
+                                    <!-- Report Count -->
+                                    <td>{{ $reportedComment->report_count }}</td> <!-- Count of users who reported the comment -->
+                    
+                                    <!-- Reported By (First User who reported the comment) -->
+                                    <td>{{ $reportedComment->user->firstname }} {{ $reportedComment->user->lastname }}</td>
+                    
+                                    <!-- Report Reason -->
                                     <td>{{ $reportedComment->reason }}</td>
+                    
+                                    <!-- Status Badge -->
                                     <td>
                                         @if ($reportedComment->status == 1)
                                             <span class="badge text-black" style="background: yellow">Pending</span>
@@ -68,21 +79,22 @@
                                             <span class="badge bg-success">Approved</span>
                                         @endif
                                     </td>
-                                    <td>{{ $reportedComment->created_at }}</td>
-                                    {{-- <td>{{ $reportedComment->created_at }}</td> --}}
-                                    @php
-                                        $isDisabled = $reportedComment->status != 1;
-                                    @endphp
+                    
+                                    <!-- Date Reported (earliest report) -->
+                                    <td>{{ $reportedComment->created_at->format('Y-m-d') }}</td>
+                    
+                                    <!-- Action Buttons (Approve/Decline) -->
                                     <td>
-                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#actionModal"
-                                            onclick="setStatus(2, {{ $reportedComment->id }})"  {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
-                                        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#actionModal"
-                                            onclick="setStatus(0, {{ $reportedComment->id }})" {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
+                                        @php $isDisabled = $reportedComment->status != 1; @endphp
+                                        <button class="btn btn-primary approve" data-bs-toggle="modal" data-bs-target="#actionModal"
+                                            onclick="setStatus(2, {{ $reportedComment->id }})" data-id="{{ $reportedComment->id }}" {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
+                                        <button class="btn btn-warning decline" data-bs-toggle="modal" data-bs-target="#declineModal"
+                                            onclick="setStatus(0, {{ $reportedComment->id }})" data-id="{{ $reportedComment->id }}" {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>
+                    </table>                    
                 </div>
             </div>
         </div>
@@ -93,7 +105,7 @@
     <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="statusForm" method="POST" action="">
+                <form id="approveForm" method="POST" action="">
                     @csrf
                     @method('PUT')
 
@@ -103,8 +115,36 @@
                     </div>
 
                     <div class="modal-body">
-                        <p>Are you sure you want to perform this action?</p>
-                        <input type="hidden" name="status" id="statusInput">
+                        <p>Are you sure you want to take down the comment?</p>
+                        <input type="hidden" name="status" value="2">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div class="modal fade" id="declineModal" tabindex="-1" aria-labelledby="declineModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="declineForm" method="POST" action="">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="declineModalLabel">Decline Comment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Are you sure it doesn't violate the guidelines?</p>
+                        <input type="hidden" name="status" value="0">
+                        <textarea name="declined_reason" id="" rows="2" class="form-control" placeholder="Reason to decline"></textarea>
                     </div>
 
                     <div class="modal-footer">
@@ -121,6 +161,15 @@
     <script>
         $(() => {
             $('#datatable').DataTable();
+
+            $('.approve').click(function() {
+                $('#approveForm').attr('action', '/reported-comment/' + $(this).data('id'));
+            })
+
+            $('.decline').click(function() {
+                $('#declineForm').attr('action', '/reported-comment/' + $(this).data('id'));
+            })
+
         })
 
         function setStatus(status, commentId) {

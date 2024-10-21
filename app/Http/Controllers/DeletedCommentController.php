@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDeletedCommentRequest;
 use App\Models\DeletedComment;
+use App\Models\ReportedComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,9 @@ class DeletedCommentController extends Controller
      */
     public function index()
     {
-        return view('super-admin.deleted-comment.index', ['deletedComments' => DeletedComment::with('comments.user', 'user')->get()]);
+        return view('super-admin.deleted-comment.index', [
+            'deletedComments' => ReportedComment::with('comments.user', 'user')->where('status', 0)->get()
+        ]);
     }
 
     /**
@@ -57,10 +60,11 @@ class DeletedCommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DeletedComment $deletedComment)
+    public function update(Request $request, int $commentId)
     {
-        $deletedComment->update(['status' => 0]);
-        $deletedComment->newsfeed()->update(['status' => 1]);
+        $deletedComment = ReportedComment::find($commentId);
+        $deletedComment->update(['status' => 1]);
+        // $deletedComment->newsfeed()->update(['status' => 1]);
 
         alert()->success('Comment restored successfully');
         return redirect()->back();

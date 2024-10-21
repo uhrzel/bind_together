@@ -171,7 +171,7 @@
                                 <input type="hidden" name="role" value="{{ $role }}">
                             @endif
                         </div>
-                        @admin_sport
+                        @if ($role == 'coach')
                         <div class="form-group mt-3">
                             <label for="">Sport</label>
                             <select name="sport_id" id="" class="form-select">
@@ -181,7 +181,17 @@
                                 @endforeach
                             </select>
                         </div>
-                        @endadmin_sport
+                        @elseif ($role == 'adviser')
+                        <div class="form-group mt-3">
+                            <label for="">Organization</label>
+                            <select name="organization_id" id="" class="form-select">
+                                <option value="" selected disabled>Select Organization</option>
+                                @foreach ($organizations as $organization)
+                                    <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
                         <div class="mt-3 row">
                             <div class="form-group col">
                                 <label for="email" class="form-label">Email</label>
@@ -191,6 +201,7 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                            @super_admin
                             <div class="form-group col">
                                 <label for="role">Role</label>
                                 <select name="role" id="" class="form-select">
@@ -198,6 +209,7 @@
                                     <option value="admin_sport">Admin Sport</option>
                                 </select>
                             </div>
+                            @endsuper_admin
                         </div>
                         <div class="row">
                             <div class="col-md-6 mt-3">
@@ -271,7 +283,7 @@
                             <div class="col-md-6 mt-3">
                                 <label for="editSuffix" class="form-label">Suffix</label>
                                 <input type="text" class="form-control" id="editSuffix" name="suffix"
-                                    placeholder="Enter Suffix (E.G., Jr, Sr)" required>
+                                    placeholder="Enter Suffix (E.G., Jr, Sr)">
                                 @error('suffix')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
