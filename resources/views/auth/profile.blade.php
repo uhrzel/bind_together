@@ -140,15 +140,15 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Campus name</th>
-                                                        <td>{{ auth()->user()->campus->name }}</td>
+                                                        <td>{{ auth()->user()->campus->name  ?? ''}}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Program name</th>
-                                                        <td>{{ auth()->user()->program->name }}</td>
+                                                        <td>{{ auth()->user()->program->name ?? '' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Year level</th>
-                                                        <td>{{ auth()->user()->year_level }}th Year</td>
+                                                        <td>{{ auth()->user()->year_level ?? '' }}th Year</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
