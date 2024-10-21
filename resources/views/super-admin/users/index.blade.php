@@ -144,7 +144,7 @@
                             <div class="col-md-6 mt-3">
                                 <label for="suffix" class="form-label">Suffix</label>
                                 <input type="text" class="form-control" name="suffix"
-                                    placeholder="Enter Suffix (e.g., Jr, Sr)" required>
+                                    placeholder="Enter Suffix (e.g., Jr, Sr)">
                                 @error('suffix')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -172,25 +172,25 @@
                             @endif
                         </div>
                         @if ($role == 'coach')
-                        <div class="form-group mt-3">
-                            <label for="">Sport</label>
-                            <select name="sport_id" id="" class="form-select">
-                                <option value="" selected disabled>Select Sport</option>
-                                @foreach ($sports as $sport)
-                                    <option value="{{ $sport->id }}">{{ $sport->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                            <div class="form-group mt-3">
+                                <label for="">Sport</label>
+                                <select name="sport_id" id="" class="form-select">
+                                    <option value="" selected disabled>Select Sport</option>
+                                    @foreach ($sports as $sport)
+                                        <option value="{{ $sport->id }}">{{ $sport->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         @elseif ($role == 'adviser')
-                        <div class="form-group mt-3">
-                            <label for="">Organization</label>
-                            <select name="organization_id" id="" class="form-select">
-                                <option value="" selected disabled>Select Organization</option>
-                                @foreach ($organizations as $organization)
-                                    <option value="{{ $organization->id }}">{{ $organization->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                            <div class="form-group mt-3">
+                                <label for="">Organization</label>
+                                <select name="organization_id" id="" class="form-select">
+                                    <option value="" selected disabled>Select Organization</option>
+                                    @foreach ($organizations as $organization)
+                                        <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         @endif
                         <div class="mt-3 row">
                             <div class="form-group col">
@@ -201,15 +201,15 @@
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            @super_admin
-                            <div class="form-group col">
-                                <label for="role">Role</label>
-                                <select name="role" id="" class="form-select">
-                                    <option value="admin_org">Admin Org</option>
-                                    <option value="admin_sport">Admin Sport</option>
-                                </select>
-                            </div>
-                            @endsuper_admin
+                            @if ($role == 'admin_org')
+                                <div class="form-group col">
+                                    <label for="role">Role</label>
+                                    <select name="role" id="" class="form-select">
+                                        <option value="admin_org">Admin Org</option>
+                                        <option value="admin_sport">Admin Sport</option>
+                                    </select>
+                                </div>
+                            @endif
                         </div>
                         <div class="row">
                             <div class="col-md-6 mt-3">

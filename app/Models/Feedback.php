@@ -16,6 +16,7 @@ class Feedback extends Model
         'subject',
         'message',
         'status',
+        'response',
     ];
 
     public function user() : BelongsTo

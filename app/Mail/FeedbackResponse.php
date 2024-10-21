@@ -16,7 +16,7 @@ class FeedbackResponse extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $recipientName, public string $adminName)
+    public function __construct(public string $recipientName, public string $responseMessage , public string $adminName)
     {
         //
     }
@@ -40,7 +40,7 @@ class FeedbackResponse extends Mailable
             view: 'mail.feedback',
             with: [
                 'recipientName' => $this->recipientName,
-                // 'responseMessage' => $this->responeMessage,
+                'responseMessage' => $this->responseMessage,
                 'adminName' => $this->adminName,
             ],
         );

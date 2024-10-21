@@ -28,7 +28,7 @@ class UserController extends Controller
         $sports = Sport::all();
         $organizations = Organization::all();
 
-        return view('super-admin.users.index', compact('users', 'role', 'sports'));
+        return view('super-admin.users.index', compact('users', 'role', 'sports', 'organizations'));
     }
 
     public function store(StoreUserRequest $request)
