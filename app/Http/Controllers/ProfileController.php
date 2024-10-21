@@ -48,6 +48,7 @@ class ProfileController extends Controller
             'contact' => $request->contact,
             'campus_id' => $request->campus_id,
             'program_id' => $request->program_id,
+            'gender' => $request->gender,
             'year_level' => $request->year_level,
         ]);
 

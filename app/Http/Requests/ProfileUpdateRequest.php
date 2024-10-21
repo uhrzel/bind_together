@@ -13,6 +13,7 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'address' => ['nullable', 'string', 'max:255'],
             'birthdate' => ['nullable', 'date'],
+            'gender' => ['nullable',],
             'contact' => ['nullable', 'string', 'min:10', 'max:15'],
             'old_password' => ['required_with:new_password'], // Old password required only if changing password
             'new_password' => ['nullable', 'string', 'min:8', 'confirmed'], // Ensure new password follows the same rules
