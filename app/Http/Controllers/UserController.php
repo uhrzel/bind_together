@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\UserTypeEnum;
 use App\Http\Requests\StoreUserRequest;
 use App\Mail\VerifyUserEmail;
+use App\Models\Organization;
+use App\Models\Sport;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -23,8 +25,10 @@ class UserController extends Controller
             $users = User::role($role)->get();
         }
 
+        $sports = Sport::all();
+        $organizations = Organization::all();
 
-        return view('super-admin.users.index', compact('users', 'role'));
+        return view('super-admin.users.index', compact('users', 'role', 'sports'));
     }
 
     public function store(StoreUserRequest $request)

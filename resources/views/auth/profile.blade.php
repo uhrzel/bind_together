@@ -1,6 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
+
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="main py-4">
         <div class="row">
             <div class="col-12 col-xl-12">
@@ -27,7 +38,8 @@
                             <div class="col-md-4 mb-3">
                                 <label for="middlename">{{ 'Middle Name' }}</label>
                                 <input type="text" name="middlename" id="middlename" class="form-control"
-                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name" readonly>
+                                    value="{{ old('middlename', auth()->user()->middlename) }}" placeholder="Middle Name"
+                                    readonly>
                                 @error('middlename')
                                     <div class="invalid-feedback"> {{ $message }} </div>
                                 @enderror
@@ -138,20 +150,20 @@
                         </div>
 
                         @admin_org
-                        <h5 class="my-3 text-primary">Organization</h5>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="">Organization</label>
-                                    <select name="organization_id" id="" class="form-select">
-                                        <option value="" selected disabled>Select Organization</option>
-                                        @foreach ($organizations as $organization)
-                                            <option value="{{ $organization->id }}">{{ $organization->name }}</option>
-                                        @endforeach
-                                    </select>
+                            <h5 class="my-3 text-primary">Organization</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="">Organization</label>
+                                        <select name="organization_id" id="" class="form-select">
+                                            <option value="" selected disabled>Select Organization</option>
+                                            @foreach ($organizations as $organization)
+                                                <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         @endadmin_org
 
                         <h5 class="my-3 text-primary">Password Update</h5>
@@ -169,7 +181,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="password_confirmation">{{ 'Confirm Password' }}</label>
                                 <input type="password" name="password_confirmation" id="password_confirmation"
-                                    class="form-control" placeholder="Confirm Password" required>
+                                    class="form-control" placeholder="Confirm Password">
                                 <div id="confirmPasswordError" class="invalid-feedback" style="display: block;"></div>
                             </div>
                         </div>

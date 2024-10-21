@@ -171,6 +171,17 @@
                                 <input type="hidden" name="role" value="{{ $role }}">
                             @endif
                         </div>
+                        @admin_sport
+                        <div class="form-group mt-3">
+                            <label for="">Sport</label>
+                            <select name="sport_id" id="" class="form-select">
+                                <option value="" selected disabled>Select Sport</option>
+                                @foreach ($sports as $sport)
+                                    <option value="{{ $sport->id }}">{{ $sport->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endadmin_sport
                         <div class="mt-3 row">
                             <div class="form-group col">
                                 <label for="email" class="form-label">Email</label>

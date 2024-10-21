@@ -1,5 +1,5 @@
 <div class="d-flex">
-    <img src="https://via.placeholder.com/40" class="rounded-circle me-2" height="40" alt="User Avatar">
+    <img src="{{ asset('storage/' . $comment->user->avatar) }}" class="rounded-circle me-2" width="40" height="40"  alt="User Avatar">
     <div class="bg-light p-3 rounded-3 w-100">
         <div class="d-flex justify-content-between">
             <div>

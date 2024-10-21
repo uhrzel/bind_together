@@ -57,7 +57,11 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comments $comments)
     {
-        //
+        // dd($request->all());
+        $comments->update(['description' => $request->description]);
+
+        // alert()->success('Comment updated successfully');
+        return response()->json(['success' => true]);
     }
 
     /**

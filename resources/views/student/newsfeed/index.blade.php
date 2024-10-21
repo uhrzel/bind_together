@@ -16,7 +16,8 @@
         <div class="card mb-4">
             <div class="card-body row">
                 <div class="col-1">
-                    <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="User Avatar">
+                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" width="50" height="50"
+                        class="rounded-circle me-3" alt="User Avatar">
                 </div>
                 <div class="col-11 mt-1">
                     <input type="text" style="cursor: pointer" class="form-control rounded-pill me-2"
@@ -33,7 +34,8 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex">
-                        <img src="https://via.placeholder.com/50" class="rounded-circle me-3" alt="User Avatar">
+                        <img src="{{ asset('storage/' . $newsfeed->user->avatar) }}" class="rounded-circle me-3"
+                            alt="User Avatar">
                         <div>
                             <h6 class="mb-0">{{ $newsfeed->user->firstname }} {{ $newsfeed->user->lastname }}</h6>
                             <small>{{ $newsfeed->created_at->diffForHumans() }}</small>
@@ -65,7 +67,8 @@
                                 @endstudent
                                 @admin_org
                                     <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button></li>
+                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    </li>
                                     <li><a class="dropdown-item"
                                             href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
                                     </li>
@@ -130,19 +133,38 @@
                                     $isDisabled = $userHasReported ? 'disabled' : '';
                                 @endphp
                                 <div class="d-flex">
-                                    <img src="https://via.placeholder.com/40" class="rounded-circle me-2" height="40"
-                                        alt="User Avatar">
+                                    <img src="{{ asset('storage/' . $comments->user->avatar) }}"
+                                        class="rounded-circle me-2" height="40" width="40" alt="User Avatar">
                                     <div class="bg-light p-3 rounded-3 w-100">
-                                        <div class="d-flex justify-content-between">
-                                            <div id="comment-display-{{ $comments->id }}">
-                                                <strong>{{ $comments->user->firstname }} {{ $comments->user->lastname }}</strong>
-                                                <a href="#" class="text-primary ms-2 text-info edit-btn" data-id="{{ $comments->id }}">Edit</a>
-                                                <a href="#" class="text-danger ms-2 delete-btn" data-id="{{ $comments->id }}">Delete</a>
+                                        <form id="editCommentForm-{{ $comments->id }}" action="" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="d-flex justify-content-between">
+                                                <div id="comment-display-{{ $comments->id }}">
+                                                    <strong>{{ $comments->user->firstname }}
+                                                        {{ $comments->user->lastname }}</strong>
+                                                    @if ($comments->user_id == auth()->id())
+                                                        <button type="button"
+                                                            class="border-0 bg-transparent text-primary ms-2 text-info edit-btn"
+                                                            data-id="{{ $comments->id }}"
+                                                            id="edit-btn-{{ $comments->id }}">Edit</button>
+                                                        <button type="submit" hidden
+                                                            class="border-0 bg-transparent text-primary ms-2 text-info"
+                                                            data-id="{{ $comments->id }}"
+                                                            id="saveButton-{{ $comments->id }}">Save</button>
+                                                        <button class="border-0 bg-transparent text-danger ms-2 delete-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                                                            data-id="{{ $comments->id }}">Delete</button>
+                                                    @endif
+                                                </div>
+                                                <small
+                                                    class="text-muted">{{ $comments->created_at->diffForHumans() }}</small>
                                             </div>
-                                            <small class="text-muted">{{ $comments->created_at->diffForHumans() }}</small>
-                                        </div>
-                                        <p class="mb-0">{{ $comments->description }}</p>
-                                        <textarea name="description" class="form-controler" rows="2">{{ $comments->description }}</textarea>
+                                            <p class="mb-0 comment-text" id="comment-text-{{ $comments->id }}">
+                                                {{ $comments->description }}</p>
+                                            <textarea name="description" class="form-control comment-textarea" id="comment-textarea-{{ $comments->id }}"
+                                                rows="2" hidden>{{ $comments->description }}</textarea>
+                                        </form>
                                         <div class="d-flex mt-2">
                                             @if ($comments->user_id != auth()->id())
                                                 <a class="like-comment ml-2" type="button"
@@ -177,13 +199,13 @@
                                     class="fas fa-paper-plane"></i></button>
                         </div>
                     </form>
-                    <div class="d-flex justify-content-between mt-2">
+                    {{-- <div class="d-flex justify-content-between mt-2">
                         <div>
                             <a href="#" class="btn btn-light"><i class="fas fa-thumbs-up"></i></a>
                             <a href="#" class="btn btn-light"><i class="fas fa-thumbs-down"></i></a>
                         </div>
                         <small class="text-muted">1 Likes • 0 Dislikes</small>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         @endforeach
@@ -398,6 +420,30 @@
         </div>
     </div>
 
+    {{-- delete comment modal --}}
+    <div class="modal fade" id="deleteCommentModal" tabindex="-1" aria-labelledby="deleteCommentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="" id="commentDelete" method="POST">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteCommentModalLabel">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete this comment?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <!-- Edit Post Modal -->
     <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
@@ -483,6 +529,54 @@
 
         $(document).ready(function() {
 
+            $('.edit-btn').on('click', function(e) {
+                e.preventDefault();
+
+                var commentId = $(this).data('id');
+
+                // Update the form action dynamically
+                var form = $('#editCommentForm-' + commentId);
+                form.attr('action', '/comments/' + commentId);
+
+                // Show the save button, hide the edit button
+                $('#edit-btn-' + commentId).hide();
+                $('#saveButton-' + commentId).removeAttr('hidden');
+
+                // Hide the comment text and show the textarea
+                $('#comment-text-' + commentId).hide();
+                $('#comment-textarea-' + commentId).removeAttr('hidden');
+            });
+
+            // Handle form submission via AJAX
+            $('form[id^="editCommentForm"]').on('submit', function(e) {
+                e.preventDefault(); // Prevent the form from reloading the page
+
+                var form = $(this);
+                var commentId = form.find('.edit-btn').data('id'); // Get comment ID from button
+
+                // Perform the AJAX request
+                $.ajax({
+                    url: form.attr('action'), // Get the form action dynamically
+                    type: 'POST',
+                    data: form.serialize(), // Serialize the form data
+                    success: function(response) {
+                        if (response.success) {
+                            // Update the comment text without reloading
+                            var updatedText = $('#comment-textarea-' + commentId).val();
+                            $('#comment-text-' + commentId).text(updatedText)
+                                .show(); // Update and show the <p>
+                            $('#comment-textarea-' + commentId).hide(); // Hide the textarea
+                            $('#saveButton-' + commentId).attr('hidden',
+                                true); // Hide save button
+                            $('#edit-btn-' + commentId).show(); // Show the edit button
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX error:', error);
+                    }
+                });
+            });
+
             $('.reportBtn').click(function() {
                 $('#newsfeedReportId').val($(this).data('id'))
                 $('#reportPostForm').attr('action', '/reported-post/')
@@ -518,6 +612,10 @@
 
             $('.deleteBtn').click(function() {
                 $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
+            })
+
+            $('.delete-btn').click(function() {
+                $('#commentDelete').attr('action', '/comments/' + $(this).data('id'))
             })
 
             $('#attachments').on('change', function(event) {
