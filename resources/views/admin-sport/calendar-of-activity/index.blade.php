@@ -17,24 +17,37 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 
     <script>
+        // Function to generate a random color in hex format
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
         const calendarOfActivity = $('#calendar')[0];
 
-        // Map through activities and add necessary properties for FullCalendar events
+        // Map through activities and dynamically generate colors
         const events = {!! json_encode($activities) !!}.map(activity => {
+            const backgroundColor = getRandomColor();
+            const borderColor = backgroundColor; // Set border color to match background
+
             return {
                 title: activity.title,
-                start: activity.start, // Ensure 'start' is in 'YYYY-MM-DDTHH:mm:ss' format
-                end: activity.end, // Ensure 'end' is in 'YYYY-MM-DDTHH:mm:ss' format
-                backgroundColor: '#ff9f89', // Custom highlight color for the event
-                borderColor: '#ff9f89', // Optional: you can style the border color as well
-                textColor: '#000', // Optional: text color inside the event
-                allDay: false // Set to true if it's an all-day event
+                start: activity.start,
+                end: activity.end,
+                backgroundColor: backgroundColor, // Use dynamic random color
+                borderColor: borderColor,
+                textColor: '#ffffff', // White text for contrast
+                allDay: true // Assuming all events are full-day
             };
         });
 
         const calendar = new FullCalendar.Calendar(calendarOfActivity, {
             initialView: 'dayGridMonth',
-            events: events, // Assign events to the calendar
+            events: events, // Assign dynamic events with colors to the calendar
         });
 
         calendar.render();

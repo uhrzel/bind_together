@@ -233,7 +233,7 @@
                                                             number</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text">+63</span>
-                                                            <input type="text" class="form-control"
+                                                            <input type="text" class="form-control" maxlength="11"
                                                                 id="contact_number" name="contact"
                                                                 value="{{ auth()->user()->contact }}">
                                                         </div>
@@ -248,10 +248,10 @@
                                                 <!-- School Information Section -->
                                                 <h5 class="text-primary">School information</h5>
                                                 <div class="row mb-3">
-                                                    <div class="col-md-6">
+                                                    {{-- <div class="col-md-6">
                                                         <label for="college" class="form-label">College</label>
                                                         <input type="text" value="CCST" class="form-control">
-                                                    </div>
+                                                    </div> --}}
                                                     <div class="col-md-6">
                                                         <label for="campus_name" class="form-label">Campus name</label>
                                                         <select name="campus_id" id="" class="form-select">
@@ -282,10 +282,10 @@
                                                     <div class="col-md-6">
                                                         <label for="year_level" class="form-label">Year level</label>
                                                         <select class="form-select" id="year_level" name="year_level">
-                                                            <option value="4" selected>4th Year</option>
-                                                            <option value="3">3rd Year</option>
-                                                            <option value="2">2nd Year</option>
-                                                            <option value="1">1st Year</option>
+                                                            <option value="4" {{ auth()->user()->year_level == '4' ? 'selected' : '' }}>4th Year</option>
+                                                            <option value="3" {{ auth()->user()->year_level == '3' ? 'selected' : '' }}>3rd Year</option>
+                                                            <option value="2" {{ auth()->user()->year_level == '2' ? 'selected' : '' }}>2nd Year</option>
+                                                            <option value="1" {{ auth()->user()->year_level == '1' ? 'selected' : '' }}>1st Year</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -360,8 +360,8 @@
                                                             </span>
                                                         </div>
                                                         <small class="form-text text-muted">Password must be at least 8
-                                                            characters, with at least one uppercase letter, one lowercase
-                                                            letter, one number, and one special character.</small>
+                                                            characters, with at least one uppercase letter, lowercase
+                                                            letter, number, and special character.</small>
                                                     </div>
                                                 </div>
 
