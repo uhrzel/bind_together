@@ -34,8 +34,8 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex">
-                        <img src="{{ asset('storage/' . $newsfeed->user->avatar) }}" width="50" height="50" class="rounded-circle me-3"
-                            alt="User Avatar">
+                        <img src="{{ asset('storage/' . $newsfeed->user->avatar) }}" width="50" height="50"
+                            class="rounded-circle me-3" alt="User Avatar">
                         <div>
                             <h6 class="mb-0">{{ $newsfeed->user->firstname }} {{ $newsfeed->user->lastname }}</h6>
                             <small>{{ $newsfeed->created_at->diffForHumans() }}</small>
@@ -226,7 +226,8 @@
                         <div class="d-flex align-items-center mb-3">
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
                                 style="width: 40px; height: 40px;" alt="Avatar">
-                            <span class="ms-2 fw-bold">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</span>
+                            <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
+                                {{ auth()->user()->lastname }}</span>
                         </div>
 
                         <div class="form-group mb-3">
@@ -559,6 +560,7 @@
                     data: form.serialize(), // Serialize the form data
                     success: function(response) {
                         if (response.success) {
+                            console.log('SUPER' + commentId)
                             // Update the comment text without reloading
                             var updatedText = $('#comment-textarea-' + commentId).val();
                             $('#comment-text-' + commentId).text(updatedText)
@@ -575,10 +577,7 @@
                 });
             });
 
-            $('.reportBtn').click(function() {
-                $('#newsfeedReportId').val($(this).data('id'))
-                $('#reportPostForm').attr('action', '/reported-post/')
-            })
+
 
             $('.editBtn').click(function() {
                 fetch('/newsfeed/' + $(this).data('id'))
@@ -617,43 +616,45 @@
             })
 
             $('#attachments').on('change', function(event) {
-    const preview = $('#preview');
-    preview.empty(); // Clear previous previews
-    const files = event.target.files; // Retrieve all selected files
+                const preview = $('#preview');
+                preview.empty(); // Clear previous previews
+                const files = event.target.files; // Retrieve all selected files
 
-    $.each(files, function(index, file) {
-        const reader = new FileReader();
-        
-        // Generate file label with the actual file name
-        const fileName = file.name;
-        
-        // Handle file load
-        reader.onload = function(e) {
-            const mediaPreview = $('<div>', {
-                class: 'col-4 mb-3'
-            });
+                $.each(files, function(index, file) {
+                    const reader = new FileReader();
 
-            // Append the file name before the media preview
-            mediaPreview.append(`<p class="text-white">${fileName}</p>`);
+                    // Generate file label with the actual file name
+                    const fileName = file.name;
 
-            // Check the file type for image or video and create corresponding preview elements
-            if (file.type.startsWith('image')) {
-                mediaPreview.append(`<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`);
-            } else if (file.type.startsWith('video')) {
-                mediaPreview.append(`
+                    // Handle file load
+                    reader.onload = function(e) {
+                        const mediaPreview = $('<div>', {
+                            class: 'col-4 mb-3'
+                        });
+
+                        // Append the file name before the media preview
+                        mediaPreview.append(`<p class="text-white">${fileName}</p>`);
+
+                        // Check the file type for image or video and create corresponding preview elements
+                        if (file.type.startsWith('image')) {
+                            mediaPreview.append(
+                                `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`
+                                );
+                        } else if (file.type.startsWith('video')) {
+                            mediaPreview.append(`
                     <video class="img-fluid rounded" controls style="max-height: 150px; object-fit: cover;">
                         <source src="${e.target.result}" type="${file.type}">
                     </video>`);
-            }
+                        }
 
-            // Append the media preview to the preview container
-            preview.append(mediaPreview);
-        };
+                        // Append the media preview to the preview container
+                        preview.append(mediaPreview);
+                    };
 
-        // Read the file as a data URL
-        reader.readAsDataURL(file);
-    });
-});
+                    // Read the file as a data URL
+                    reader.readAsDataURL(file);
+                });
+            });
 
 
             $('form[id^="comment-form-"]').on('submit', function(e) {
@@ -722,6 +723,11 @@
                     }
                 });
             });
+
+            $('.reportBtn').click(function() {
+                $('#newsfeedReportId').val($(this).data('id'))
+                $('#reportPostForm').attr('action', '/reported-post/')
+            })
 
             $('#others').on('change', function() {
                 if ($(this).is(':checked')) {

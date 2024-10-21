@@ -91,19 +91,19 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Student Number</th>
-                                                        <td>21-01485</td>
+                                                        <td>{{ auth()->user()->student_number }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Full Name</th>
-                                                        <td>Dannel Cinco Ramos</td>
+                                                        <td>{{ auth()->user()->firstname }} {{ auth()->user()->middlename }} {{ auth()->user()->lastname }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Date of Birth</th>
-                                                        <td>2002-08-27</td>
+                                                        <td>{{ \Carbon\Carbon::parse(auth()->user()->birthdate)->format('F j, Y') }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Gender</th>
-                                                        <td>Female</td>
+                                                        <td>{{ auth()->user()->gender }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -117,11 +117,11 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Contact number</th>
-                                                        <td>+63 9668749844</td>
+                                                        <td>{{ auth()->user()->contact }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Email</th>
-                                                        <td>dc.ramos@bpsu.edu.ph</td>
+                                                        <td>{{ auth()->user()->email }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -140,15 +140,15 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Campus name</th>
-                                                        <td>Balanga Campus</td>
+                                                        <td>{{ auth()->user()->campus->name }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Program name</th>
-                                                        <td>Bachelor of Arts in Psychology</td>
+                                                        <td>{{ auth()->user()->program->name }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Year level</th>
-                                                        <td>4th Year</td>
+                                                        <td>{{ auth()->user()->year_level }}th Year</td>
                                                     </tr>
                                                 </tbody>
                                             </table>

@@ -37,10 +37,18 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $activityTypes = [
+                                    \App\Enums\ActivityType::Audition => 'Audition',
+                                    \App\Enums\ActivityType::Tryout => 'Tryout',
+                                    \App\Enums\ActivityType::Practice => 'Practice',
+                                    \App\Enums\ActivityType::Competition => 'Competition',
+                                ];
+                            @endphp
                             @foreach ($activities as $activity)
                                 <tr>
                                     <td>{{ $activity->title }}</td>
-                                    <td>{{ $activity->type }}</td>
+                                    <td>{{ $activityTypes[$activity->type] ?? 'Unknown Type' }}</td>
                                     <td>{{ $activity->venue }}</td>
                                     <td>
                                         {{ \Carbon\Carbon::parse($activity->start_date)->format('F d, Y h:i A') }} -
@@ -77,7 +85,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newCompetitionModalLabel">New Competition</h5>
+                    <h5 class="modal-title" id="newCompetitionModalLabel">Activity</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -123,10 +131,20 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="form-group col">
-                                <label for="organization">Organization</label>
-                                <input type="text" value="{{ $user->organization->name }}" class="form-control" placeholder="Organization" readonly>
-                            </div>
+                            @coach
+                                <div class="form-group col">
+                                    <label for="organization">Sport</label>
+                                    <input type="text" value="{{ $user->sport->name }}" class="form-control"
+                                        placeholder="Organization" readonly>
+                                </div>
+                            @endcoach
+                            @adviser
+                                <div class="form-group col">
+                                    <label for="organization">Organization</label>
+                                    <input type="text" value="{{ $user->organization->name }}" class="form-control"
+                                        placeholder="Organization" readonly>
+                                </div>
+                            @endadviser
                         </div>
                         <div class="row mb-3 mt-3">
                             <!-- Activity Start Date -->
