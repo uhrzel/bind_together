@@ -66,7 +66,7 @@
                             @if ($role == 'coach')
                                 <td class="border-gray-200">{{ $user->sport->name ?? 'N/A' }}</td>
                             @elseif ($role == 'adviser')
-                                <td class="border-gray-200">{{ $user->organization->name }}</td>
+                                <td class="border-gray-200">{{ $user->organization->name ?? 'N/A' }}</td>
                             @endif
                             <td>
                                 @if ($user->status == 1)

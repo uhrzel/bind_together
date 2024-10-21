@@ -37,8 +37,8 @@ class NewsfeedController extends Controller
             'description' => $request->description,
         ]);
 
-    if ($request->hasFile('media')) {
-            foreach ($request->file('media') as $file) {
+    if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
                 $filePath = $file->store('newsfeed_files', 'public'); // Storing in 'public/newsfeed_files'
 
                 $fileType = $file->getMimeType();

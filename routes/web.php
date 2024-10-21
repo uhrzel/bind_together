@@ -19,6 +19,7 @@ use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegisteredParticipantController;
 use App\Http\Controllers\ReportedCommentController;
 use App\Http\Controllers\ReportedPostController;
+use App\Http\Controllers\ReportGenerationViewController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureEmailIsVerified;
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('registered-participant', RegisteredParticipantController::class)->name('registered.participant');
     Route::get('joined-activities', JoinedActivityController::class)->name('joined.activities');
     Route::get('activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
+    Route::get('report-view', ReportGenerationViewController::class)->name('report.view');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

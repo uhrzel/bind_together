@@ -137,6 +137,23 @@
                             </div>
                         </div>
 
+                        @admin_org
+                        <h5 class="my-3 text-primary">Organization</h5>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="">Organization</label>
+                                    <select name="organization_id" id="" class="form-select">
+                                        <option value="" selected disabled>Select Organization</option>
+                                        @foreach ($organizations as $organization)
+                                            <option value="{{ $organization->id }}">{{ $organization->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        @endadmin_org
+
                         <h5 class="my-3 text-primary">Password Update</h5>
 
                         <div class="row">

@@ -567,6 +567,15 @@
         </li>
     @endstudent
 
+    <li class="nav-item {{ request()->routeIs('report.view') ? 'active' : '' }}">
+        <a href="{{ route('report.view') }}" class="nav-link">
+            <span class="sidebar-icon me-3">
+                <i class="fas fa-user-alt fa-fw"></i>
+            </span>
+            <span class="sidebar-text">{{ __('Reports') }}</span>
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">
         <a href="{{ route('about') }}" class="nav-link">
             <span class="sidebar-icon">

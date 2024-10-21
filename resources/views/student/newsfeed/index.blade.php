@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        @foreach ($newsfeeds as $newsfeed)
+        @foreach ($newsfeeds->reverse() as $newsfeed)
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex">
@@ -134,18 +134,23 @@
                                         alt="User Avatar">
                                     <div class="bg-light p-3 rounded-3 w-100">
                                         <div class="d-flex justify-content-between">
-                                            <strong>{{ $comments->user->firstname }}</strong>
+                                            <div id="comment-display-{{ $comments->id }}">
+                                                <strong>{{ $comments->user->firstname }} {{ $comments->user->lastname }}</strong>
+                                                <a href="#" class="text-primary ms-2 text-info edit-btn" data-id="{{ $comments->id }}">Edit</a>
+                                                <a href="#" class="text-danger ms-2 delete-btn" data-id="{{ $comments->id }}">Delete</a>
+                                            </div>
                                             <small class="text-muted">{{ $comments->created_at->diffForHumans() }}</small>
                                         </div>
                                         <p class="mb-0">{{ $comments->description }}</p>
+                                        <textarea name="description" class="form-controler" rows="2">{{ $comments->description }}</textarea>
                                         <div class="d-flex mt-2">
-                                            <a class="like-comment ml-2" type="button"
-                                                style="text-decoration: none; color: blue"
-                                                data-comment-id="{{ $comments->id }}"
-                                                onclick="toggleLike({{ $comments->id }})">
-                                                <b><i class="far fa-thumbs-up"></i> Like</b>
-                                            </a>
                                             @if ($comments->user_id != auth()->id())
+                                                <a class="like-comment ml-2" type="button"
+                                                    style="text-decoration: none; color: blue"
+                                                    data-comment-id="{{ $comments->id }}"
+                                                    onclick="toggleLike({{ $comments->id }})">
+                                                    <b><i class="far fa-thumbs-up"></i> Like</b>
+                                                </a>
                                                 <button class="border-0 bg-transparent text-danger" type="button"
                                                     data-bs-toggle="modal" data-bs-target="#reportCommentModal"
                                                     onclick="setCommentId({{ $comments->id }})" {{ $isDisabled }}>
@@ -197,9 +202,9 @@
                     </div>
                     <div class="modal-body">
                         <div class="d-flex align-items-center mb-3">
-                            <img src="your-avatar-url" class="rounded-circle" style="width: 40px; height: 40px;"
-                                alt="Avatar">
-                            <span class="ms-2 fw-bold">Dannel</span>
+                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
+                                style="width: 40px; height: 40px;" alt="Avatar">
+                            <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}</span>
                         </div>
 
                         <div class="form-group mb-3">

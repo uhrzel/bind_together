@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Organization;
 
 class ProfileController extends Controller
 {
     public function show()
     {
-        return view('auth.profile');
+        return view('auth.profile', ['organizations' => Organization::all()]);
     }
 
     public function update(ProfileUpdateRequest $request)
