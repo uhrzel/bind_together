@@ -11,6 +11,7 @@ use App\Http\Controllers\DeactivatePostController;
 use App\Http\Controllers\DeletedCommentController;
 use App\Http\Controllers\DeletedPostController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\GenerateReportController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
 use App\Http\Controllers\NewsfeedController;
@@ -63,6 +64,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('joined-activities', JoinedActivityController::class)->name('joined.activities');
     Route::get('activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
     Route::get('report-view', ReportGenerationViewController::class)->name('report.view');
+    Route::post('report-generate', GenerateReportController::class)->name('reports.generate');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);
