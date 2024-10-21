@@ -95,11 +95,13 @@
                                                     </tr>
                                                     <tr>
                                                         <th>Full Name</th>
-                                                        <td>{{ auth()->user()->firstname }} {{ auth()->user()->middlename }} {{ auth()->user()->lastname }}</td>
+                                                        <td>{{ auth()->user()->firstname }} {{ auth()->user()->middlename }}
+                                                            {{ auth()->user()->lastname }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Date of Birth</th>
-                                                        <td>{{ \Carbon\Carbon::parse(auth()->user()->birthdate)->format('F j, Y') }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse(auth()->user()->birthdate)->format('F j, Y') }}
+                                                        </td>
                                                     </tr>
                                                     <tr>
                                                         <th>Gender</th>
@@ -135,12 +137,8 @@
                                                         <td></td>
                                                     </tr>
                                                     <tr>
-                                                        <th>College</th>
-                                                        <td>CCST</td>
-                                                    </tr>
-                                                    <tr>
                                                         <th>Campus name</th>
-                                                        <td>{{ auth()->user()->campus->name  ?? ''}}</td>
+                                                        <td>{{ auth()->user()->campus->name ?? '' }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Program name</th>
@@ -282,10 +280,18 @@
                                                     <div class="col-md-6">
                                                         <label for="year_level" class="form-label">Year level</label>
                                                         <select class="form-select" id="year_level" name="year_level">
-                                                            <option value="4" {{ auth()->user()->year_level == '4' ? 'selected' : '' }}>4th Year</option>
-                                                            <option value="3" {{ auth()->user()->year_level == '3' ? 'selected' : '' }}>3rd Year</option>
-                                                            <option value="2" {{ auth()->user()->year_level == '2' ? 'selected' : '' }}>2nd Year</option>
-                                                            <option value="1" {{ auth()->user()->year_level == '1' ? 'selected' : '' }}>1st Year</option>
+                                                            <option value="4"
+                                                                {{ auth()->user()->year_level == '4' ? 'selected' : '' }}>
+                                                                4th Year</option>
+                                                            <option value="3"
+                                                                {{ auth()->user()->year_level == '3' ? 'selected' : '' }}>
+                                                                3rd Year</option>
+                                                            <option value="2"
+                                                                {{ auth()->user()->year_level == '2' ? 'selected' : '' }}>
+                                                                2nd Year</option>
+                                                            <option value="1"
+                                                                {{ auth()->user()->year_level == '1' ? 'selected' : '' }}>
+                                                                1st Year</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -338,7 +344,7 @@
                                                         <label for="old_password" class="form-label">Old password</label>
                                                         <div class="input-group">
                                                             <input type="password" class="form-control" id="old_password"
-                                                                name="old_password" placeholder="Old password" >
+                                                                name="old_password" placeholder="Old password">
                                                             <span class="input-group-text toggle-password"
                                                                 data-target="old_password">
                                                                 <i class="fas fa-eye"></i>
@@ -353,7 +359,7 @@
                                                         <label for="new_password" class="form-label">New password</label>
                                                         <div class="input-group">
                                                             <input type="password" class="form-control" id="new_password"
-                                                                name="new_password" placeholder="Password" >
+                                                                name="new_password" placeholder="Password">
                                                             <span class="input-group-text toggle-password"
                                                                 data-target="new_password">
                                                                 <i class="fas fa-eye"></i>
@@ -373,7 +379,7 @@
                                                         <div class="input-group">
                                                             <input type="password" class="form-control"
                                                                 id="confirm_password" name="confirm_password"
-                                                                placeholder="Confirm password" >
+                                                                placeholder="Confirm password">
                                                             <span class="input-group-text toggle-password"
                                                                 data-target="confirm_password">
                                                                 <i class="fas fa-eye"></i>
@@ -426,18 +432,18 @@
     </script>
 
     <script>
-        $('#new_password').on('input', function() {
-            var password = $(this).val();
-            var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        // $('#new_password').on('input', function() {
+        //     var password = $(this).val();
+        //     var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-            if (!regex.test(password)) {
-                this.setCustomValidity(
-                    'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
-                );
-            } else {
-                this.setCustomValidity('');
-            }
-        });
+        //     if (!regex.test(password)) {
+        //         $(this)[0].setCustomValidity(
+        //             'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+        //         );
+        //     } else {
+        //         $(this)[0].setCustomValidity('');
+        //     }
+        // });
     </script>
 
 
