@@ -22,8 +22,8 @@ class StoreNewsfeedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => ['required', 'string', 'max:255'],
-            'attachments.*' => ['file', 'mimes:jpeg,png,jpg,gif,mp4', 'max:20480'],
+            'description' => ['nullable', 'string', 'max:255'],
+            'attachments.*' => ['file', 'mimes:jpeg,png,jpg,gif,mp4',],
         ];
     }
 }
