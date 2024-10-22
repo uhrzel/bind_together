@@ -114,8 +114,10 @@ class NewsfeedController extends Controller
 
         if ($request->has('deleted_files')) {
             $deletedFiles = explode(',', $request->input('deleted_files'));
-
-            NewsfeedFile::whereIn('id', $deletedFiles)->delete();
+        
+            if (!empty($deletedFiles)) {
+                NewsfeedFile::whereIn('id', $deletedFiles)->delete();
+            }
         }
 
         if ($request->hasFile('attachments')) {

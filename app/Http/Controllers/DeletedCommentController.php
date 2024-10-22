@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDeletedCommentRequest;
+use App\Models\Comments;
 use App\Models\DeletedComment;
 use App\Models\ReportedComment;
 use Illuminate\Http\Request;
@@ -15,6 +16,25 @@ class DeletedCommentController extends Controller
      */
     public function index()
     {
+        $reportedComments = Comments::withWhereHas('reportedComments', function ($query) {
+            $query->where('status', 0); // Only get comments with status 0
+        })
+        ->with([
+            'user', // Eager load the user for the comment
+            'reportedComments' => function ($query) {
+                $query->where('status', 0); // Only load reportedComments with status 0
+            }
+        ])
+        ->withCount([
+            'reportedComments as report_count' => function ($query) {
+                $query->where('status', 0); // Count reportedComments with status 0
+            }
+        ])
+        ->get();
+    
+        dd($reportedComments);
+
+
         return view('super-admin.deleted-comment.index', [
             'deletedComments' => ReportedComment::with('comments.user', 'user')->where('status', 0)->get()
         ]);

@@ -55,41 +55,41 @@
                             @foreach ($reportedComments as $reportedComment)
                                 <tr>
                                     <!-- Comment Description -->
-                                    <td>{{ $reportedComment->comments->description }}</td>
-                    
+                                    <td>{{ $reportedComment->description }}</td>
+                                    {{-- @dd($reportedComment->user) --}}
                                     <!-- Owner of the Comment -->
-                                    <td>{{ $reportedComment->comments->user->firstname }} {{ $reportedComment->comments->user->lastname }}</td>
+                                    <td>{{ $reportedComment->user->firstname }} {{ $reportedComment->user->lastname }}</td>
                     
                                     <!-- Report Count -->
                                     <td>{{ $reportedComment->report_count }}</td> <!-- Count of users who reported the comment -->
                     
                                     <!-- Reported By (First User who reported the comment) -->
-                                    <td>{{ $reportedComment->user->firstname }} {{ $reportedComment->user->lastname }}</td>
+                                    <td>{{ $reportedComment->reportedComments->first()->user->firstname }} {{ $reportedComment->reportedComments->first()->user->lastname }}</td>
                     
                                     <!-- Report Reason -->
-                                    <td>{{ $reportedComment->reason }}</td>
+                                    <td>{{ $reportedComment->reportedComments->first()->reason }}</td>
                     
                                     <!-- Status Badge -->
                                     <td>
-                                        @if ($reportedComment->status == 1)
+                                        @if ($reportedComment->reportedComments->first()->status == 1)
                                             <span class="badge text-black" style="background: yellow">Pending</span>
-                                        @elseif ($reportedComment->status == 0)
+                                        @elseif ($reportedComment->reportedComments->first()->status == 0)
                                             <span class="badge bg-danger">Declined</span>
-                                        @elseif ($reportedComment->status == 2)
+                                        @elseif ($reportedComment->reportedComments->first()->status == 2)
                                             <span class="badge bg-success">Approved</span>
                                         @endif
                                     </td>
                     
                                     <!-- Date Reported (earliest report) -->
-                                    <td>{{ $reportedComment->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $reportedComment->reportedComments->first()->created_at->format('Y-m-d') }}</td>
                     
                                     <!-- Action Buttons (Approve/Decline) -->
                                     <td>
                                         @php $isDisabled = $reportedComment->status != 1; @endphp
                                         <button class="btn btn-primary approve" data-bs-toggle="modal" data-bs-target="#actionModal"
-                                            onclick="setStatus(2, {{ $reportedComment->id }})" data-id="{{ $reportedComment->id }}" {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
+                                            onclick="setStatus(2, {{ $reportedComment->reportedComments->first()->id }})" data-id="{{ $reportedComment->reportedComments->first()->id }}" {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
                                         <button class="btn btn-warning decline" data-bs-toggle="modal" data-bs-target="#declineModal"
-                                            onclick="setStatus(0, {{ $reportedComment->id }})" data-id="{{ $reportedComment->id }}" {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
+                                            onclick="setStatus(0, {{ $reportedComment->reportedComments->first()->id }})" data-id="{{ $reportedComment->reportedComments->first()->id }}" {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
                                     </td>
                                 </tr>
                             @endforeach

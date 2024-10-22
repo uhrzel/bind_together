@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comments;
 use App\Models\ReportedComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,11 +14,22 @@ class ReportedCommentController extends Controller
      */
     public function index()
     {
-        $reportedComments = ReportedComment::with(['comments.user', 'user'])
-            ->whereIn('status', [1, 2])
-            ->selectRaw('id, comments_id, user_id, reason, status, count(user_id) as report_count, min(created_at) as created_at')
-            ->groupBy('id', 'comments_id', 'user_id', 'reason', 'status')
-            ->get();
+        $reportedComments = Comments::where('status', 1)
+    ->withWhereHas('reportedComments', function ($query) {
+        $query->whereIn('status', [1, 2]);
+    })
+    ->with([
+        'user',
+        'reportedComments' => function ($query) {
+            $query->whereIn('status', [1, 2]);
+        }
+    ])
+    ->withCount([
+        'reportedComments as report_count' => function ($query) {
+            $query->whereIn('status', [1, 2]);
+        }
+    ])
+    ->get();
 
         return view('super-admin.reported-comment.index', compact('reportedComments'));
     }
@@ -80,10 +92,15 @@ class ReportedCommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ReportedComment $reportedComment)
+    public function update(Request $request, int $reportedComment)
     {
-        $comment = $reportedComment->comments_id;
-        $reports = ReportedComment::where('comments_id', $comment)->get();
+        // $comment = $reportedComment->comments_id;
+        dd(Comments::find($reportedComment));
+        $reports = ReportedComment::where('comments_id', $reportedComment)->get();
+        if ($request->status == 2)
+        {
+            Comments::find($reportedComment)->update(['status' => 0]);
+        }
 
         foreach ($reports as $report) {
             $report->update([
@@ -93,7 +110,7 @@ class ReportedCommentController extends Controller
         }
 
         alert()->success('Reported comment status has been updated');
-        return redirect()->route('reported-comment.index');
+        return redirect()->back();
     }
 
 

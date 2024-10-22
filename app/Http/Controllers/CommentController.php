@@ -72,6 +72,6 @@ class CommentController extends Controller
         Comments::find($commentID)->delete();
 
         alert()->success('Comment removed successfully');
-        return redirect()->route('newsfeed.index');
+        return redirect()->back();
     }
 }

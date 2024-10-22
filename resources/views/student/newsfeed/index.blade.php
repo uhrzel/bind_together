@@ -541,11 +541,15 @@
         const deletedFiles = [];
 
         function removeFile(fileId) {
-            deletedFiles.push(fileId);
+            let deletedFiles = $('#deletedFiles').val() ? $('#deletedFiles').val().split(',') : [];
+
+            if (!deletedFiles.includes(fileId.toString())) {
+                deletedFiles.push(fileId);
+            }
 
             $('#deletedFiles').val(deletedFiles.join(','));
 
-            $('.file-preview-' + fileId).hide();
+            $('.file-preview-' + fileId).remove(); // Hides the file preview
         }
 
         $(document).ready(function() {
@@ -668,60 +672,62 @@
             })
 
             $('.editBtn').click(function() {
-                fetch('/newsfeed/' + $(this).data('id'))
+                const postId = $(this).data('id');
+
+                fetch('/newsfeed/' + postId)
                     .then(response => response.json())
                     .then(newsfeed => {
-                        $('#description').val(newsfeed.description)
+                        $('#description').val(newsfeed.description);
 
                         var filesContainer = $('#editPostFiles');
-                        // filesContainer.empty();
+                        filesContainer.empty(); // Clear previous files before adding new ones
 
                         if (Array.isArray(newsfeed.newsfeed_files)) {
                             newsfeed.newsfeed_files.forEach(function(file) {
                                 if (file.file_type.startsWith('image')) {
                                     filesContainer.append(`
-                                    <div class="col-4 mb-3 position-relative file-preview-${file.id}">
-                                    <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
-                                    <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            `);
+                            <div class="col-4 mb-3 position-relative file-preview-${file.id}">
+                                <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
+                                <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `);
+                                } else if (file.file_type.startsWith('video')) {
+                                    filesContainer.append(`
+                            <div class="col-4 mb-3 position-relative file-preview-${file.id}">
+                                <video controls class="img-fluid rounded">
+                                    <source src="/storage/${file.file_path}" type="${file.file_type}">
+                                    Your browser does not support the video tag.
+                                </video>
+                                <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `);
                                 }
                             });
                         }
 
-                        $('#editPostForm').attr('action', '/newsfeed/' + $(this).data('id'));
-                    })
-            })
+                        // Set the form action for submitting the edit
+                        $('#editPostForm').attr('action', '/newsfeed/' + postId);
+                    });
+            });
 
-            $('.deleteBtn').click(function() {
-                $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
-            })
-
-            $('.delete-btn').click(function() {
-                $('#commentDelete').attr('action', '/comments/' + $(this).data('id'))
-            })
-
-            $('#attachments').on('change', function(event) {
-                const preview = $('#preview');
+            // Preview for newly selected attachments
+            $('#editAttachments').on('change', function(event) {
+                const preview = $('#editPostFiles');
                 preview.empty(); // Clear previous previews
                 const files = event.target.files; // Retrieve all selected files
 
                 $.each(files, function(index, file) {
                     const reader = new FileReader();
 
-                    // Generate file label with the actual file name
-                    const fileName = file.name;
-
                     // Handle file load
                     reader.onload = function(e) {
                         const mediaPreview = $('<div>', {
                             class: 'col-4 mb-3'
                         });
-
-                        // Append the file name before the media preview
-                        mediaPreview.append(`<p class="text-white">${fileName}</p>`);
 
                         // Check the file type for image or video and create corresponding preview elements
                         if (file.type.startsWith('image')) {
@@ -743,6 +749,49 @@
                     reader.readAsDataURL(file);
                 });
             });
+
+            $('#attachments').on('change', function(event) {
+                const preview = $('#preview');
+                preview.empty(); // Clear previous previews
+                const files = event.target.files; // Get the selected files
+
+                $.each(files, function(index, file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const mediaPreview = $('<div>', {
+                            class: 'col-4 mb-3'
+                        });
+
+                        // Check the file type for image or video and create corresponding preview elements
+                        if (file.type.startsWith('image')) {
+                            mediaPreview.append(`
+                    <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                `);
+                        } else if (file.type.startsWith('video')) {
+                            mediaPreview.append(`
+                    <video class="img-fluid rounded" controls style="max-height: 150px; object-fit: cover;">
+                        <source src="${e.target.result}" type="${file.type}">
+                        Your browser does not support the video tag.
+                    </video>
+                `);
+                        }
+
+                        // Append the media preview to the preview container
+                        preview.append(mediaPreview);
+                    };
+
+                    reader.readAsDataURL(file); // Read the file as a DataURL to show the preview
+                });
+            });
+
+            $('.deleteBtn').click(function() {
+                $('#newsfeedDelete').attr('action', '/newsfeed/' + $(this).data('id'))
+            })
+
+            $('.delete-btn').click(function() {
+                $('#commentDelete').attr('action', '/comments/' + $(this).data('id'))
+            })
 
 
             $('form[id^="comment-form-"]').on('submit', function(e) {
