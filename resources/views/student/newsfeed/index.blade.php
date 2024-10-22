@@ -136,12 +136,13 @@
                                     <img src="{{ asset('storage/' . $comments->user->avatar) }}"
                                         class="rounded-circle me-2" height="40" width="40" alt="User Avatar">
                                     <div class="bg-light p-3 rounded-3 w-100">
-                                        <form id="editCommentForm-{{ $comments->id }}" method="POST">
+                                        <form id="editCommentForm-{{ $comments->id }}" action="" method="POST">
                                             @csrf
                                             @method('PUT')
                                             <div class="d-flex justify-content-between">
                                                 <div id="comment-display-{{ $comments->id }}">
-                                                    <strong>{{ $comments->user->firstname }} {{ $comments->user->lastname }}</strong>
+                                                    <strong>{{ $comments->user->firstname }}
+                                                        {{ $comments->user->lastname }}</strong>
                                                     @if ($comments->user_id == auth()->id())
                                                         <button type="button"
                                                             class="border-0 bg-transparent text-primary ms-2 text-info edit-btn"
@@ -156,14 +157,14 @@
                                                             data-id="{{ $comments->id }}">Delete</button>
                                                     @endif
                                                 </div>
-                                                <small class="text-muted">{{ $comments->created_at->diffForHumans() }}</small>
+                                                <small
+                                                    class="text-muted">{{ $comments->created_at->diffForHumans() }}</small>
                                             </div>
                                             <p class="mb-0 comment-text" id="comment-text-{{ $comments->id }}">
-                                                {{ $comments->description }}
-                                            </p>
-                                            <textarea name="description" class="form-control comment-textarea"
-                                                id="comment-textarea-{{ $comments->id }}" rows="2" hidden>{{ $comments->description }}</textarea>
-                                        </form>                                        
+                                                {{ $comments->description }}</p>
+                                            <textarea name="description" class="form-control comment-textarea" id="comment-textarea-{{ $comments->id }}"
+                                                rows="2" hidden>{{ $comments->description }}</textarea>
+                                        </form>
                                         <div class="d-flex mt-2">
                                             @if ($comments->user_id != auth()->id())
                                                 <a class="like-comment ml-2" type="button"
@@ -534,7 +535,7 @@
 
                 // Update the form action dynamically
                 var form = $('#editCommentForm-' + commentId);
-                form.attr('action', '/comments/' + commentId); // Ensure the URL is correct
+                form.attr('action', '/comments/' + commentId);
 
                 // Show the save button, hide the edit button
                 $('#edit-btn-' + commentId).hide();
@@ -562,10 +563,10 @@
                             // Update the comment text without reloading
                             var updatedText = $('#comment-textarea-' + commentId).val();
                             $('#comment-text-' + commentId).text(updatedText)
-                        .show(); // Update and show the <p>
+                                .show(); // Update and show the <p>
                             $('#comment-textarea-' + commentId).hide(); // Hide the textarea
                             $('#saveButton-' + commentId).attr('hidden',
-                            true); // Hide save button
+                                true); // Hide save button
                             $('#edit-btn-' + commentId).show(); // Show the edit button
                         }
                     },
@@ -574,6 +575,8 @@
                     }
                 });
             });
+
+
 
             $('.editBtn').click(function() {
                 fetch('/newsfeed/' + $(this).data('id'))
@@ -635,7 +638,7 @@
                         if (file.type.startsWith('image')) {
                             mediaPreview.append(
                                 `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`
-                            );
+                                );
                         } else if (file.type.startsWith('video')) {
                             mediaPreview.append(`
                     <video class="img-fluid rounded" controls style="max-height: 150px; object-fit: cover;">

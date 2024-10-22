@@ -32,8 +32,8 @@ class CommentController extends Controller
     {
         $comment = Comments::create($request->validated() + ['user_id' => Auth::id()]);
 
-        // $comment_html = view('partials.comments', ['comment' => $comment->load('user')])->render();
-        return response()->json(['success' => true]);
+        $comment_html = view('partials.comments', ['comment' => $comment->load('user')])->render();
+        return response()->json(['success' => true, 'comment_html' => $comment_html,]);
     }
 
     /**
