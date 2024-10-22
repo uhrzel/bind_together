@@ -199,13 +199,13 @@
                                     class="fas fa-paper-plane"></i></button>
                         </div>
                     </form>
-                    {{-- <div class="d-flex justify-content-between mt-2">
+                    <div class="d-flex justify-content-between mt-2">
                         <div>
                             <a href="#" class="btn btn-light"><i class="fas fa-thumbs-up"></i></a>
                             <a href="#" class="btn btn-light"><i class="fas fa-thumbs-down"></i></a>
                         </div>
                         <small class="text-muted">1 Likes • 0 Dislikes</small>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         @endforeach
