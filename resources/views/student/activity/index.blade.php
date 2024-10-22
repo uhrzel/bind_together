@@ -63,12 +63,12 @@
                                     <div class="card-footer d-flex justify-content-between">
                                         @if ($activity->type == 2)
                                             <button class="btn btn-danger join-practice" data-id="{{ $activity->id }}"
-                                                data-bs-toggle="modal" data-bs-target="#joinPracticeModal" {{ $hasJoinedPractice ? 'disabled' : '' }}>
+                                                data-bs-toggle="modal" data-bs-target="#joinPracticeModal" {{ $hasJoinedPractice ? 'disabled' : '' }} {{ $notGoing ? 'disabled' : '' }}>
                                                 <i class="fas fa-check-circle"></i>
                                                 Join
                                             </button>
                                             <button class="btn btn-danger not-going" data-id="{{ $activity->id }}"
-                                                data-bs-toggle="modal" data-bs-target="#notGoingPracticeModal" {{ $notGoing ? 'disabled' : '' }}>
+                                                data-bs-toggle="modal" data-bs-target="#notGoingPracticeModal" {{ $notGoing ? 'disabled' : '' }}  {{ $hasJoinedPractice ? 'disabled' : '' }}>
                                                 <i class="fas fa-check-circle"></i>
                                                 Not Going
                                             </button>
@@ -339,7 +339,8 @@
                     $('#tryoutAuditionModal').modal('show');
                     $('#activityId').val(activityId); // Set the hidden input for the form
                 } else if (activityType == 1) {
-
+                    $('#tryoutAuditionModal').modal('show');
+                    $('#activityId').val(activityId);
                 }
             });
 

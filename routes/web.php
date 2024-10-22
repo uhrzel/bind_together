@@ -11,6 +11,7 @@ use App\Http\Controllers\DeactivatePostController;
 use App\Http\Controllers\DeletedCommentController;
 use App\Http\Controllers\DeletedPostController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\FetchActivityRegistration;
 use App\Http\Controllers\GenerateReportController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
@@ -70,6 +71,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::put('comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
     Route::post('newsfeed-like', NewsfeedLikeController::class)->name('newsfeed.like');
+    Route::get('fetch-activity/{activityId}', FetchActivityRegistration::class)->name('fetch.activities');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

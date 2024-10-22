@@ -80,9 +80,13 @@ class ActivityRegistrationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ActivityRegistration $activityRegistration)
+    public function update(Request $request, int $activityRegistrationId)
     {
-        //
+        $act = ActivityRegistration::find($activityRegistrationId);
+        $act->update(['status' => $request->status]);
+
+        alert()->success('Updated successfully');
+        return redirect()->back();
     }
 
     /**
