@@ -15,6 +15,7 @@ use App\Http\Controllers\GenerateReportController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
 use App\Http\Controllers\NewsfeedController;
+use App\Http\Controllers\NewsfeedLikeController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegisteredParticipantController;
@@ -67,6 +68,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::post('report-generate', GenerateReportController::class)->name('reports.generate');
     Route::put('comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('newsfeed-like', NewsfeedLikeController::class)->name('newsfeed.like');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

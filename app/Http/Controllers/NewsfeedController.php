@@ -16,8 +16,38 @@ class NewsfeedController extends Controller
      */
     public function index()
     {
-        return view('student.newsfeed.index', ['newsfeeds' => Newsfeed::with('user', 'newsfeedFiles', 'comments.user')->where('status', 1)->get()]);
-    }
+        $newsfeeds = Newsfeed::with([
+            'user', 
+            'newsfeedFiles', 
+            'comments.user', 
+            'newsfeedLikes'
+        ])
+        ->withCount([
+            'newsfeedLikes as likes_count' => function ($query) {
+                $query->where('status', 1); // Count likes
+            },
+            'newsfeedLikes as dislikes_count' => function ($query) {
+                $query->where('status', 0); // Count dislikes
+            },
+        ])
+        ->get()
+        ->map(function ($newsfeed) {
+            // Check if the current user liked or disliked the post
+            $newsfeed->user_liked = $newsfeed->newsfeedLikes
+                ->where('user_id', Auth::id())
+                ->where('status', 1)
+                ->isNotEmpty();
+    
+            $newsfeed->user_disliked = $newsfeed->newsfeedLikes
+                ->where('user_id', Auth::id())
+                ->where('status', 0)
+                ->isNotEmpty();
+    
+            return $newsfeed;
+        });
+    
+        return view('student.newsfeed.index', ['newsfeeds' => $newsfeeds]);
+    }    
 
     /**
      * Show the form for creating a new resource.
@@ -37,7 +67,7 @@ class NewsfeedController extends Controller
             'description' => $request->description,
         ]);
 
-    if ($request->hasFile('attachments')) {
+        if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $filePath = $file->store('newsfeed_files', 'public'); // Storing in 'public/newsfeed_files'
 
@@ -77,7 +107,7 @@ class NewsfeedController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Newsfeed $newsfeed)
-    {        
+    {
         $newsfeed->update([
             'description' => $request->input('description'),
         ]);

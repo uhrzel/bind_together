@@ -33,4 +33,9 @@ class Newsfeed extends Model
         return $this->hasMany(Comments::class);
     }
 
+    public function newsfeedLikes() : HasMany
+    {
+        return $this->hasMany(NewsfeedLike::class);
+    }
+
 }

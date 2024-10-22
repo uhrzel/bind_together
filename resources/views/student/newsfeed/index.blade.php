@@ -34,8 +34,8 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex">
-                        <img src="{{ asset('storage/' . $newsfeed->user->avatar) }}" width="50" height="50" class="rounded-circle me-3"
-                            alt="User Avatar">
+                        <img src="{{ asset('storage/' . $newsfeed->user->avatar) }}" width="50" height="50"
+                            class="rounded-circle me-3" alt="User Avatar">
                         <div>
                             <h6 class="mb-0">{{ $newsfeed->user->firstname }} {{ $newsfeed->user->lastname }}</h6>
                             <small>{{ $newsfeed->created_at->diffForHumans() }}</small>
@@ -201,10 +201,32 @@
                     </form>
                     <div class="d-flex justify-content-between mt-2">
                         <div>
-                            <a href="#" class="btn btn-light"><i class="fas fa-thumbs-up"></i></a>
-                            <a href="#" class="btn btn-light"><i class="fas fa-thumbs-down"></i></a>
+                            <!-- Like button -->
+                            <a href="#"
+                                class="btn {{ $newsfeed->user_liked ? 'btn-primary' : 'btn-light' }} like-btn"
+                                data-newsfeed-id="{{ $newsfeed->id }}" data-status="1">
+                                <i class="fas fa-thumbs-up"></i>
+                            </a>
+
+                            <!-- Dislike button -->
+                            <a href="#"
+                                class="btn {{ $newsfeed->user_disliked ? 'btn-primary' : 'btn-light' }} dislike-btn"
+                                data-newsfeed-id="{{ $newsfeed->id }}" data-status="0">
+                                <i class="fas fa-thumbs-down"></i>
+                            </a>
                         </div>
-                        <small class="text-muted">1 Likes • 0 Dislikes</small>
+
+                        <small class="text-muted">
+                            <!-- Count of likes -->
+                            <span id="like-count-{{ $newsfeed->id }}">
+                                {{ $newsfeed->likes_count }}
+                            </span> Likes •
+
+                            <!-- Count of dislikes -->
+                            <span id="dislike-count-{{ $newsfeed->id }}">
+                                {{ $newsfeed->dislikes_count }}
+                            </span> Dislikes
+                        </small>
                     </div>
                 </div>
             </div>
@@ -226,7 +248,8 @@
                         <div class="d-flex align-items-center mb-3">
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
                                 style="width: 40px; height: 40px;" alt="Avatar">
-                            <span class="ms-2 fw-bold">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</span>
+                            <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
+                                {{ auth()->user()->lastname }}</span>
                         </div>
 
                         <div class="form-group mb-3">
@@ -527,6 +550,69 @@
 
         $(document).ready(function() {
 
+            $('.like-btn').on('click', function(e) {
+                e.preventDefault();
+
+                var newsfeedId = $(this).data('newsfeed-id');
+                var status = 1; // Status for like (1)
+
+                $.ajax({
+                    url: '/newsfeed-like', // Make sure this matches your route
+                    type: 'POST',
+                    data: {
+                        newsfeed_id: newsfeedId,
+                        status: status,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        // Update the like and dislike counts dynamically
+                        $('#like-count-' + newsfeedId).text(response.likes_count);
+                        $('#dislike-count-' + newsfeedId).text(response.dislikes_count);
+
+                        // Highlight the like button and remove highlight from the dislike button
+                        $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
+                            'btn-primary').removeClass('btn-light');
+                        $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
+                            'btn-primary').addClass('btn-light');
+                    },
+                    error: function(xhr) {
+                        console.error('Error occurred:', xhr.responseText);
+                    }
+                });
+            });
+
+            // Dislike button functionality
+            $('.dislike-btn').on('click', function(e) {
+                e.preventDefault();
+
+                var newsfeedId = $(this).data('newsfeed-id');
+                var status = 0; // Status for dislike (0)
+
+                $.ajax({
+                    url: '/newsfeed-like', // Make sure this matches your route
+                    type: 'POST',
+                    data: {
+                        newsfeed_id: newsfeedId,
+                        status: status,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        // Update the like and dislike counts dynamically
+                        $('#like-count-' + newsfeedId).text(response.likes_count);
+                        $('#dislike-count-' + newsfeedId).text(response.dislikes_count);
+
+                        // Highlight the dislike button and remove highlight from the like button
+                        $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
+                            'btn-primary').removeClass('btn-light');
+                        $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
+                            'btn-primary').addClass('btn-light');
+                    },
+                    error: function(xhr) {
+                        console.error('Error occurred:', xhr.responseText);
+                    }
+                });
+            });
+
             $('.edit-btn').on('click', function(e) {
                 e.preventDefault();
 
@@ -618,43 +704,45 @@
             })
 
             $('#attachments').on('change', function(event) {
-    const preview = $('#preview');
-    preview.empty(); // Clear previous previews
-    const files = event.target.files; // Retrieve all selected files
+                const preview = $('#preview');
+                preview.empty(); // Clear previous previews
+                const files = event.target.files; // Retrieve all selected files
 
-    $.each(files, function(index, file) {
-        const reader = new FileReader();
-        
-        // Generate file label with the actual file name
-        const fileName = file.name;
-        
-        // Handle file load
-        reader.onload = function(e) {
-            const mediaPreview = $('<div>', {
-                class: 'col-4 mb-3'
-            });
+                $.each(files, function(index, file) {
+                    const reader = new FileReader();
 
-            // Append the file name before the media preview
-            mediaPreview.append(`<p class="text-white">${fileName}</p>`);
+                    // Generate file label with the actual file name
+                    const fileName = file.name;
 
-            // Check the file type for image or video and create corresponding preview elements
-            if (file.type.startsWith('image')) {
-                mediaPreview.append(`<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`);
-            } else if (file.type.startsWith('video')) {
-                mediaPreview.append(`
+                    // Handle file load
+                    reader.onload = function(e) {
+                        const mediaPreview = $('<div>', {
+                            class: 'col-4 mb-3'
+                        });
+
+                        // Append the file name before the media preview
+                        mediaPreview.append(`<p class="text-white">${fileName}</p>`);
+
+                        // Check the file type for image or video and create corresponding preview elements
+                        if (file.type.startsWith('image')) {
+                            mediaPreview.append(
+                                `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`
+                            );
+                        } else if (file.type.startsWith('video')) {
+                            mediaPreview.append(`
                     <video class="img-fluid rounded" controls style="max-height: 150px; object-fit: cover;">
                         <source src="${e.target.result}" type="${file.type}">
                     </video>`);
-            }
+                        }
 
-            // Append the media preview to the preview container
-            preview.append(mediaPreview);
-        };
+                        // Append the media preview to the preview container
+                        preview.append(mediaPreview);
+                    };
 
-        // Read the file as a data URL
-        reader.readAsDataURL(file);
-    });
-});
+                    // Read the file as a data URL
+                    reader.readAsDataURL(file);
+                });
+            });
 
 
             $('form[id^="comment-form-"]').on('submit', function(e) {
