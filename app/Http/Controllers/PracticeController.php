@@ -13,7 +13,7 @@ class PracticeController extends Controller
      */
     public function index()
     {
-        //
+        return view('coach.practice.index', ['participants' => Practice::with('user', 'activity')->get()]);
     }
 
     /**

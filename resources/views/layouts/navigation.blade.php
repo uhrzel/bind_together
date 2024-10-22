@@ -300,48 +300,6 @@
             </div>
         </li>
 
-        <li class="nav-item">
-            <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                data-bs-target="#submenu-app1">
-                <span>
-                    <span class="sidebar-icon me-3">
-                        <i class="fas fa-circle fa-fw"></i>
-                    </span>
-                    <span class="sidebar-text">Athlete Record</span>
-                </span>
-                <span class="link-arrow">
-                    <svg class="icon icon-sm" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clip-rule="evenodd">
-                        </path>
-                    </svg>
-                </span>
-            </span>
-            <div class="multi-level collapse" role="list" id="submenu-app1" aria-expanded="false">
-                <ul class="flex-column nav">
-                    <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
-                        <a href="{{ route('registered.participant', ['status' => '0']) }}" class="nav-link">
-                            <span class="sidebar-icon me-3">
-                                <i class="fas fa-user-alt fa-fw"></i>
-                            </span>
-                            <span class="sidebar-text">{{ __('Tryout List') }}</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item {{ request()->query('status') == '1' ? 'active' : '' }}">
-                        <a href="{{ route('registered.participant', ['status' => '1']) }}" class="nav-link">
-                            <span class="sidebar-icon me-3">
-                                <i class="fas fa-user-alt fa-fw"></i>
-                            </span>
-                            <span class="sidebar-text">{{ __('Official Player') }}</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-
         <li class="nav-item {{ request()->routeIs('activity.index') ? 'active' : '' }}">
             <a href="{{ route('activity.index') }}" class="nav-link">
                 <span class="sidebar-icon">
@@ -507,7 +465,7 @@
 
         <li class="nav-item">
             <span class="nav-link d-flex justify-content-between align-items-center" data-bs-toggle="collapse"
-                data-bs-target="#submenu-app">
+                data-bs-target="#submenu-app1">
                 <span>
                     <span class="sidebar-icon me-3">
                         <i class="fas fa-circle fa-fw"></i>
@@ -524,9 +482,18 @@
                     </svg>
                 </span>
             </span>
-            <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false">
+            <div class="multi-level collapse" role="list" id="submenu-app1" aria-expanded="false">
                 <ul class="flex-column nav">
-                    <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
+                    <li class="nav-item  {{ request()->routeIs('practice.index') ? 'active' : '' }}">
+                        <a href="{{ route('practice.index', ['status' => '0']) }}" class="nav-link">
+                            <span class="sidebar-icon me-3">
+                                <i class="fas fa-user-alt fa-fw"></i>
+                            </span>
+                            <span class="sidebar-text">{{ __('Practice') }}</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item  {{ request()->routeIs('registered.participant') ? 'active' : '' }}">
                         <a href="{{ route('registered.participant', ['status' => '0']) }}" class="nav-link">
                             <span class="sidebar-icon me-3">
                                 <i class="fas fa-user-alt fa-fw"></i>

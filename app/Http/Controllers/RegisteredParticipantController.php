@@ -16,7 +16,7 @@ class RegisteredParticipantController extends Controller
         $status = $request->query('status', '0');
 
         $athletes = ActivityRegistration::query()
-            ->with(['activity', 'user'])
+            ->with(['activity', 'user.campus'])
             ->where('status', $status)
             ->whereHas('activity', function ($query) {
                 $query->whereIn('type', [ActivityType::Tryout, ActivityType::Practice]);

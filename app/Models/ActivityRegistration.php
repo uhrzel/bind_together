@@ -22,6 +22,7 @@ class ActivityRegistration extends Model
         'photo_copy_id',
         'other_file',
         'parent_consent',
+        'status'
     ];
 
     public function activity() : BelongsTo

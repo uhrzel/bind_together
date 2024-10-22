@@ -31,6 +31,7 @@
                                 <th>Title</th>
                                 <th>Type</th>
                                 <th>Venue</th>
+                                <th>Target Audience</th>
                                 <th>Activity Duration</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -50,6 +51,11 @@
                                     <td>{{ $activity->title }}</td>
                                     <td>{{ $activityTypes[$activity->type] ?? 'Unknown Type' }}</td>
                                     <td>{{ $activity->venue }}</td>
+                                    @if ($activity->target_player == 0)
+                                        <td>All Students</td>
+                                        @else
+                                        <td>Official Players</td>
+                                    @endif
                                     <td>
                                         {{ \Carbon\Carbon::parse($activity->start_date)->format('F d, Y h:i A') }} -
                                         {{ \Carbon\Carbon::parse($activity->end_date)->format('F d, Y h:i A') }}
@@ -68,6 +74,10 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editCompetitionModal"
                                             onclick="loadActivityData({{ $activity->id }})">Edit</button>
+                                        <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
+                                            data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
+                                            View
+                                        </button>
                                         <button type="button" class="btn btn-danger">Delete</button>
                                     </td>
                                 </tr>
@@ -188,6 +198,114 @@
             </div>
         </div>
     </div>
+
+    {{-- View Modal --}}
+    <div class="modal fade" id="viewActivityModal" tabindex="-1" aria-labelledby="viewActivityModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewActivityModalLabel">View Activity Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Read-only Form -->
+                    <div class="row mb-3">
+                        <!-- Title -->
+                        <div class="col-md-6">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="view_title" value="" readonly>
+                        </div>
+                        <!-- Target Players -->
+                        <div class="col-md-6">
+                            <label for="target_players" class="form-label">Target players</label>
+                            <input type="text" class="form-control"
+                                id="view_target_players" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" rows="3" readonly id="view_content"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="activity_type" class="form-label">Activity Type</label>
+                            <input type="text" class="form-control" value="" id="view_type"
+                                readonly>
+                        </div>
+                        @if (auth()->user()->hasRole('coach'))
+                            <div class="form-group col">
+                                <label for="organization">Sport</label>
+                                <input type="text" value="{{ auth()->user()->sport->name }}" id="view_sport_id" class="form-control" readonly>
+                            </div>
+                        @elseif (auth()->user()->hasRole('adviser'))
+                            <div class="form-group col">
+                                <label for="organization">Organization</label>
+                                <input type="text" value="" id="view_organization_id" class="form-control"
+                                    readonly>
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="row mb-3 mt-3">
+                        <!-- Activity Start Date -->
+                        <div class="col-md-6">
+                            <label for="start_date" class="form-label">Activity Start Date</label>
+                            <input type="text" class="form-control"
+                                value="" id="view_start_date" readonly>
+                        </div>
+
+                        <!-- Activity End Date -->
+                        <div class="col-md-6">
+                            <label for="end_date" class="form-label">Activity End Date</label>
+                            <input type="text" class="form-control"
+                                value="" id="view_end_date" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <!-- Venue -->
+                        <div class="col-md-12">
+                            <label for="venue" class="form-label">Venue</label>
+                            <input type="text" class="form-control" value="" id="view_venue" readonly>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <!-- Address -->
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" value="" id="view_address" readonly>
+                    </div>
+
+                    {{-- <div class="mb-3">
+                        <!-- Attachment -->
+                        <label for="attachment" class="form-label">Attachment (Images)</label>
+                        <div class="row">
+                            @if ($activity->attachments)
+                                @foreach ($activity->attachments as $attachment)
+                                    <div class="col-md-3">
+                                        <img src="{{ asset('storage/' . $attachment) }}" class="img-fluid img-thumbnail"
+                                            alt="Attachment Image">
+                                    </div>
+                                @endforeach
+                            @else
+                                <p>No attachments available.</p>
+                            @endif
+                        </div>
+                    </div> --}}
+                </div>
+                <div class="modal-footer">
+                    <!-- Close Button -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- Back Button -->
+                    {{-- <a href="{{ route('activity.index') }}" class="btn btn-primary">Back</a> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editCompetitionModal" tabindex="-1" aria-labelledby="editCompetitionModalLabel"
@@ -310,5 +428,22 @@
                 }
             });
         }
+
+        $(() => {
+            $('.viewBtn').click(function () {
+                fetch('/activity/' + $(this).data('id'))
+                .then(response => response.json())
+                .then(activity => {
+                    $('#view_title').val(activity.title)
+                    $('#view_target_players').val(activity.target_player)
+                    $('#view_content').val(activity.content)
+                    $('#view_type').val(activity.type)
+                    $('#view_start_date').val(activity.start_date)
+                    $('#view_end_date').val(activity.end_date)
+                    $('#view_venue').val(activity.venue)
+                    $('#view_address').val(activity.address)
+                })
+            })
+        })
     </script>
 @endpush
