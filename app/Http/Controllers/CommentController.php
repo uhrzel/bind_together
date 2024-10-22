@@ -35,7 +35,6 @@ class CommentController extends Controller
         $comment_html = view('partials.comments', ['comment' => $comment->load('user')])->render();
         return response()->json(['success' => true, 'comment_html' => $comment_html,]);
     }
-
     /**
      * Display the specified resource.
      */
@@ -55,21 +54,22 @@ class CommentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Comments $comments)
+    public function update(Request $request, int $commentId)
     {
         // dd($request->all());
+        $comments = Comments::find($commentId);
         $comments->update(['description' => $request->description]);
 
         // alert()->success('Comment updated successfully');
-        return response()->json(['success' => true]);
+        return response()->json(['success' => true, 'comments' => $request->description]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comments $comments)
+    public function destroy(int $commentID)
     {
-        $comments->delete();
+        Comments::find($commentID)->delete();
 
         alert()->success('Comment removed successfully');
         return redirect()->route('newsfeed.index');

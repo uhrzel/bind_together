@@ -65,6 +65,8 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('activate-post/{newsfeedId}', DeactivatePostController::class)->name('deactivate-post');
     Route::get('report-view', ReportGenerationViewController::class)->name('report.view');
     Route::post('report-generate', GenerateReportController::class)->name('reports.generate');
+    Route::put('comments/{commentId}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);
@@ -72,7 +74,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('sport', SportController::class);
     Route::resource('organization', OrganizationController::class);
     Route::resource('newsfeed', NewsfeedController::class);
-    Route::resource('comments', CommentController::class);
+    Route::resource('comments', CommentController::class)->except('update', 'destroy');
     Route::resource('reported-comment', ReportedCommentController::class);
     Route::resource('reported-post', ReportedPostController::class);
     Route::resource('activity', ActivityController::class);
