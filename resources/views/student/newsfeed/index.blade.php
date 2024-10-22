@@ -69,17 +69,17 @@
                                     <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
                                             data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
                                     </li>
-                                    <li><a class="dropdown-item"
+                                    {{-- <li><a class="dropdown-item"
                                             href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li>
+                                    </li> --}}
                                 @endadmin_org
                                 @admin_sport
                                     <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
                                             data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
                                     </li>
-                                    <li><a class="dropdown-item"
+                                    {{-- <li><a class="dropdown-item"
                                             href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li>
+                                    </li> --}}
                                 @endadmin_sport
                                 @adviser
                                     <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
@@ -549,7 +549,7 @@
 
             $('#deletedFiles').val(deletedFiles.join(','));
 
-            $('.file-preview-' + fileId).remove(); // Hides the file preview
+            $('.file-preview-' + fileId).remove();
         }
 
         $(document).ready(function() {
@@ -708,6 +708,7 @@
                         var filesContainer = $('#editPostFiles');
                         filesContainer.empty(); // Clear previous files before adding new ones
 
+                        // Load existing files from the newsfeed
                         if (Array.isArray(newsfeed.newsfeed_files)) {
                             newsfeed.newsfeed_files.forEach(function(file) {
                                 if (file.file_type.startsWith('image')) {
@@ -740,39 +741,38 @@
                     });
             });
 
-            // Preview for newly selected attachments
+            // Preview for newly selected attachments (keeps existing files in the preview)
             $('#editAttachments').on('change', function(event) {
-                const preview = $('#editPostFiles');
-                preview.empty(); // Clear previous previews
-                const files = event.target.files; // Retrieve all selected files
+                const preview = $('#editPostFiles'); // Same container where existing files are loaded
+                const files = event.target.files; // Get the selected files
 
                 $.each(files, function(index, file) {
                     const reader = new FileReader();
 
-                    // Handle file load
                     reader.onload = function(e) {
                         const mediaPreview = $('<div>', {
-                            class: 'col-4 mb-3'
+                            class: 'col-4 mb-3 position-relative'
                         });
 
                         // Check the file type for image or video and create corresponding preview elements
                         if (file.type.startsWith('image')) {
-                            mediaPreview.append(
-                                `<img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">`
-                            );
+                            mediaPreview.append(`
+                    <img src="${e.target.result}" class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                `);
                         } else if (file.type.startsWith('video')) {
                             mediaPreview.append(`
                     <video class="img-fluid rounded" controls style="max-height: 150px; object-fit: cover;">
                         <source src="${e.target.result}" type="${file.type}">
-                    </video>`);
+                        Your browser does not support the video tag.
+                    </video>
+                `);
                         }
 
-                        // Append the media preview to the preview container
+                        // Append the media preview to the preview container (without clearing existing files)
                         preview.append(mediaPreview);
                     };
 
-                    // Read the file as a data URL
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(file); // Read the file as a DataURL to show the preview
                 });
             });
 
