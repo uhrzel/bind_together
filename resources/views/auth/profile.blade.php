@@ -47,7 +47,7 @@
                                     class="rounded-circle" height="100" width="100" alt="AVATAR"> <br>
                                 <label for="">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</label>
                                 <br>
-                                <span class="badge bg-primary">Student</span>
+                                <span class="badge bg-primary">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</span>
                             </div>
                         </div>
                         <div class="col-8" style="margin-left: 40px">
@@ -158,6 +158,7 @@
 
                                                 <h5 class="text-primary">Basic information</h5>
                                                 <div class="row mb-3">
+                                                    @student
                                                     <div class="col-md-6">
                                                         <label for="student_number" class="form-label">Student
                                                             Number</label>
@@ -165,47 +166,42 @@
                                                             name="student_number"
                                                             value="{{ auth()->user()->student_number }}" readonly>
                                                     </div>
+                                                    @endstudent
                                                     <div class="col-md-6">
                                                         <label for="firstname" class="form-label">First name</label>
                                                         <input type="text" class="form-control" id="firstname"
                                                             name="firstname" value="{{ auth()->user()->firstname }}"
                                                             readonly>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
                                                     <div class="col-md-6">
                                                         <label for="middlename" class="form-label">Middle name</label>
                                                         <input type="text" class="form-control" id="middlename"
                                                             name="middlename" value="{{ auth()->user()->middlename }}"
                                                             readonly>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="lastname" class="form-label">Last name</label>
                                                         <input type="text" class="form-control" id="lastname"
                                                             name="lastname" value="{{ auth()->user()->lastname }}"
                                                             readonly>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="suffix" class="form-label">Suffix</label>
                                                         <input type="text" class="form-control" id="suffix"
                                                             name="suffix" value="{{ auth()->user()->suffix }}"
                                                             placeholder="Enter Suffix (E.G., Jr, Sr)" readonly>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="dob" class="form-label">Date of birth</label>
                                                         <input type="date" class="form-control" id="dob"
                                                             name="birthdate"
                                                             value="{{ auth()->user()->birthdate ? \Illuminate\Support\Carbon::parse(auth()->user()->birthdate)->format('Y-m-d') : '' }}">
 
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="gender" class="form-label">Gender</label>
                                                         <select class="form-select" id="gender" name="gender">
                                                             <option value="Female"
@@ -216,7 +212,7 @@
                                                                 Male</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col mt-2">
                                                         <label for="address" class="form-label">Address</label>
                                                         <input type="text" class="form-control" id="address"
                                                             name="address" value="{{ auth()->user()->address }}">
@@ -224,19 +220,19 @@
                                                 </div>
 
                                                 <!-- Contact Information Section -->
-                                                <h5 class="text-primary">Contact information</h5>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
+                                                <h5 class="text-primary mt-2">Contact information</h5>
+                                                <div class="row mb-3 mt-2">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="contact_number" class="form-label">Contact
                                                             number</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text">+63</span>
-                                                            <input type="text" class="form-control" maxlength="11"
+                                                            <input type="number" class="form-control" maxlength="11"
                                                                 id="contact_number" name="contact"
                                                                 value="{{ auth()->user()->contact }}">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="email" class="form-label">Email</label>
                                                         <input type="email" class="form-control" id="email"
                                                             name="email" value="{{ auth()->user()->email }}" readonly>
@@ -244,13 +240,13 @@
                                                 </div>
 
                                                 <!-- School Information Section -->
-                                                <h5 class="text-primary">School information</h5>
+                                                <h5 class="text-primary mt-2">School information</h5>
                                                 <div class="row mb-3">
                                                     {{-- <div class="col-md-6">
                                                         <label for="college" class="form-label">College</label>
                                                         <input type="text" value="CCST" class="form-control">
                                                     </div> --}}
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="campus_name" class="form-label">Campus name</label>
                                                         <select name="campus_id" id="" class="form-select">
                                                             <option value="" selected disabled>Select Campus</option>
@@ -262,10 +258,8 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                </div>
 
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-6 mt-2">
                                                         <label for="program" class="form-label">Program name</label>
                                                         <select name="program_id" id="" class="form-select">
                                                             <option value="" selected disabled>Select Program
@@ -277,7 +271,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-6">
+                                                    <div class="col mt-2">
                                                         <label for="year_level" class="form-label">Year level</label>
                                                         <select class="form-select" id="year_level" name="year_level">
                                                             <option value="4"

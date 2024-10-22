@@ -57,8 +57,9 @@
                     @foreach ($users as $user)
                         <tr>
                             <td class="text-center">
-                                <img class="rounded-circle" src="{{ asset('images/avatar/avatar.png') }}" alt="avatar"
-                                    height="30">
+                                <img class="rounded-circle"
+                                    src="{{ auth()->user()->avatar ? asset('storage/' . $user->avatar) : asset('images/avatar/image_place.jpg') }}"
+                                    alt="avatar" height="30">
                             </td>
                             <td><span class="fw-normal">{{ $user->firstname }} {{ $user->lastname }}</span></td>
                             <td><span class="fw-normal">{{ $user->gender }}</span></td>
@@ -69,7 +70,7 @@
                                 <td class="border-gray-200">{{ $user->organization->name ?? 'N/A' }}</td>
                             @endif
                             <td>
-                                @if ($user->status == 1)
+                                @if ($user->is_active == 1)
                                     <span class="active-status">Active</span>
                                 @else
                                     <span class="deactivated-status">Deactivated</span>
@@ -214,15 +215,25 @@
                         <div class="row">
                             <div class="col-md-6 mt-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password"
-                                    placeholder="Enter Password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Enter Password" required>
+                                    <button class="btn btn-outline-secondary create-toggle-password" type="button" data-target="password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                                 <div id="passwordError" class="text-danger"></div>
                             </div>
-
+                        
                             <div class="col-md-6 mt-3">
                                 <label for="password_confirmation" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="password_confirmation"
-                                    name="password_confirmation" placeholder="Retype Password" required>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                                        placeholder="Retype Password" required>
+                                    <button class="btn btn-outline-secondary create-toggle-password" type="button" data-target="password_confirmation">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
                                 <div id="confirmPasswordError" class="text-danger"></div>
                             </div>
                         </div>
@@ -325,18 +336,37 @@
                                 </select>
                             </div>
                         </div>
-                        <div class=" mt-3">
+                        <div class="mt-3">
                             <label for="editPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="editPassword" name="password"
-                                placeholder="Enter New Password (if changing)">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="editPassword" name="password"
+                                    placeholder="Enter New Password (if changing)">
+                                <button class="btn btn-outline-secondary toggle-password" type="button"
+                                    data-target="editPassword">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <!-- This is where the validation error message will appear -->
+                            <div id="passwordError" class="text-danger mt-1"></div>
+
                             @error('password')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class=" mt-3">
+
+                        <div class="mt-3">
                             <label for="editPasswordConfirmation" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="editPasswordConfirmation"
-                                name="password_confirmation" placeholder="Confirm Password (if changing)">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="editPasswordConfirmation"
+                                    name="password_confirmation" placeholder="Confirm Password (if changing)">
+                                <button class="btn btn-outline-secondary toggle-password" type="button"
+                                    data-target="editPasswordConfirmation">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <!-- This is where the confirmation validation error message will appear -->
+                            <div id="confirmPasswordError" class="text-danger mt-1"></div>
+
                             @error('password_confirmation')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -387,10 +417,11 @@
                             <hr>
                             <p><strong>Contact:</strong> <span id="viewContact">+XX XXXXXXXXXX</span></p>
                             <p><strong>Email:</strong> <span id="viewEmail">example@domain.com</span></p>
-
-                            <h6 class="text-primary">Assigned Sport</h6>
-                            <hr>
-                            <p><strong>Sport Name:</strong> <span id="viewSport">Sport Details</span></p>
+                            @coach
+                                <h6 class="text-primary">Assigned Sport</h6>
+                                <hr>
+                                <p><strong>Sport Name:</strong> <span id="viewSport">Sport Details</span></p>
+                            @endcoach
                         </div>
                     </div>
                 </div>
@@ -500,10 +531,10 @@
                 $('#viewEmail').text(user.user.email);
 
                 if (user.avatar) {
-                    $('#viewAvatar').attr('src', '/storage/' + user.user.avatar);
+                    $('#viewAvatar').attr('src', '{{ url('') }}' + '/storage/' + user.user.avatar);
                 } else {
                     $('#viewAvatar').attr('src',
-                        '/path-to-default-avatar/default-avatar.png');
+                        '{{ url('') }}' + '/images/avatar/image_place.jpg');
                 }
 
                 const age = calculateAge(birthdate);
@@ -557,18 +588,81 @@
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
         // Real-time password validation
-        $('#password').on('input', function() {
-            const password = $(this).val();
-            const passwordError = $('#passwordError');
+        // $('#password').on('input', function() {
+        //     const password = $(this).val();
+        //     const passwordError = $('#passwordError');
 
-            if (!passwordRegex.test(password)) {
-                passwordError.text(
-                    "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character."
-                );
-                $(this).addClass('is-invalid');
+        //     if (!passwordRegex.test(password)) {
+        //         passwordError.text(
+        //             "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one number, and one special character."
+        //         );
+        //         $(this).addClass('is-invalid');
+        //     } else {
+        //         passwordError.text(""); // Clear error if valid
+        //         $(this).removeClass('is-invalid');
+        //     }
+        // });
+
+        $('.create-toggle-password').on('click', function () {
+        var target = $(this).data('target'); // Get the input field associated with the button
+        var input = $('#' + target); // Target the specific input
+        var icon = $(this).find('i'); // Target the icon inside the button
+
+        // Toggle between password and text
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Change the icon to 'eye-slash'
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Change the icon back to 'eye'
+        }
+    });
+
+        $('.toggle-password').on('click', function() {
+            var target = $(this).data('target');
+            var input = $('#' + target);
+            var icon = $(this).find('i');
+
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
             } else {
-                passwordError.text(""); // Clear error if valid
-                $(this).removeClass('is-invalid');
+                input.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        $('#editPassword').on('input', function() {
+            var password = $(this).val();
+            var errorMessage = $('#passwordError');
+            var inputField = $(this);
+
+            // Real-time feedback for the password field
+            if (!passwordRegex.test(password)) {
+                errorMessage.text(
+                    'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
+                );
+                inputField.addClass('is-invalid'); // Add red border to indicate invalid input
+            } else {
+                errorMessage.text(''); // Clear the error message when valid
+                inputField.removeClass('is-invalid'); // Remove the red border when valid
+            }
+        });
+
+        // Confirm password validation
+        $('#editPasswordConfirmation').on('input', function() {
+            var password = $('#editPassword').val();
+            var confirmPassword = $(this).val();
+            var errorMessage = $('#confirmPasswordError');
+            var inputField = $(this);
+
+            // Check if passwords match and display error message
+            if (password !== confirmPassword) {
+                errorMessage.text('Passwords do not match.');
+                inputField.addClass('is-invalid');
+            } else if (password === confirmPassword && password !== '') {
+                errorMessage.text(''); // Clear the error message when valid
+                inputField.removeClass('is-invalid');
             }
         });
 

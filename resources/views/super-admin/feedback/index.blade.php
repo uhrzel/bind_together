@@ -12,7 +12,7 @@
         <div class="card mb-2">
             <div class="card-header d-flex">
                 <div class="me-3">
-                    <img src="{{ asset('storage/' . $feedback->user->avatar) }}" class="rounded-circle" alt="User Avatar">
+                    <img src="{{ $feedback->user->avatar ? asset('storage/' . $feedback->user->avatar) : asset('images/avatar/image_place.jpg') }}" width="50" height="50" class="rounded-circle" alt="User Avatar">
                 </div>
                 <div>
                     <h5 class="mb-0">{{ $feedback->user->firstname }} {{ $feedback->user->lastname }}</h5>

@@ -26,7 +26,7 @@
                             <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}" alt="Profile"
                                 class="rounded-circle mb-2" width="70" height="70"
                                 style="border: 3px solid white;">
-                            <h5 class="mb-0">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
+                            <h5 class="mb-0" style="color: white" >{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
                             <small
                                 style="color: #fff;">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</small>
                         </div>
