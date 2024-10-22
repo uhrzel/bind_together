@@ -149,4 +149,9 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Activity::class, 'activity_registrations', 'user_id', 'activity_id');
     }
 
+    public function practices() : HasMany
+    {
+        return $this->hasMany(Practice::class);
+    }
+
 }

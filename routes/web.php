@@ -17,6 +17,7 @@ use App\Http\Controllers\LikedCommentController;
 use App\Http\Controllers\NewsfeedController;
 use App\Http\Controllers\NewsfeedLikeController;
 use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegisteredParticipantController;
 use App\Http\Controllers\ReportedCommentController;
@@ -84,6 +85,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('deleted-post', DeletedPostController::class);
     Route::resource('deleted-comment', DeletedCommentController::class);
     Route::resource('feedback', FeedbackController::class);
+    Route::resource('practice', PracticeController::class);
 
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

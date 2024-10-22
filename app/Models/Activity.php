@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Activity extends Model
 {
@@ -45,6 +46,11 @@ class Activity extends Model
     public function participants()
     {
         return $this->belongsToMany(User::class, 'activity_registrations', 'activity_id', 'user_id');
+    }
+
+    public function practices() : HasMany
+    {
+        return $this->hasMany(Practice::class);
     }
 
 }

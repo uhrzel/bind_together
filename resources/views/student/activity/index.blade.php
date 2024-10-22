@@ -23,10 +23,11 @@
                     <div class="row mb-3">
                         <div class="col-md-12">
                             <label for="search" class="form-label fw-bold">Search</label>
-                            <input type="text" id="search" class="form-control" placeholder="Search For Activities...">
+                            <input type="text" id="search" class="form-control"
+                                placeholder="Search For Activities...">
                         </div>
                     </div>
-    
+
                     <!-- Activities Section -->
                     <div class="row" id="activities-container">
                         @foreach ($activities as $activity)
@@ -37,10 +38,16 @@
                                     \App\Enums\ActivityType::Practice => 'Practice',
                                     \App\Enums\ActivityType::Competition => 'Competition',
                                 ];
-    
-                                $hasJoined = auth()->user()->joinedActivities->contains($activity->id);
+
+                                $hasJoined = auth()
+                                    ->user()
+                                    ->joinedActivities->contains($activity->id);
+                                
+                                    $practice = $activity->practices->where('user_id', auth()->id())->first();
+                                $hasJoinedPractice = $practice && $practice->status == 1; // Check if user has joined (status = 1)
+                                $notGoing = $practice && $practice->status == 0;
                             @endphp
-    
+
                             <div class="col-md-4 mb-3 activity-card" data-title="{{ strtolower($activity->title) }}">
                                 <div class="card h-100 shadow-sm">
                                     <div class="card-body">
@@ -49,15 +56,31 @@
                                             <strong>Sport name:</strong> {{ $activity->sport->name ?? '' }} <br>
                                             <strong>Type:</strong> {{ $activityTypes[$activity->type] ?? '' }} <br>
                                             <strong>Venue:</strong> {{ $activity->venue }} <br>
-                                            <strong>Duration:</strong> {{ $activity->start_date }} - {{ $activity->end_date }}
+                                            <strong>Duration:</strong> {{ $activity->start_date }} -
+                                            {{ $activity->end_date }}
                                         </p>
                                     </div>
                                     <div class="card-footer d-flex justify-content-between">
-                                        <button class="btn btn-danger join-button" data-activity-id="{{ $activity->id }}"
-                                            data-activity-type="{{ $activity->type }}" {{ $hasJoined ? 'disabled' : '' }}>
-                                            <i class="fas fa-check-circle"></i>
-                                            {{ $hasJoined ? 'Already Joined' : 'Join' }}
-                                        </button>
+                                        @if ($activity->type == 2)
+                                            <button class="btn btn-danger join-practice" data-id="{{ $activity->id }}"
+                                                data-bs-toggle="modal" data-bs-target="#joinPracticeModal" {{ $hasJoinedPractice ? 'disabled' : '' }}>
+                                                <i class="fas fa-check-circle"></i>
+                                                Join
+                                            </button>
+                                            <button class="btn btn-danger not-going" data-id="{{ $activity->id }}"
+                                                data-bs-toggle="modal" data-bs-target="#notGoingPracticeModal" {{ $notGoing ? 'disabled' : '' }}>
+                                                <i class="fas fa-check-circle"></i>
+                                                Not Going
+                                            </button>
+                                        @else
+                                            <button class="btn btn-danger join-button"
+                                                data-activity-id="{{ $activity->id }}"
+                                                data-activity-type="{{ $activity->type }}"
+                                                {{ $hasJoined ? 'disabled' : '' }}>
+                                                <i class="fas fa-check-circle"></i>
+                                                {{ $hasJoined ? 'Already Joined' : 'Join' }}
+                                            </button>
+                                        @endif
                                         <button class="btn btn-dark view-button" data-activity-id="{{ $activity->id }}"
                                             data-bs-toggle="modal" data-bs-target="#activityDetailsModal">
                                             <i class="fas fa-eye"></i> View
@@ -108,8 +131,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="emergency_contact_number" class="form-label">Emergency Contact Number</label>
-                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact" name="emergency_contact"
-                                placeholder="Enter Emergency Contact Number" required>
+                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact"
+                                name="emergency_contact" placeholder="Enter Emergency Contact Number" required>
                         </div>
                         <div class="mb-3">
                             <label for="medical_certificate" class="form-label">Certificate of Registration</label>
@@ -181,7 +204,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('activity-registration.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('activity-registration.store') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" id="activityId" name="activity_id">
 
@@ -207,8 +231,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="emergency_contact_number" class="form-label">Emergency Contact Number</label>
-                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact" name="emergency_contact"
-                                placeholder="Enter Emergency Contact Number" required>
+                            <input type="tel" class="form-control" maxlength="11" id="emergency_contact"
+                                name="emergency_contact" placeholder="Enter Emergency Contact Number" required>
                         </div>
                         <div class="mb-3">
                             <label for="medical_certificate" class="form-label">Certificate of Registration</label>
@@ -221,14 +245,64 @@
                         </div>
                         <div class="mb-3">
                             <label for="other_file" class="form-label">Other File</label>
-                            <input type="file" class="form-control" id="other_file" name="other_file"
-                                required>
+                            <input type="file" class="form-control" id="other_file" name="other_file" required>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="joinPracticeModal" tabindex="-1" aria-labelledby="joinPracticeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="joinPracticeModalLabel">Join Practice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="practiceForm" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <p>Are you sure you want to join?</p>
+                        <input type="hidden" name="status" value="1">
+                        <input type="hidden" name="activity_id" id="practiceActivityId">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="notGoingPracticeModal" tabindex="-1" aria-labelledby="notGoingPracticeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notGoingPracticeModalLabel">Join Practice</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="" id="notGoingForm" method="POST">
+                        @csrf
+                        <p>Why are you not going?</p>
+                        <input type="hidden" name="status" value="0">
+                        <input type="hidden" name="activity_id" id="notGoingActivityId">
+                        <textarea name="reason" id="" rows="2" class="form-control" placeholder="Reason"></textarea>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </div>
@@ -240,18 +314,19 @@
         $(document).ready(function() {
 
             $('#search').on('input', function() {
-            var searchQuery = $(this).val().toLowerCase(); // Get the search input and convert to lowercase
+                var searchQuery = $(this).val()
+                    .toLowerCase(); // Get the search input and convert to lowercase
 
-            // Loop through each activity card and show/hide based on the title
-            $('.activity-card').each(function() {
-                var title = $(this).data('title'); // Get the title from the data attribute
-                if (title.includes(searchQuery)) {
-                    $(this).show(); // Show the card if it matches the search
-                } else {
-                    $(this).hide(); // Hide the card if it doesn't match
-                }
+                // Loop through each activity card and show/hide based on the title
+                $('.activity-card').each(function() {
+                    var title = $(this).data('title'); // Get the title from the data attribute
+                    if (title.includes(searchQuery)) {
+                        $(this).show(); // Show the card if it matches the search
+                    } else {
+                        $(this).hide(); // Hide the card if it doesn't match
+                    }
+                });
             });
-        });
 
             $('.join-button').on('click', function() {
                 var activityType = $(this).data('activity-type');
@@ -263,10 +338,8 @@
                 } else if (activityType == 0) { // Tryouts or Audition
                     $('#tryoutAuditionModal').modal('show');
                     $('#activityId').val(activityId); // Set the hidden input for the form
-                } else if ( activityType == 1) {
-                    
-                } else {
-                    alert("Joined successfully!");
+                } else if (activityType == 1) {
+
                 }
             });
 
@@ -295,6 +368,18 @@
                     }
                 });
             });
+
+            $('.join-practice').click(function() {
+                const activityId = $(this).data('id');
+                $('#practiceActivityId').val(activityId);
+                $('#practiceForm').attr('action', '/practice/')
+            })
+
+            $('.not-going').click(function() {
+                const activityId = $(this).data('id');
+                $('#notGoingActivityId').val(activityId);
+                $('#notGoingForm').attr('action', '/practice/')
+            })
 
         });
     </script>
