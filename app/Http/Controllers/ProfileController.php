@@ -37,7 +37,7 @@ class ProfileController extends Controller
         }
 
         // Update password only if provided
-        if ($request->filled('new_password')) {
+        if ($request->filled('password')) {
             $user->update(['password' => Hash::make($request->password)]);
         }
 

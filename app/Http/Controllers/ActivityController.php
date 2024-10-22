@@ -14,7 +14,11 @@ class ActivityController extends Controller
      */
     public function index()
     {
-        return view('admin-sport.activity.index', ['activities' => Activity::where('user_id', Auth::id())->get(), 'user' => Auth::user()->load('organization')]);
+        return view('admin-sport.activity.index', [
+            'activities' => Activity::where('user_id', Auth::id())
+                ->whereIn('status', [0, 2])->get(),
+            'user' => Auth::user()->load('organization')
+        ]);
     }
 
     /**
@@ -72,7 +76,7 @@ class ActivityController extends Controller
      */
     public function update(StoreActivityRequest $request, Activity $activity)
     {
-        $activity->update($request->validated());
+        $activity->update($request->validated() + ['status' => 0]);
 
         alert()->success('Activity updated successfully');
         return redirect()->route('activity.index');

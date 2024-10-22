@@ -15,9 +15,8 @@ class ProfileUpdateRequest extends FormRequest
             'birthdate' => ['nullable', 'date'],
             'gender' => ['nullable',],
             'contact' => ['nullable', 'string', 'min:10', 'max:15'],
-            'old_password' => ['required_with:new_password'], // Old password required only if changing password
-            'new_password' => ['nullable', 'string', 'min:8', 'confirmed'], // Ensure new password follows the same rules
-            'confirm_password' => ['nullable', 'string', 'min:8'], // Confirm password rule
+            'old_password' => ['required_with:password'], // Old password required only if changing password
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'], // Ensure new password follows the same rules
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'], // Max 2MB for avatar
             'suffix' => ['nullable', 'string', 'max:10'], // Suffix is optional
             'campus_id' => ['nullable', 'exists:campuses,id'], // Ensure campus exists

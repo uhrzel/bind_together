@@ -8,6 +8,7 @@ use App\Http\Controllers\CalendarOfActivityController;
 use App\Http\Controllers\CampusController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DeactivatePostController;
+use App\Http\Controllers\DeletedActivityController;
 use App\Http\Controllers\DeletedCommentController;
 use App\Http\Controllers\DeletedPostController;
 use App\Http\Controllers\FeedbackController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\ReportedCommentController;
 use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\ReportGenerationViewController;
 use App\Http\Controllers\SportController;
+use App\Http\Controllers\StatusActivityController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Requests\EmailVerificationRequest;
@@ -72,6 +74,8 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::delete('comments/{commentId}', [CommentController::class, 'destroy'])->name('comments.destroy');
     Route::post('newsfeed-like', NewsfeedLikeController::class)->name('newsfeed.like');
     Route::get('fetch-activity/{activityId}', FetchActivityRegistration::class)->name('fetch.activities');
+    Route::post('delete-activity/{activityId}', StatusActivityController::class)->name('delete.activity');
+    Route::get('deleted-activities', DeletedActivityController::class)->name('deleted.activities');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

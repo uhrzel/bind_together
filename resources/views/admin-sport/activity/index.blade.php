@@ -53,7 +53,7 @@
                                     <td>{{ $activity->venue }}</td>
                                     @if ($activity->target_player == 0)
                                         <td>All Students</td>
-                                        @else
+                                    @else
                                         <td>Official Players</td>
                                     @endif
                                     <td>
@@ -78,7 +78,8 @@
                                             data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
-                                        <button type="button" class="btn btn-danger">Delete</button>
+                                        <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal" data-id="{{ $activity->id }}">Delete</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -219,8 +220,7 @@
                         <!-- Target Players -->
                         <div class="col-md-6">
                             <label for="target_players" class="form-label">Target players</label>
-                            <input type="text" class="form-control"
-                                id="view_target_players" readonly>
+                            <input type="text" class="form-control" id="view_target_players" readonly>
                         </div>
                     </div>
 
@@ -232,13 +232,13 @@
                     <div class="row">
                         <div class="form-group col">
                             <label for="activity_type" class="form-label">Activity Type</label>
-                            <input type="text" class="form-control" value="" id="view_type"
-                                readonly>
+                            <input type="text" class="form-control" value="" id="view_type" readonly>
                         </div>
                         @if (auth()->user()->hasRole('coach'))
                             <div class="form-group col">
                                 <label for="organization">Sport</label>
-                                <input type="text" value="{{ auth()->user()->sport->name }}" id="view_sport_id" class="form-control" readonly>
+                                <input type="text" value="{{ auth()->user()->sport->name }}" id="view_sport_id"
+                                    class="form-control" readonly>
                             </div>
                         @elseif (auth()->user()->hasRole('adviser'))
                             <div class="form-group col">
@@ -253,15 +253,13 @@
                         <!-- Activity Start Date -->
                         <div class="col-md-6">
                             <label for="start_date" class="form-label">Activity Start Date</label>
-                            <input type="text" class="form-control"
-                                value="" id="view_start_date" readonly>
+                            <input type="text" class="form-control" value="" id="view_start_date" readonly>
                         </div>
 
                         <!-- Activity End Date -->
                         <div class="col-md-6">
                             <label for="end_date" class="form-label">Activity End Date</label>
-                            <input type="text" class="form-control"
-                                value="" id="view_end_date" readonly>
+                            <input type="text" class="form-control" value="" id="view_end_date" readonly>
                         </div>
                     </div>
 
@@ -397,6 +395,31 @@
         </div>
     </div>
 
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="deleteForm" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        Are you sure you want to delete this?
+                        <input type="hidden" name="status" value="2">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -430,20 +453,25 @@
         }
 
         $(() => {
-            $('.viewBtn').click(function () {
+            $('.viewBtn').click(function() {
                 fetch('/activity/' + $(this).data('id'))
-                .then(response => response.json())
-                .then(activity => {
-                    $('#view_title').val(activity.title)
-                    $('#view_target_players').val(activity.target_player)
-                    $('#view_content').val(activity.content)
-                    $('#view_type').val(activity.type)
-                    $('#view_start_date').val(activity.start_date)
-                    $('#view_end_date').val(activity.end_date)
-                    $('#view_venue').val(activity.venue)
-                    $('#view_address').val(activity.address)
-                })
+                    .then(response => response.json())
+                    .then(activity => {
+                        $('#view_title').val(activity.title)
+                        $('#view_target_players').val(activity.target_player)
+                        $('#view_content').val(activity.content)
+                        $('#view_type').val(activity.type)
+                        $('#view_start_date').val(activity.start_date)
+                        $('#view_end_date').val(activity.end_date)
+                        $('#view_venue').val(activity.venue)
+                        $('#view_address').val(activity.address)
+                    })
             })
+
+            $('.deleteBtn').click(function() {
+                $('#deleteForm').attr('action', 'delete-activity/' + $(this).data('id'));
+            })
+
         })
     </script>
 @endpush

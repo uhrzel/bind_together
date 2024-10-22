@@ -240,6 +240,7 @@
                                                 </div>
 
                                                 <!-- School Information Section -->
+                                                @student
                                                 <h5 class="text-primary mt-2">School information</h5>
                                                 <div class="row mb-3">
                                                     {{-- <div class="col-md-6">
@@ -289,7 +290,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
+                                                @endstudent
                                                 <!-- Submit Button -->
                                                 <div class="text-end">
                                                     <button type="submit" class="btn btn-danger">Submit</button>
@@ -353,7 +354,7 @@
                                                         <label for="new_password" class="form-label">New password</label>
                                                         <div class="input-group">
                                                             <input type="password" class="form-control" id="new_password"
-                                                                name="new_password" placeholder="Password">
+                                                                name="password" placeholder="Password">
                                                             <span class="input-group-text toggle-password"
                                                                 data-target="new_password">
                                                                 <i class="fas fa-eye"></i>
@@ -368,14 +369,10 @@
                                                 <!-- Confirm Password -->
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
-                                                        <label for="confirm_password" class="form-label">Confirm
-                                                            password</label>
+                                                        <label for="password_confirmation" class="form-label">Confirm password</label>
                                                         <div class="input-group">
-                                                            <input type="password" class="form-control"
-                                                                id="confirm_password" name="confirm_password"
-                                                                placeholder="Confirm password">
-                                                            <span class="input-group-text toggle-password"
-                                                                data-target="confirm_password">
+                                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
+                                                            <span class="input-group-text toggle-password" data-target="password_confirmation">
                                                                 <i class="fas fa-eye"></i>
                                                             </span>
                                                         </div>
