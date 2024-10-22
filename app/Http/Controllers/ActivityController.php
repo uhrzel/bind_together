@@ -16,9 +16,9 @@ class ActivityController extends Controller
     {
         return view('admin-sport.activity.index', [
             'activities' => Activity::where('user_id', Auth::id())
-                ->whereIn('status', [0, 2])->get(),
-            'user' => Auth::user()->load('organization')
-        ]);
+            ->get(),
+             'user' => Auth::user()->load('organization')
+            ]);
     }
 
     /**
@@ -30,25 +30,42 @@ class ActivityController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+ * Store a newly created resource in storage.
      */
     public function store(StoreActivityRequest $request)
     {
-        if ($request->hasFile('attachment')) {
-            $paths = [];
-
-            foreach ($request->file('attachment') as $file) {
-                $path = $file->store('attachments', 'public');
-                $paths[] = $path;
-            }
-
-            $data = $request->except('attachment') + ['attachment' => json_encode($paths), 'user_id' => Auth::id(), 'status' => 0];
-        } else {
-            $data = $request->validated();
+        // Determine the status based on the type and user roles
+        $status = 0; // Default status
+    
+        // Set status to 1 if the type is 2 or 3
+        if (in_array($request->input('type'), [2, 3])) {
+            $status = 1;
         }
-
+    
+        // Set status to 1 if the user has 'admin_org' or 'admin_sport' roles
+        if (auth()->user()->hasRole(['admin_org', 'admin_sport'])) {
+            $status = 1;
+        }
+        
+        // Handle file attachment if it exists
+        if ($request->hasFile('attachment')) {
+            $path = $request->file('attachment')->store('attachments', 'public');
+            $data = $request->except('attachment') + [
+                'attachment' => $path, 
+                'user_id' => Auth::id(), 
+                'status' => $status
+            ];
+        } else {
+            $data = $request->validated() + [
+                'status' => $status, 
+                'user_id' => Auth::id()
+            ];
+        }
+    
+        // Create the activity
         Activity::create($data);
-
+    
+        // Show success message
         alert()->success('Activity created successfully');
         return redirect()->route('activity.index');
     }
