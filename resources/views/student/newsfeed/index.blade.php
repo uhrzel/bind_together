@@ -554,18 +554,27 @@
 
         $(document).ready(function() {
 
+            // Like button functionality
             $('.like-btn').on('click', function(e) {
                 e.preventDefault();
 
                 var newsfeedId = $(this).data('newsfeed-id');
                 var status = 1; // Status for like (1)
 
+                // Check if the like button is already active
+                var isLiked = $(this).hasClass('btn-primary');
+
+                // If already liked, the user is "unliking"
+                if (isLiked) {
+                    status = null; // Set status to null for removing the like
+                }
+
                 $.ajax({
-                    url: '/newsfeed-like', // Make sure this matches your route
+                    url: '/newsfeed-like',
                     type: 'POST',
                     data: {
                         newsfeed_id: newsfeedId,
-                        status: status,
+                        status: status, // Sending null will remove the reaction
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
@@ -573,11 +582,16 @@
                         $('#like-count-' + newsfeedId).text(response.likes_count);
                         $('#dislike-count-' + newsfeedId).text(response.dislikes_count);
 
-                        // Highlight the like button and remove highlight from the dislike button
-                        $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
-                            'btn-primary').removeClass('btn-light');
-                        $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
-                            'btn-primary').addClass('btn-light');
+                        // Toggle the like button class based on current status
+                        if (status === 1) {
+                            $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
+                                'btn-primary').removeClass('btn-light');
+                            $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]')
+                                .removeClass('btn-primary').addClass('btn-light');
+                        } else {
+                            $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
+                                'btn-primary').addClass('btn-light');
+                        }
                     },
                     error: function(xhr) {
                         console.error('Error occurred:', xhr.responseText);
@@ -592,30 +606,42 @@
                 var newsfeedId = $(this).data('newsfeed-id');
                 var status = 0; // Status for dislike (0)
 
+                // Check if the dislike button is already active
+                var isDisliked = $(this).hasClass('btn-primary');
+
+                // If already disliked, the user is "undisliking"
+                if (isDisliked) {
+                    status = null; // Set status to null for removing the dislike
+                }
+
                 $.ajax({
-                    url: '/newsfeed-like', // Make sure this matches your route
+                    url: '/newsfeed-like',
                     type: 'POST',
                     data: {
                         newsfeed_id: newsfeedId,
-                        status: status,
+                        status: status, // Sending null will remove the reaction
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
-                        // Update the like and dislike counts dynamically
                         $('#like-count-' + newsfeedId).text(response.likes_count);
                         $('#dislike-count-' + newsfeedId).text(response.dislikes_count);
 
-                        // Highlight the dislike button and remove highlight from the like button
-                        $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
-                            'btn-primary').removeClass('btn-light');
-                        $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
-                            'btn-primary').addClass('btn-light');
+                        if (status === 0) {
+                            $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]').addClass(
+                                'btn-primary').removeClass('btn-light');
+                            $('.like-btn[data-newsfeed-id="' + newsfeedId + '"]').removeClass(
+                                'btn-primary').addClass('btn-light');
+                        } else {
+                            $('.dislike-btn[data-newsfeed-id="' + newsfeedId + '"]')
+                                .removeClass('btn-primary').addClass('btn-light');
+                        }
                     },
                     error: function(xhr) {
                         console.error('Error occurred:', xhr.responseText);
                     }
                 });
             });
+
 
             $('.edit-btn').on('click', function(e) {
                 e.preventDefault();

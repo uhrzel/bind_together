@@ -72,7 +72,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <ul class="list-unstyled">
-                                <li><strong>Sport Name:</strong> <span id="activity-sport-name"></span></li>
+                                <li id="sport"><strong>Sport Name:</strong> <span id="activity-sport-name"></span></li>
                                 <li><strong>Title:</strong> <span id="activity-title"></span></li>
                                 <li><strong>Target Players:</strong> <span id="activity-target-players"></span></li>
                                 <li><strong>Content:</strong> <span id="activity-content"></span></li>
@@ -98,6 +98,23 @@
 @push('scripts')
     <script>
         $(() => {
+
+            $('#search').on('input', function() {
+                var searchQuery = $(this).val().toLowerCase();
+
+                // Loop through each activity card and check if the title matches the search query
+                $('.card-title').each(function() {
+                    var activityTitle = $(this).text().toLowerCase();
+
+                    // If the activity title contains the search query, show it, otherwise hide it
+                    if (activityTitle.includes(searchQuery)) {
+                        $(this).closest('.col-md-4').show(); // Show the parent card
+                    } else {
+                        $(this).closest('.col-md-4').hide(); // Hide the parent card
+                    }
+                });
+            });
+
             $('.view-button').on('click', function() {
                 var activityId = $(this).data('activity-id');
                 var baseUrl = "{{ asset('/storage/') }}";
@@ -105,7 +122,9 @@
                     url: '/activity/' + activityId,
                     method: 'GET',
                     success: function(data) {
-                        console.log(data)
+                        console.log(data);
+
+                        // Populate fields with data
                         $('#activity-sport-name').text((data.sport && data.sport.name) || '');
                         $('#activity-title').text(data.title);
                         $('#activity-target-players').text(data.target_player === 1 ?
@@ -117,11 +136,19 @@
                         $('#activity-address').text(data.address);
                         $('#activity-image').attr('src', data.attachment ? baseUrl + '/' + data
                             .attachment : '/path-to-placeholder-image.jpg');
+
+                        // Conditionally hide the #sports element based on data.type
+                        if (data.type == 3) {
+                            $('#sports').hide(); // Hide the sport name if type is 3
+                        } else {
+                            $('#sports').show(); // Show the sport name for other types
+                        }
                     },
                     error: function(xhr) {
                         alert('Error fetching activity details.');
                     }
                 });
+
             });
         })
     </script>

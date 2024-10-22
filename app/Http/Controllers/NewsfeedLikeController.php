@@ -15,7 +15,7 @@ class NewsfeedLikeController extends Controller
     {
         $request->validate([
             'newsfeed_id' => 'required|exists:newsfeeds,id',
-            'status' => 'required|integer|in:0,1',
+            'status' => 'nullable|integer|in:0,1',  // Make status nullable to allow removing the reaction
         ]);
 
         // Check if the like/dislike already exists
@@ -24,15 +24,22 @@ class NewsfeedLikeController extends Controller
             ->first();
 
         if ($newsfeedLike) {
-            // Update the status if it exists
-            $newsfeedLike->update(['status' => $request->status]);
+            // If the status is null, the user is "unliking" or "undisliking"
+            if (is_null($request->status)) {
+                $newsfeedLike->delete();  // Remove the like/dislike
+            } else {
+                // Otherwise, update the status if it's a like or dislike
+                $newsfeedLike->update(['status' => $request->status]);
+            }
         } else {
-            // Create a new like/dislike entry
-            NewsfeedLike::create([
-                'newsfeed_id' => $request->newsfeed_id,
-                'user_id' => Auth::id(),
-                'status' => $request->status,
-            ]);
+            // Create a new like/dislike entry if it doesn't exist
+            if (!is_null($request->status)) {
+                NewsfeedLike::create([
+                    'newsfeed_id' => $request->newsfeed_id,
+                    'user_id' => Auth::id(),
+                    'status' => $request->status,
+                ]);
+            }
         }
 
         // Get updated like and dislike counts
