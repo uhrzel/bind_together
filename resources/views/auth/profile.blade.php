@@ -227,7 +227,7 @@
                                                             number</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text">+63</span>
-                                                            <input type="number" class="form-control" maxlength="11"
+                                                            <input type="number" class="form-control" maxlength="10"
                                                                 id="contact_number" name="contact"
                                                                 value="{{ auth()->user()->contact }}">
                                                         </div>

@@ -13,8 +13,7 @@
                                 alt="{{ Auth::user()->firstname }}" style="width: 40px; height: 40px;">
                             <!-- Username -->
                             <div class="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-                                <span
-                                    class="mb-0 font-small fw-bold text-gray-900">{{ auth()->user()->firstname }}</span>
+                                <span class="mb-0 font-small fw-bold text-gray-900">{{ auth()->user()->firstname }}</span>
                             </div>
                         </div>
                     </a>
@@ -26,9 +25,8 @@
                             <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}" alt="Profile"
                                 class="rounded-circle mb-2" width="70" height="70"
                                 style="border: 3px solid white;">
-                            <h5 class="mb-0" style="color: white" >{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
-                            <small
-                                style="color: #fff;">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</small>
+                            <h5 class="mb-0" style="color: white">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
+                            <small style="color: #fff;">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</small>
                         </div>
 
                         <!-- Member Information -->
@@ -40,15 +38,12 @@
                         <div class="dropdown-divider"></div>
 
                         <!-- Profile Button -->
-                        <a class="dropdown-item text-center" href="{{ route('profile.show') }}"
-                            style="padding: 10px 0;">Profile</a>
+                        <a class="dropdown-item text-center" href="{{ route('profile.show') }}" style="padding: 10px 0;">Profile</a>
 
                         <!-- Sign Out Button -->
-                        <a class="dropdown-item text-center text-danger" href="{{ route('logout') }}"
-                            style="padding: 10px 0;"
-                            onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">Sign
-                            out</a>
+                        <a class="dropdown-item text-center text-danger" href="#" id="logout-link" style="padding: 10px 0;">
+                            Sign out
+                        </a>
                         <form method="POST" id="logout-form" action="{{ route('logout') }}" style="display: none;">
                             @csrf
                         </form>
@@ -58,3 +53,29 @@
         </div>
     </div>
 </nav>
+
+<!-- Include SweetAlert2 (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent the default action
+
+        // Display SweetAlert confirmation dialog
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If confirmed, submit the logout form
+                document.getElementById('logout-form').submit();
+            }
+        });
+    });
+</script>

@@ -36,6 +36,16 @@ class LoginController extends Controller
         return '/home';
     }
 
+
+    protected function authenticated(\Illuminate\Http\Request $request, $user)
+    {
+        // Trigger SweetAlert after successful login
+        alert()->success('Sign in successful', 'Redirecting...');
+
+        // Continue with the default redirect behavior
+        return redirect()->intended($this->redirectPath());
+    }
+
     /**
      * Create a new controller instance.
      *
