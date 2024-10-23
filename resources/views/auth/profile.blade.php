@@ -47,7 +47,8 @@
                                     class="rounded-circle" height="100" width="100" alt="AVATAR"> <br>
                                 <label for="">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</label>
                                 <br>
-                                <span class="badge bg-primary">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</span>
+                                <span
+                                    class="badge bg-primary">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</span>
                             </div>
                         </div>
                         <div class="col-8" style="margin-left: 40px">
@@ -89,10 +90,12 @@
                                                         <th class="text-info">Basic information</th>
                                                         <th></th>
                                                     </tr>
-                                                    <tr>
-                                                        <th>Student Number</th>
-                                                        <td>{{ auth()->user()->student_number }}</td>
-                                                    </tr>
+                                                    @if (!auth()->user()->isSuperAdmin())
+                                                        <tr>
+                                                            <th>Student Number</th>
+                                                            <td>{{ auth()->user()->student_number }}</td>
+                                                        </tr>
+                                                    @endif
                                                     <tr>
                                                         <th>Full Name</th>
                                                         <td>{{ auth()->user()->firstname }} {{ auth()->user()->middlename }}
@@ -130,26 +133,28 @@
 
                                             <!-- School Information Section -->
                                             {{-- <h5 class="text-primary">School information</h5> --}}
-                                            <table class="table">
-                                                <tbody>
-                                                    <tr>
-                                                        <th class="text-info">School Information</th>
-                                                        <td></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Campus name</th>
-                                                        <td>{{ auth()->user()->campus->name ?? '' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Program name</th>
-                                                        <td>{{ auth()->user()->program->name ?? '' }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Year level</th>
-                                                        <td>{{ auth()->user()->year_level ?? '' }}th Year</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            @student
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th class="text-info">School Information</th>
+                                                            <td></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Campus name</th>
+                                                            <td>{{ auth()->user()->campus->name ?? '' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Program name</th>
+                                                            <td>{{ auth()->user()->program->name ?? '' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Year level</th>
+                                                            <td>{{ auth()->user()->year_level ?? '' }}th Year</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            @endstudent
                                         </div>
                                         <div class="tab-pane fade" id="update-info" role="tabpanel"
                                             aria-labelledby="update-info-tab">
@@ -159,13 +164,13 @@
                                                 <h5 class="text-primary">Basic information</h5>
                                                 <div class="row mb-3">
                                                     @student
-                                                    <div class="col-md-6">
-                                                        <label for="student_number" class="form-label">Student
-                                                            Number</label>
-                                                        <input type="text" class="form-control" id="student_number"
-                                                            name="student_number"
-                                                            value="{{ auth()->user()->student_number }}" readonly>
-                                                    </div>
+                                                        <div class="col-md-6">
+                                                            <label for="student_number" class="form-label">Student
+                                                                Number</label>
+                                                            <input type="text" class="form-control" id="student_number"
+                                                                name="student_number"
+                                                                value="{{ auth()->user()->student_number }}" readonly>
+                                                        </div>
                                                     @endstudent
                                                     <div class="col-md-6">
                                                         <label for="firstname" class="form-label">First name</label>
@@ -241,55 +246,57 @@
 
                                                 <!-- School Information Section -->
                                                 @student
-                                                <h5 class="text-primary mt-2">School information</h5>
-                                                <div class="row mb-3">
-                                                    {{-- <div class="col-md-6">
+                                                    <h5 class="text-primary mt-2">School information</h5>
+                                                    <div class="row mb-3">
+                                                        {{-- <div class="col-md-6">
                                                         <label for="college" class="form-label">College</label>
                                                         <input type="text" value="CCST" class="form-control">
                                                     </div> --}}
-                                                    <div class="col-md-6 mt-2">
-                                                        <label for="campus_name" class="form-label">Campus name</label>
-                                                        <select name="campus_id" id="" class="form-select">
-                                                            <option value="" selected disabled>Select Campus</option>
-                                                            @foreach ($campuses as $campus)
-                                                                <option value="{{ $campus->id }}"
-                                                                    {{ auth()->user()->campus_id == $campus->id ? 'selected' : '' }}>
-                                                                    {{ $campus->name }}
+                                                        <div class="col-md-6 mt-2">
+                                                            <label for="campus_name" class="form-label">Campus
+                                                                name</label>
+                                                            <select name="campus_id" id="" class="form-select">
+                                                                <option value="" selected disabled>Select Campus
                                                                 </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                                                @foreach ($campuses as $campus)
+                                                                    <option value="{{ $campus->id }}"
+                                                                        {{ auth()->user()->campus_id == $campus->id ? 'selected' : '' }}>
+                                                                        {{ $campus->name }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
 
-                                                    <div class="col-md-6 mt-2">
-                                                        <label for="program" class="form-label">Program name</label>
-                                                        <select name="program_id" id="" class="form-select">
-                                                            <option value="" selected disabled>Select Program
-                                                            </option>
-                                                            @foreach ($programs as $program)
-                                                                <option value="{{ $program->id }}"
-                                                                    {{ auth()->user()->program_id == $program->id ? 'selected' : '' }}>
-                                                                    {{ $program->name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                        <div class="col-md-6 mt-2">
+                                                            <label for="program" class="form-label">Program name</label>
+                                                            <select name="program_id" id="" class="form-select">
+                                                                <option value="" selected disabled>Select Program
+                                                                </option>
+                                                                @foreach ($programs as $program)
+                                                                    <option value="{{ $program->id }}"
+                                                                        {{ auth()->user()->program_id == $program->id ? 'selected' : '' }}>
+                                                                        {{ $program->name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                        <div class="col mt-2">
+                                                            <label for="year_level" class="form-label">Year level</label>
+                                                            <select class="form-select" id="year_level" name="year_level">
+                                                                <option value="4"
+                                                                    {{ auth()->user()->year_level == '4' ? 'selected' : '' }}>
+                                                                    4th Year</option>
+                                                                <option value="3"
+                                                                    {{ auth()->user()->year_level == '3' ? 'selected' : '' }}>
+                                                                    3rd Year</option>
+                                                                <option value="2"
+                                                                    {{ auth()->user()->year_level == '2' ? 'selected' : '' }}>
+                                                                    2nd Year</option>
+                                                                <option value="1"
+                                                                    {{ auth()->user()->year_level == '1' ? 'selected' : '' }}>
+                                                                    1st Year</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                    <div class="col mt-2">
-                                                        <label for="year_level" class="form-label">Year level</label>
-                                                        <select class="form-select" id="year_level" name="year_level">
-                                                            <option value="4"
-                                                                {{ auth()->user()->year_level == '4' ? 'selected' : '' }}>
-                                                                4th Year</option>
-                                                            <option value="3"
-                                                                {{ auth()->user()->year_level == '3' ? 'selected' : '' }}>
-                                                                3rd Year</option>
-                                                            <option value="2"
-                                                                {{ auth()->user()->year_level == '2' ? 'selected' : '' }}>
-                                                                2nd Year</option>
-                                                            <option value="1"
-                                                                {{ auth()->user()->year_level == '1' ? 'selected' : '' }}>
-                                                                1st Year</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
                                                 @endstudent
                                                 <!-- Submit Button -->
                                                 <div class="text-end">
@@ -369,10 +376,14 @@
                                                 <!-- Confirm Password -->
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
-                                                        <label for="password_confirmation" class="form-label">Confirm password</label>
+                                                        <label for="password_confirmation" class="form-label">Confirm
+                                                            password</label>
                                                         <div class="input-group">
-                                                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Confirm password">
-                                                            <span class="input-group-text toggle-password" data-target="password_confirmation">
+                                                            <input type="password" class="form-control"
+                                                                id="password_confirmation" name="password_confirmation"
+                                                                placeholder="Confirm password">
+                                                            <span class="input-group-text toggle-password"
+                                                                data-target="password_confirmation">
                                                                 <i class="fas fa-eye"></i>
                                                             </span>
                                                         </div>

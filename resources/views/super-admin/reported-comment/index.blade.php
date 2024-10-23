@@ -59,16 +59,18 @@
                                     {{-- @dd($reportedComment->user) --}}
                                     <!-- Owner of the Comment -->
                                     <td>{{ $reportedComment->user->firstname }} {{ $reportedComment->user->lastname }}</td>
-                    
+
                                     <!-- Report Count -->
-                                    <td>{{ $reportedComment->report_count }}</td> <!-- Count of users who reported the comment -->
-                    
+                                    <td>{{ $reportedComment->report_count }}</td>
+                                    <!-- Count of users who reported the comment -->
+
                                     <!-- Reported By (First User who reported the comment) -->
-                                    <td>{{ $reportedComment->reportedComments->first()->user->firstname }} {{ $reportedComment->reportedComments->first()->user->lastname }}</td>
-                    
+                                    <td>{{ $reportedComment->reportedComments->first()->user->firstname }}
+                                        {{ $reportedComment->reportedComments->first()->user->lastname }}</td>
+
                                     <!-- Report Reason -->
                                     <td>{{ $reportedComment->reportedComments->first()->reason }}</td>
-                    
+
                                     <!-- Status Badge -->
                                     <td>
                                         @if ($reportedComment->reportedComments->first()->status == 1)
@@ -79,22 +81,30 @@
                                             <span class="badge bg-success">Approved</span>
                                         @endif
                                     </td>
-                    
+
                                     <!-- Date Reported (earliest report) -->
                                     <td>{{ $reportedComment->reportedComments->first()->created_at->format('Y-m-d') }}</td>
-                    
+
                                     <!-- Action Buttons (Approve/Decline) -->
                                     <td>
                                         @php $isDisabled = $reportedComment->status != 1; @endphp
-                                        <button class="btn btn-primary approve" data-bs-toggle="modal" data-bs-target="#actionModal"
-                                            onclick="setStatus(2, {{ $reportedComment->reportedComments->first()->id }})" data-id="{{ $reportedComment->reportedComments->first()->id }}" {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
-                                        <button class="btn btn-warning decline" data-bs-toggle="modal" data-bs-target="#declineModal"
-                                            onclick="setStatus(0, {{ $reportedComment->reportedComments->first()->id }})" data-id="{{ $reportedComment->reportedComments->first()->id }}" {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
+
+                                        <button class="btn btn-primary approve" data-bs-toggle="modal"
+                                            data-bs-target="#actionModal"
+                                            onclick="setStatus(2, {{ $reportedComment->reportedComments->first()->id }})"
+                                            data-id="{{ $reportedComment->id }}"
+                                            {{ $isDisabled ? 'disabled' : '' }}>Approve</button>
+
+                                        <button class="btn btn-warning decline" data-bs-toggle="modal"
+                                            data-bs-target="#declineModal"
+                                            onclick="setStatus(0, {{ $reportedComment->reportedComments->first()->id }})"
+                                            data-id="{{ $reportedComment->id }}"
+                                            {{ $isDisabled ? 'disabled' : '' }}>Decline</button>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
-                    </table>                    
+                    </table>
                 </div>
             </div>
         </div>

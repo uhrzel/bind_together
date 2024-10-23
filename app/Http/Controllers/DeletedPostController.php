@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDeletedPostRequest;
 use App\Models\DeletedPost;
+use App\Models\ReportedPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,11 @@ class DeletedPostController extends Controller
      */
     public function index()
     {
-        return view('super-admin.deleted-post.index', ['deletedPosts' => DeletedPost::with('newsfeed.user', 'user')->get()]);
+        return view('super-admin.deleted-post.index', [
+            'deletedPosts' => DeletedPost::with('newsfeed.user', 'user')
+                ->where('status', 0)
+                ->get()
+        ]);
     }
 
     /**
@@ -30,7 +35,9 @@ class DeletedPostController extends Controller
      */
     public function store(StoreDeletedPostRequest $request)
     {
-        $deleted = DeletedPost::create($request->validated() + ['user_id' => Auth::id()]);
+        $deleted = ReportedPost::create($request->validated() + [
+            'user_id' => Auth::id()
+        ]);
 
         $deleted->newsfeed()->update(['status' => 0]);
 
@@ -59,7 +66,7 @@ class DeletedPostController extends Controller
      */
     public function update(Request $request, DeletedPost $deletedPost)
     {
-        $deletedPost->update(['status' => 0]);
+        $deletedPost->update(['status' => 1]);
         $deletedPost->newsfeed()->update(['status' => 1]);
 
         alert()->success('Post restored successfully');

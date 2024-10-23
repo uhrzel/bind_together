@@ -1,42 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-
-<div class="container-fluid">
-    <div class="card">
-        <div class="card-header">
-            <h4>Deleted Comment</h4>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="datatable" class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Content</th>
-                            <th>Owner</th>
-                            <th>Reason for Deletion</th>
-                            <th>Date Posted</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($deletedComments as $deletedComment)
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h4>Deleted Comment</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="datatable" class="table table-bordered">
+                        <thead>
                             <tr>
-                                <td>{{ $deletedComment->reason }}</td>
-                                <td>{{ $deletedComment->comments->user->firstname }} {{ $deletedComment->comments->user->lastname }} </td>
-                                <td>{{ $deletedComment->reason }} {{ $deletedComment->other_reason }} </td>
-                                <td>{{ $deletedComment->comments->created_at }} </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger restore" data-bs-toggle="modal" data-bs-target="#restoreModal" data-id="{{ $deletedComment->id }}">Restore</button>
-                                </td>
+                                <th>Content</th>
+                                <th>Owner</th>
+                                <th>Reason for Deletion</th>
+                                <th>Date Posted</th>
+                                <th>Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($deletedComments as $deletedComment)
+                                <tr>
+                                    <td>{{ $deletedComment->description }}</td>
+                                    <td>{{ $deletedComment->user->firstname }} {{ $deletedComment->user->lastname }} </td>
+                                    <td>{{ $deletedComment->reportedComments[0]->reason ?? '' }}
+                                        {{ $deletedComment->reportedComments[0]->other_reason ?? '' }} </td>
+                                    <td>{{ $deletedComment->created_at }} </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger restore" data-bs-toggle="modal"
+                                            data-bs-target="#restoreModal"
+                                            data-id="{{ $deletedComment->id }}">Restore</button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
     <!-- Modal Structure -->
@@ -71,7 +73,7 @@
         $(() => {
             $('#datatable').DataTable();
 
-            $('.restore').click(function () {
+            $('.restore').click(function() {
                 $('#restoreForm').attr('action', '/deleted-comment/' + $(this).data('id'));
             });
 
