@@ -23,7 +23,7 @@ class StoreNewsfeedRequest extends FormRequest
     {
         return [
             'description' => ['nullable', 'string', 'max:255'],
-            'attachments.*' => ['file', 'mimes:jpeg,png,jpg,gif,mp4', 'max:1024000'],
+            'attachments.*' => ['file', 'max:1024000'],
         ];
     }
 }
