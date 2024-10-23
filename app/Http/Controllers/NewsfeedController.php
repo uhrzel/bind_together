@@ -20,7 +20,8 @@ class NewsfeedController extends Controller
         $newsfeeds = Newsfeed::with([
             'user',
             'newsfeedFiles',
-            'comments.user',
+            'comments' => fn ($q) => $q->where('status', 1)
+                ->with('user'),
             'newsfeedLikes'
         ])
             ->withCount([
@@ -31,6 +32,7 @@ class NewsfeedController extends Controller
                     $query->where('status', 0); // Count dislikes
                 },
             ])
+            ->where('status', '!=', 2)
             ->get()
             ->map(function ($newsfeed) {
                 // Check if the current user liked or disliked the post

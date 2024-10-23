@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -15,8 +16,18 @@ class ProfileUpdateRequest extends FormRequest
             'birthdate' => ['nullable', 'date'],
             'gender' => ['nullable',],
             'contact' => ['nullable', 'string', 'min:10', 'max:15'],
+            'password' => [
+                'nullable',
+                'string',
+                'confirmed',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->letters()
+                    ->uncompromised()
+            ], // Ensure new password follows the same rules
             'old_password' => ['required_with:password'], // Old password required only if changing password
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'], // Ensure new password follows the same rules
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'], // Max 2MB for avatar
             'suffix' => ['nullable', 'string', 'max:10'], // Suffix is optional
             'campus_id' => ['nullable', 'exists:campuses,id'], // Ensure campus exists

@@ -13,6 +13,7 @@ class ProfileController extends Controller
 {
     public function show()
     {
+
         return view('auth.profile', [
             'organizations' => Organization::all(),
             'campuses' => Campus::all(),

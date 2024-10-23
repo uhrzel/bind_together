@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DeletedPost;
 use App\Models\ReportedPost;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,11 @@ class ReportedPostController extends Controller
      */
     public function index()
     {
-        return view('super-admin.reported-post.index', ['reportedNewsfeeds' => ReportedPost::with('newsfeed.user', 'user')->get()]);
+        return view('super-admin.reported-post.index', [
+            'reportedNewsfeeds' => ReportedPost::with('newsfeed.user', 'user')
+                ->where('status', '!=', 2)
+                ->get()
+        ]);
     }
 
     /**
@@ -75,6 +80,19 @@ class ReportedPostController extends Controller
     public function update(Request $request, ReportedPost $reportedPost)
     {
         $reportedPost->update(['status' => $request->status]);
+
+        if ($request->status == 2) {
+            // deleted
+            $reportedPost->newsfeed()->update(['status' => 2]);
+        }
+
+        DeletedPost::create([
+            'newsfeed_id' => $reportedPost->newsfeed_id,
+            'user_id' => $reportedPost->user_id,
+            'reason' => $reportedPost->reason,
+            'other_reason' => $reportedPost->other_reason,
+            'status' => 0,
+        ]);
 
         alert()->success('Reported post status has been updated');
         return redirect()->route('reported-post.index');

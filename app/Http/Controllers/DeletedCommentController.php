@@ -17,26 +17,24 @@ class DeletedCommentController extends Controller
     public function index()
     {
         $reportedComments = Comments::withWhereHas('reportedComments', function ($query) {
-            $query->where('status', 0); // Only get comments with status 0
+            $query->where('status', 2); // Only get comments with status 0
         })
-        ->with([
-            'user', // Eager load the user for the comment
-            'reportedComments' => function ($query) {
-                $query->where('status', 0); // Only load reportedComments with status 0
-            }
-        ])
-        ->withCount([
-            'reportedComments as report_count' => function ($query) {
-                $query->where('status', 0); // Count reportedComments with status 0
-            }
-        ])
-        ->get();
-    
-        dd($reportedComments);
-
+            ->with([
+                'user', // Eager load the user for the comment
+                'reportedComments' => function ($query) {
+                    $query->where('status', 2); // Only load reportedComments with status 0
+                }
+            ])
+            ->withCount([
+                'reportedComments as report_count' => function ($query) {
+                    $query->where('status', 0); // Count reportedComments with status 0
+                }
+            ])
+            ->where('status', 2)
+            ->get();
 
         return view('super-admin.deleted-comment.index', [
-            'deletedComments' => ReportedComment::with('comments.user', 'user')->where('status', 0)->get()
+            'deletedComments' => $reportedComments,
         ]);
     }
 
@@ -82,9 +80,8 @@ class DeletedCommentController extends Controller
      */
     public function update(Request $request, int $commentId)
     {
-        $deletedComment = ReportedComment::find($commentId);
+        $deletedComment = Comments::find($commentId);
         $deletedComment->update(['status' => 1]);
-        // $deletedComment->newsfeed()->update(['status' => 1]);
 
         alert()->success('Comment restored successfully');
         return redirect()->back();

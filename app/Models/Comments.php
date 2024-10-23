@@ -20,7 +20,7 @@ class Comments extends Model
         'status',
     ];
 
-    public function newsfeed(): BelongsTo
+    public function newsfeed(): BelongsTo   
     {
         return $this->belongsTo(Newsfeed::class);
     }

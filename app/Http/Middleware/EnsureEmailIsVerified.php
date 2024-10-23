@@ -21,7 +21,7 @@ class EnsureEmailIsVerified
             // Log the user out
             Auth::logout();
 
-            alert()->warning('Pleastitle: e verify your email first');
+            alert()->warning('Please verify your email first');
 
             return Redirect::route('login');
         }

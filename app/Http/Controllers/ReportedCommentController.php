@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comments;
+use App\Models\DeletedComment;
 use App\Models\ReportedComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,21 +16,21 @@ class ReportedCommentController extends Controller
     public function index()
     {
         $reportedComments = Comments::where('status', 1)
-    ->withWhereHas('reportedComments', function ($query) {
-        $query->whereIn('status', [1, 2]);
-    })
-    ->with([
-        'user',
-        'reportedComments' => function ($query) {
-            $query->whereIn('status', [1, 2]);
-        }
-    ])
-    ->withCount([
-        'reportedComments as report_count' => function ($query) {
-            $query->whereIn('status', [1, 2]);
-        }
-    ])
-    ->get();
+            ->withWhereHas('reportedComments', function ($query) {
+                $query->whereIn('status', [1, 2]);
+            })
+            ->with([
+                'user',
+                'reportedComments' => function ($query) {
+                    $query->whereIn('status', [1, 2]);
+                }
+            ])
+            ->withCount([
+                'reportedComments as report_count' => function ($query) {
+                    $query->whereIn('status', [1, 2]);
+                }
+            ])
+            ->get();
 
         return view('super-admin.reported-comment.index', compact('reportedComments'));
     }
@@ -95,19 +96,20 @@ class ReportedCommentController extends Controller
     public function update(Request $request, int $reportedComment)
     {
         // $comment = $reportedComment->comments_id;
-        dd(Comments::find($reportedComment));
-        $reports = ReportedComment::where('comments_id', $reportedComment)->get();
-        if ($request->status == 2)
-        {
-            Comments::find($reportedComment)->update(['status' => 0]);
+
+        $comment = Comments::with('reportedComments')->find($reportedComment);
+        if ($request->status == 2) {
+            $comment->update(['status' => 0]);
         }
 
-        foreach ($reports as $report) {
-            $report->update([
-                'status' => $request->status,
+        
+        foreach ($comment->reportedComments as $rComment) {
+            $rComment->update([
+                'status' => $request->status, 
                 'declined_reason' => $request->declined_reason ?? ''
             ]);
         }
+
 
         alert()->success('Reported comment status has been updated');
         return redirect()->back();
