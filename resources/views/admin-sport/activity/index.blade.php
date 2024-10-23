@@ -73,13 +73,15 @@
                                     <td>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editCompetitionModal"
-                                            onclick="loadActivityData({{ $activity->id }})">Edit</button>
+                                            onclick="loadActivityData({{ $activity->id }})"
+                                            {{ $activity->status != 0 ? 'disabled' : '' }}>Edit</button>
                                         <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
                                             data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
                                         <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal" data-id="{{ $activity->id }}">Delete</button>
+                                            data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
+                                            {{ $activity->status != 0 ? 'disabled' : '' }}>Delete</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -188,7 +190,7 @@
                         <div class="mb-3">
                             <!-- Attachment -->
                             <label for="attachment" class="form-label">Attachment (Image)</label>
-                            <input class="form-control" type="file" name="attachment[]" accept="image/*" multiple>
+                            <input class="form-control" type="file" name="attachment" accept="image/*">
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -206,99 +208,37 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="viewActivityModalLabel">View Activity Details</h5>
+                    <h5 class="modal-title" id="viewActivityModalLabel">Activity Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Read-only Form -->
-                    <div class="row mb-3">
-                        <!-- Title -->
-                        <div class="col-md-6">
-                            <label for="title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="view_title" value="" readonly>
-                        </div>
-                        <!-- Target Players -->
-                        <div class="col-md-6">
-                            <label for="target_players" class="form-label">Target players</label>
-                            <input type="text" class="form-control" id="view_target_players" readonly>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="content" class="form-label">Content</label>
-                        <textarea class="form-control" rows="3" readonly id="view_content"></textarea>
-                    </div>
-
                     <div class="row">
-                        <div class="form-group col">
-                            <label for="activity_type" class="form-label">Activity Type</label>
-                            <input type="text" class="form-control" value="" id="view_type" readonly>
-                        </div>
-                        @if (auth()->user()->hasRole('coach'))
-                            <div class="form-group col">
-                                <label for="organization">Sport</label>
-                                <input type="text" value="{{ auth()->user()->sport->name }}" id="view_sport_id"
-                                    class="form-control" readonly>
-                            </div>
-                        @elseif (auth()->user()->hasRole('adviser'))
-                            <div class="form-group col">
-                                <label for="organization">Organization</label>
-                                <input type="text" value="" id="view_organization_id" class="form-control"
-                                    readonly>
-                            </div>
-                        @endif
-                    </div>
-
-                    <div class="row mb-3 mt-3">
-                        <!-- Activity Start Date -->
+                        <!-- Left Column: Activity Details -->
                         <div class="col-md-6">
-                            <label for="start_date" class="form-label">Activity Start Date</label>
-                            <input type="text" class="form-control" value="" id="view_start_date" readonly>
+                            <ul class="list-unstyled">
+                                {{-- <li><strong>Sport Name:</strong> <span id="view_sport_name"></span></li> --}}
+                                <li class="pt-2"><strong>Title:</strong> <span id="view_title"></span></li>
+                                <li class="pt-2"><strong>Target Players:</strong> <span id="view_target_players"></span></li>
+                                <li class="pt-2"><strong>Content:</strong> <span id="view_content"></span></li>
+                                <li class="pt-2"><strong>Activity Type:</strong> <span id="view_type"></span></li>
+                                <li class="pt-2"><strong>Activity Duration:</strong> <br> <span id="view_start_date"></span> -
+                                    <span id="view_end_date"></span>
+                                </li>
+                                <li class="pt-2"><strong>Venue:</strong> <span id="view_venue"></span></li>
+                                <li class="pt-2"><strong>Address:</strong> <span id="view_address"></span></li>
+                            </ul>
                         </div>
 
-                        <!-- Activity End Date -->
+                        <!-- Right Column: Image -->
                         <div class="col-md-6">
-                            <label for="end_date" class="form-label">Activity End Date</label>
-                            <input type="text" class="form-control" value="" id="view_end_date" readonly>
+                            <img id="view_activity_image" src="" class="img-fluid img-thumbnail"
+                                alt="Activity Image">
                         </div>
                     </div>
-
-                    <div class="row mb-3">
-                        <!-- Venue -->
-                        <div class="col-md-12">
-                            <label for="venue" class="form-label">Venue</label>
-                            <input type="text" class="form-control" value="" id="view_venue" readonly>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <!-- Address -->
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" value="" id="view_address" readonly>
-                    </div>
-
-                    {{-- <div class="mb-3">
-                        <!-- Attachment -->
-                        <label for="attachment" class="form-label">Attachment (Images)</label>
-                        <div class="row">
-                            @if ($activity->attachments)
-                                @foreach ($activity->attachments as $attachment)
-                                    <div class="col-md-3">
-                                        <img src="{{ asset('storage/' . $attachment) }}" class="img-fluid img-thumbnail"
-                                            alt="Attachment Image">
-                                    </div>
-                                @endforeach
-                            @else
-                                <p>No attachments available.</p>
-                            @endif
-                        </div>
-                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <!-- Close Button -->
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <!-- Back Button -->
-                    {{-- <a href="{{ route('activity.index') }}" class="btn btn-primary">Back</a> --}}
                 </div>
             </div>
         </div>
@@ -453,20 +393,52 @@
         }
 
         $(() => {
+            // $('.viewBtn').click(function() {
+            //     fetch('/activity/' + $(this).data('id'))
+            //         .then(response => response.json())
+            //         .then(activity => {
+            //             $('#view_title').val(activity.title)
+            //             $('#view_target_players').val(activity.target_player)
+            //             $('#view_content').val(activity.content)
+            //             $('#view_type').val(activity.type)
+            //             $('#view_start_date').val(activity.start_date)
+            //             $('#view_end_date').val(activity.end_date)
+            //             $('#view_venue').val(activity.venue)
+            //             $('#view_address').val(activity.address)
+            //         })
+            // })
+
             $('.viewBtn').click(function() {
-                fetch('/activity/' + $(this).data('id'))
+                const activityId = $(this).data('id');
+
+                // Fetch the activity details via an API or AJAX call
+                fetch('/activity/' + activityId)
                     .then(response => response.json())
                     .then(activity => {
-                        $('#view_title').val(activity.title)
-                        $('#view_target_players').val(activity.target_player)
-                        $('#view_content').val(activity.content)
-                        $('#view_type').val(activity.type)
-                        $('#view_start_date').val(activity.start_date)
-                        $('#view_end_date').val(activity.end_date)
-                        $('#view_venue').val(activity.venue)
-                        $('#view_address').val(activity.address)
+                        // Populate the fields in the modal
+                        // $('#view_sport_name').text(activity.sport_name || 'N/A');
+                        $('#view_title').text(activity.title || 'N/A');
+                        $('#view_target_players').text(activity.target_players || 'N/A');
+                        $('#view_content').text(activity.content || 'N/A');
+                        $('#view_type').text(activity.type || 'N/A');
+                        $('#view_start_date').text(activity.start_date || 'N/A');
+                        $('#view_end_date').text(activity.end_date || 'N/A');
+                        $('#view_venue').text(activity.venue || 'N/A');
+                        $('#view_address').text(activity.address || 'N/A');
+
+                        // Handle the image
+                        const imageUrl = activity.attachment ? '/storage/' + activity.attachment :
+                            '/path-to-default-image.jpg';
+                        $('#view_activity_image').attr('src', imageUrl);
                     })
-            })
+                    .catch(error => {
+                        console.error('Error fetching activity details:', error);
+                    });
+
+                // Show the modal
+                $('#viewActivityModal').modal('show');
+            });
+
 
             $('.deleteBtn').click(function() {
                 $('#deleteForm').attr('action', 'delete-activity/' + $(this).data('id'));
