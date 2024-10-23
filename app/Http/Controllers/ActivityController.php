@@ -39,7 +39,7 @@ class ActivityController extends Controller
         $status = 0; // Default status
     
         // Set status to 1 if the type is 2 or 3
-        if (in_array($request->input('type'), [2, 3])) {
+        if (in_array($request->input('type'), [2, 3, 0])) {
             $status = 1;
         }
     
