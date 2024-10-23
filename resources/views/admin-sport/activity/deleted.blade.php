@@ -5,12 +5,12 @@
         <div class="card">
             <div class="card-header row">
                 <div class="col">
-                    <h4>Activity</h4>
+                    <h4>Deleted Activity</h4>
                 </div>
-                <div class="col text-end">
+                {{-- <div class="col text-end">
                     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newCompetitionModal">Add
                         New</button>
-                </div>
+                </div> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">

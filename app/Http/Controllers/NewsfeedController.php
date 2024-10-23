@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNewsfeedRequest;
+use App\Models\Campus;
 use App\Models\Newsfeed;
 use App\Models\NewsfeedFile;
 use App\Models\ReportedComment;
@@ -46,7 +47,9 @@ class NewsfeedController extends Controller
                 return $newsfeed;
             });
 
-        return view('student.newsfeed.index', ['newsfeeds' => $newsfeeds]);
+            $campuses = Campus::all();
+
+        return view('student.newsfeed.index', ['newsfeeds' => $newsfeeds, 'campuses' => $campuses]);
     }
 
     /**

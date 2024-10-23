@@ -53,6 +53,43 @@
                                 </div>
                             </div>
                         @endforeach
+                        @foreach ($practices as $activity)
+                            @php
+                                $activityTypes = [
+                                    \App\Enums\ActivityType::Audition => 'Audition',
+                                    \App\Enums\ActivityType::Tryout => 'Tryout',
+                                    \App\Enums\ActivityType::Practice => 'Practice',
+                                    \App\Enums\ActivityType::Competition => 'Competition',
+                                ];
+
+                                $hasJoined = auth()
+                                    ->user()
+                                    ->joinedActivities->contains($activity->id);
+                            @endphp
+
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $activity->activity->title }}</h5>
+                                        <p class="card-text">
+                                            <strong>Sport name:</strong> {{ $activity->activity->sport->name ?? '' }} <br>
+                                            <strong>Type:</strong> {{ $activityTypes[$activity->activity->type] ?? '' }}
+                                            <br>
+                                            <strong>Venue:</strong> {{ $activity->activity->venue }} <br>
+                                            <strong>Duration:</strong> {{ $activity->activity->start_date }} -
+                                            {{ $activity->end_date }}
+                                        </p>
+                                    </div>
+                                    <div class="card-footer d-flex justify-content-between">
+                                        <button class="btn btn-dark view-button"
+                                            data-activity-id="{{ $activity->activity->id }}" data-bs-toggle="modal"
+                                            data-bs-target="#activityDetailsModal">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -115,6 +152,13 @@
                 });
             });
 
+            const activityTypeMap = {
+                0: 'Audition',
+                1: 'Tryout',
+                2: 'Practice',
+                3: 'Competition'
+            };
+
             $('.view-button').on('click', function() {
                 var activityId = $(this).data('activity-id');
                 var baseUrl = "{{ asset('/storage/') }}";
@@ -130,18 +174,18 @@
                         $('#activity-target-players').text(data.target_player === 1 ?
                             'Official Players' : 'All Student');
                         $('#activity-content').text(data.content);
-                        $('#activity-type').text(data.type);
+                        const activityTypeText = activityTypeMap[data.type] || 'Unknown';
+                        $('#activity-type').text(activityTypeText);
                         $('#activity-duration').text(data.start_date + ' - ' + data.end_date);
                         $('#activity-venue').text(data.venue);
                         $('#activity-address').text(data.address);
                         $('#activity-image').attr('src', data.attachment ? baseUrl + '/' + data
                             .attachment : '/path-to-placeholder-image.jpg');
 
-                        // Conditionally hide the #sports element based on data.type
                         if (data.type == 3) {
-                            $('#sports').hide(); // Hide the sport name if type is 3
+                            $('#sports').hide();
                         } else {
-                            $('#sports').show(); // Show the sport name for other types
+                            $('#sports').show();
                         }
                     },
                     error: function(xhr) {

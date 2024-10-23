@@ -13,10 +13,11 @@ class JoinedActivityController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $user = Auth::user()->load('joinedActivities');
+        $user = Auth::user()->load('joinedActivities.sport', 'practices.activity.sport');
         $joinedActivities = $user->joinedActivities;
+        $practices = $user->practices;
 
 
-        return view('student.activity.joined', ['joinedActivities' => $joinedActivities]);
+        return view('student.activity.joined', ['joinedActivities' => $joinedActivities, 'practices' => $practices]);
     }
 }

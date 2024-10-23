@@ -24,9 +24,10 @@
                         data-bs-toggle="modal" data-bs-target="#newsfeedModal"
                         placeholder="What's on your mind, {{ auth()->user()->firstname }}?">
                 </div>
-                {{-- <div class="text-end mt-2">
-                    <button class="btn btn-danger rounded-pill "><i class="fas fa-image"></i> Create Post</button>
-                </div> --}}
+                <div class="text-end mt-2">
+                    <button class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#newsfeedModal"><i
+                            class="fas fa-image"></i> Create Post</button>
+                </div>
             </div>
         </div>
 
@@ -240,16 +241,23 @@
                 <form action="{{ route('newsfeed.store') }}" enctype="multipart/form-data" method="POST">
                     @csrf
                     <div class="modal-header border-0">
-                        <h5 class="modal-title" id="newsfeedModalLabel" style="color: white;">Create post</h5>
+                            <h5 class="modal-title col" id="newsfeedModalLabel" style="color: white;">Create post</h5>
+
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="filter: invert(1);"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex justify-content-between mb-3">
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
                                 style="width: 40px; height: 40px;" alt="Avatar">
                             <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
                                 {{ auth()->user()->lastname }}</span>
+
+                                <select name="campus_id" id="campus" class="form-select w-50" style="float: right">
+                                    @foreach ($campuses as $campus)
+                                        <option value="{{ $campus->id }}">{{ $campus->name }}</option>
+                                    @endforeach
+                                </select>
                         </div>
 
                         <div class="form-group mb-3">

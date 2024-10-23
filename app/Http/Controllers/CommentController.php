@@ -56,11 +56,9 @@ class CommentController extends Controller
      */
     public function update(Request $request, int $commentId)
     {
-        // dd($request->all());
         $comments = Comments::find($commentId);
         $comments->update(['description' => $request->description]);
 
-        // alert()->success('Comment updated successfully');
         return response()->json(['success' => true, 'comments' => $request->description]);
     }
 

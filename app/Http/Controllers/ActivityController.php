@@ -16,6 +16,7 @@ class ActivityController extends Controller
     {
         return view('admin-sport.activity.index', [
             'activities' => Activity::where('user_id', Auth::id())
+            ->whereIn('status', [0,1])
             ->get(),
              'user' => Auth::user()->load('organization')
             ]);

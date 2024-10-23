@@ -475,6 +475,14 @@
                 </ul>
             </div>
         </li>
+        <li class="nav-item {{ request()->routeIs('report.view') ? 'active' : '' }}">
+            <a href="{{ route('report.view') }}" class="nav-link">
+                <span class="sidebar-icon me-3">
+                    <i class="fas fa-user-alt fa-fw"></i>
+                </span>
+                <span class="sidebar-text">{{ __('Reports') }}</span>
+            </a>
+        </li>
     @endadmin_org
 
     @coach
@@ -593,6 +601,14 @@
                 <span class="sidebar-text">{{ __('Calendar of Act') }}</span>
             </a>
         </li>
+        <li class="nav-item {{ request()->routeIs('report.view') ? 'active' : '' }}">
+            <a href="{{ route('report.view') }}" class="nav-link">
+                <span class="sidebar-icon me-3">
+                    <i class="fas fa-user-alt fa-fw"></i>
+                </span>
+                <span class="sidebar-text">{{ __('Reports') }}</span>
+            </a>
+        </li>
     @endcoach
 
     @adviser
@@ -687,6 +703,27 @@
                     </li>
                 </ul>
             </div>
+        </li>
+        <li class="nav-item {{ request()->routeIs('report.view') ? 'active' : '' }}">
+            <a href="{{ route('report.view') }}" class="nav-link">
+                <span class="sidebar-icon me-3">
+                    <i class="fas fa-user-alt fa-fw"></i>
+                </span>
+                <span class="sidebar-text">{{ __('Reports') }}</span>
+            </a>
+        </li>
+
+        <li class="nav-item {{ request()->routeIs('deleted.activities') ? 'active' : '' }}">
+            <a href="{{ route('deleted.activities') }}" class="nav-link">
+                <span class="sidebar-icon">
+                    <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                        <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                    </svg>
+                </span>
+                <span class="sidebar-text">{{ __('Deleted Activity') }}</span>
+            </a>
         </li>
     @endadviser
 
