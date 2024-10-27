@@ -35,7 +35,10 @@
         const calendarOfActivity = $('#calendar')[0];
 
         // Map through activities and assign consistent colors based on activity title or id
-        const events = {!! json_encode($activities) !!}.map(activity => {
+        const activities = {!! json_encode($activities) !!}; // This is the object
+
+        // Convert the object values to an array and map over them
+        const events = Object.values(activities).map(activity => {
             const backgroundColor = stringToColor(activity.title); // Use title or ID to generate a consistent color
             const borderColor = backgroundColor; // Set border color to match background
 
