@@ -13,7 +13,7 @@ class CalendarOfActivityController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $activities = Activity::whereIn('status', [0, 1])
+        $activities = Activity::where('status', 1)
             ->get()
             ->filter(function ($activity) {
                 $endDate = Carbon::parse($activity->end_date);
