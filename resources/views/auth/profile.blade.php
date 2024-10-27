@@ -90,10 +90,12 @@
                                                         <th class="text-info">Basic information</th>
                                                         <th></th>
                                                     </tr>
+                                                    @student
                                                     <tr>
                                                         <th>Student Number</th>
                                                         <td>{{ auth()->user()->student_number }}</td>
                                                     </tr>
+                                                    @endstudent
                                                     <tr>
                                                         <th>Full Name</th>
                                                         <td>{{ auth()->user()->firstname }} {{ auth()->user()->middlename }}
@@ -131,6 +133,7 @@
 
                                             <!-- School Information Section -->
                                             {{-- <h5 class="text-primary">School information</h5> --}}
+                                            @student
                                             <table class="table">
                                                 <tbody>
                                                     <tr>
@@ -151,6 +154,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                        @endstudent
                                         </div>
                                         <div class="tab-pane fade" id="update-info" role="tabpanel"
                                             aria-labelledby="update-info-tab">

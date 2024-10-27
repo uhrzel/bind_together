@@ -426,6 +426,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <a href="" id="view_user_page" class="btn btn-secondary">View Student</a>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -518,6 +519,7 @@
         function viewUser(id) {
             $.get('/users/' + id, function(user) {
                 // console.log(user.roles[0])
+                $('#view_user_page').attr('href', '/view-user/' + id);
                 $('#viewUserId').val(user.user.id);
                 $('#viewFullname').text(user.user.firstname + ' ' + user.user.lastname);
                 $('#viewMiddlename').val(user.user.middlename || 'N/A');

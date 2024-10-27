@@ -15,7 +15,9 @@ class Newsfeed extends Model
     protected $fillable = [
         'description',
         'user_id',
-        'status'
+        'status',
+        'campus_id',
+        'target_player',
     ];
 
     public function user() : BelongsTo

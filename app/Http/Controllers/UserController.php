@@ -48,7 +48,7 @@ class UserController extends Controller
 
 
         alert()->success('User created successfully');
-        return redirect()->route('users.index', ['role' => $request->role]);
+        return redirect()->back();
     }
 
     protected function generateVerificationUrl($user)

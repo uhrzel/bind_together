@@ -154,8 +154,16 @@
                                                             data-id="{{ $comments->id }}"
                                                             id="saveButton-{{ $comments->id }}">Save</button>
                                                         <button class="border-0 bg-transparent text-danger ms-2 delete-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                                                            data-bs-toggle="modal" id="comment-{{ $comments->id }}"
+                                                            data-bs-target="#deleteCommentModal"
                                                             data-id="{{ $comments->id }}">Delete</button>
+
+                                                        {{-- <div id="comment-{{ $comments->id }}" class="comment">
+                                                                <!-- Comment content here -->
+                                                                <button class="border-0 bg-transparent text-danger ms-2 delete-btn"
+                                                                        data-bs-toggle="modal" data-bs-target="#deleteCommentModal"
+                                                                        data-id="{{ $comments->id }}">Delete</button>
+                                                            </div> --}}
                                                     @endif
                                                 </div>
                                                 <small
@@ -236,13 +244,12 @@
 
     <!-- Modal -->
     <div class="modal fade" id="newsfeedModal" tabindex="-1" aria-labelledby="newsfeedModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="background-color: #2E3236; color: white;">
                 <form action="{{ route('newsfeed.store') }}" enctype="multipart/form-data" method="POST">
                     @csrf
                     <div class="modal-header border-0">
                         <h5 class="modal-title col" id="newsfeedModalLabel" style="color: white;">Create post</h5>
-
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                             style="filter: invert(1);"></button>
                     </div>
@@ -254,21 +261,34 @@
                                 <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
                                     {{ auth()->user()->lastname }}</span>
                             </div>
-                            @admin_org
-                            <select name="campus_id" id="campus" class="form-select w-50" style="float: right">
-                                @foreach ($campuses as $campus)
-                                    <option value="{{ $campus->id }}">{{ $campus->name }}</option>
-                                @endforeach
-                            </select>
-                            @endadmin_org
+                            @if (!auth()->user()->hasRole('student'))
+                                <div class="">
+                                    <select name="campus_id" id="campus" class="form-select mb-2"
+                                        style="float: right">
+                                        <option value="" selected disabled>Select Campus</option>
+                                        @foreach ($campuses as $campus)
+                                            <option value="{{ $campus->id }}">{{ $campus->name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                    <!-- Target audience select (Initially hidden) -->
+                                    <select name="target_player" id="target_audience" class="form-select mt-2"
+                                        style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
+                                        <option value="0">All Students</option>
+                                        <option value="1">Official Performers</option>
+                                    </select>
+                                </div>
+                            @endif
                         </div>
+
+                        <!-- New Target Audience Selection -->
+
 
                         <div class="form-group mb-3">
                             <textarea class="form-control" name="description"
                                 placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
                                 style="background-color: #3E4348; color: white; border: none;"></textarea>
                         </div>
-
 
                         <input type="file" name="attachments[]" id="attachments" class="d-none" multiple>
 
@@ -289,6 +309,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Report Comment Modal -->
     <div class="modal fade" id="reportCommentModal" tabindex="-1" aria-labelledby="reportCommentModalLabel"
@@ -565,6 +586,19 @@
 
         $(document).ready(function() {
 
+
+            $('#campus').on('change', function() {
+                // Get the target audience select element
+                var targetAudienceSelect = $('#target_audience');
+
+                // Show the target audience dropdown when a campus is selected
+                if ($(this).val() !== "") {
+                    targetAudienceSelect.show(); // Show the dropdown
+                } else {
+                    targetAudienceSelect.hide(); // Hide if no campus is selected
+                }
+            });
+
             // Like button functionality
             $('.like-btn').on('click', function(e) {
                 e.preventDefault();
@@ -704,9 +738,40 @@
             });
 
             $('.reportBtn').click(function() {
-                $('#newsfeedReportId').val($(this).data('id'))
-                $('#reportPostForm').attr('action', '/reported-post/')
-            })
+                const newsfeedId = $(this).data('id');
+                $('#newsfeedReportId').val(newsfeedId);
+                $('#reportPostForm').attr('action', '/reported-post/' +
+                    newsfeedId);
+            });
+
+            $('#reportPostForm').submit(function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+                var actionUrl = $(this).attr('action');
+
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData, // Send the serialized form data
+                    success: function(response) {
+                        $('#reportPostModal').modal(
+                            'hide'); // Hide the modal after successful submission
+
+                        // Optionally show a success message
+                        alert('Report submitted successfully!');
+                    },
+                    error: function(xhr) {
+                        // Handle error response
+                        alert(
+                            'An error occurred while submitting the report. Please try again.'
+                            );
+                    }
+                });
+            });
 
             $('.editBtn').click(function() {
                 const postId = $(this).data('id');
@@ -724,32 +789,54 @@
                             newsfeed.newsfeed_files.forEach(function(file) {
                                 if (file.file_type.startsWith('image')) {
                                     filesContainer.append(`
-                            <div class="col-4 mb-3 position-relative file-preview-${file.id}">
-                                <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
-                                <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `);
+                        <div class="col-4 mb-3 position-relative file-preview-${file.id}">
+                            <img src="/storage/${file.file_path}" alt="file" class="img-fluid rounded">
+                            <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
                                 } else if (file.file_type.startsWith('video')) {
                                     filesContainer.append(`
-                            <div class="col-4 mb-3 position-relative file-preview-${file.id}">
-                                <video controls class="img-fluid rounded">
-                                    <source src="/storage/${file.file_path}" type="${file.file_type}">
-                                    Your browser does not support the video tag.
-                                </video>
-                                <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `);
+                        <div class="col-4 mb-3 position-relative file-preview-${file.id}">
+                            <video controls class="img-fluid rounded">
+                                <source src="/storage/${file.file_path}" type="${file.file_type}">
+                                Your browser does not support the video tag.
+                            </video>
+                            <button type="button" class="btn btn-danger position-absolute top-0 start-100 translate-middle" style="border-radius: 50%; padding: 4px 8px; font-size: 14px;" onclick="removeFile(${file.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `);
                                 }
                             });
                         }
 
-                        // Set the form action for submitting the edit
                         $('#editPostForm').attr('action', '/newsfeed/' + postId);
                     });
+            });
+
+            $('#editPostForm').submit(function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+                var actionUrl = $(this).attr('action');
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#editPostModal').modal('hide');
+
+                        location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
             });
 
             // Preview for newly selected attachments (keeps existing files in the preview)
@@ -827,8 +914,41 @@
             })
 
             $('.delete-btn').click(function() {
-                $('#commentDelete').attr('action', '/comments/' + $(this).data('id'))
-            })
+                const commentId = $(this).data('id');
+                $('#commentDelete').attr('action', '/comments/' + commentId);
+            });
+
+            // Submit the delete form via AJAX
+            $('#commentDelete').submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                var actionUrl = $(this).attr('action'); // Get the form action URL
+
+                // Save the current scroll position
+                var scrollPosition = $(window).scrollTop();
+
+                $.ajax({
+                    url: actionUrl,
+                    type: 'POST',
+                    data: $(this).serialize(), // Serialize the form data (including CSRF token)
+                    success: function(response) {
+                        $('#deleteCommentModal').modal(
+                            'hide');
+
+                        location.reload();
+
+                        // Restore the scroll position after the page is reloaded
+                        $(window).on('load', function() {
+                            $(window).scrollTop(scrollPosition);
+                        });
+                    },
+                    error: function(xhr) {
+                        alert(
+                            'An error occurred while trying to delete the comment. Please try again.'
+                        );
+                    }
+                });
+            });
 
 
             $('form[id^="comment-form-"]').on('submit', function(e) {

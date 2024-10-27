@@ -53,4 +53,9 @@ class Activity extends Model
         return $this->hasMany(Practice::class);
     }
 
+    public function activityRegistrations() : HasMany
+    {
+        return $this->hasMany(ActivityRegistration::class);
+    }
+
 }

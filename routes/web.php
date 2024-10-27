@@ -28,6 +28,7 @@ use App\Http\Controllers\ReportGenerationViewController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\StatusActivityController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ViewStudentController;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Requests\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('fetch-activity/{activityId}', FetchActivityRegistration::class)->name('fetch.activities');
     Route::post('delete-activity/{activityId}', StatusActivityController::class)->name('delete.activity');
     Route::get('deleted-activities', DeletedActivityController::class)->name('deleted.activities');
+    Route::get('view-user/{userId}', ViewStudentController::class)->name('view.user');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

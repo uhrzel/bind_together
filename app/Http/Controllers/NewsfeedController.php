@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNewsfeedRequest;
+use App\Models\ActivityRegistration;
 use App\Models\Campus;
 use App\Models\Newsfeed;
 use App\Models\NewsfeedFile;
@@ -20,8 +21,7 @@ class NewsfeedController extends Controller
         $newsfeeds = Newsfeed::with([
             'user',
             'newsfeedFiles',
-            'comments' => fn ($q) => $q->where('status', 1)
-                ->with('user'),
+            'comments' => fn($q) => $q->where('status', 1)->with('user'),
             'newsfeedLikes'
         ])
             ->withCount([
@@ -34,8 +34,37 @@ class NewsfeedController extends Controller
             ])
             ->where('status', '!=', 2)
             ->get()
+            ->filter(function ($newsfeed) {
+                $authUser = Auth::user();
+
+                if ($authUser->hasRole('student')) {
+                    if (is_null($newsfeed->campus_id)) {
+                        return true;
+                    }
+
+                    if ($newsfeed->campus_id == $authUser->campus_id) {
+
+                        if (is_null($newsfeed->target_player)) {
+                            return true;
+                        }
+
+                        if ($newsfeed->target_player == 'official_performers') {
+                            $isOfficialPlayer = ActivityRegistration::where('user_id', $authUser->id)
+                                ->where('status', 1)
+                                ->exists();
+
+                            return $isOfficialPlayer;
+                        }
+
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            })
             ->map(function ($newsfeed) {
-                // Check if the current user liked or disliked the post
                 $newsfeed->user_liked = $newsfeed->newsfeedLikes
                     ->where('user_id', Auth::id())
                     ->where('status', 1)
@@ -49,7 +78,7 @@ class NewsfeedController extends Controller
                 return $newsfeed;
             });
 
-            $campuses = Campus::all();
+        $campuses = Campus::all();
 
         return view('student.newsfeed.index', ['newsfeeds' => $newsfeeds, 'campuses' => $campuses]);
     }
@@ -70,6 +99,8 @@ class NewsfeedController extends Controller
         $newsfeed = Newsfeed::create([
             'user_id' => Auth::id(),
             'description' => $request->description,
+            'campus_id' => $request->campus_id,
+            'target_player' => $request->target_player,
         ]);
 
         if ($request->hasFile('attachments')) {
@@ -113,10 +144,12 @@ class NewsfeedController extends Controller
      */
     public function update(Request $request, Newsfeed $newsfeed)
     {
+        // Update the newsfeed description
         $newsfeed->update([
             'description' => $request->input('description'),
         ]);
 
+        // Handle deletion of files if needed
         if ($request->has('deleted_files')) {
             $deletedFiles = array_filter(explode(',', $request->input('deleted_files'))); // Filter out empty values
 
@@ -138,8 +171,13 @@ class NewsfeedController extends Controller
             }
         }
 
-        alert()->success('Post updated successfully');
-        return redirect()->route('newsfeed.index')->with('success', 'Post updated successfully');
+        // Load the updated newsfeed with its associated files
+        $updatedNewsfeed = Newsfeed::with('newsfeedFiles')->find($newsfeed->id);
+
+        // Return the updated newsfeed as JSON
+        return response()->json([
+            'newsfeed' => $updatedNewsfeed,
+        ]);
     }
 
     /**

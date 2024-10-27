@@ -117,8 +117,42 @@
         });
 
         $('.delete-btn').click(function() {
-            $('#commentDelete').attr('action', '/comments/' + $(this).data('id'))
-        })
+            const commentId = $(this).data('id');
+            $('#commentDelete').attr('action', '/comments/' + commentId);
+        });
+
+        // Submit the delete form via AJAX
+        $('#commentDelete').submit(function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            var actionUrl = $(this).attr('action'); // Get the form action URL
+
+            // Save the current scroll position
+            var scrollPosition = $(window).scrollTop();
+
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                data: $(this).serialize(), // Serialize the form data (including CSRF token)
+                success: function(response) {
+                    $('#deleteCommentModal').modal(
+                    'hide'); // Hide the modal after successful delete
+
+                    // Reload the page but preserve the scroll position
+                    location.reload();
+
+                    // Restore the scroll position after the page is reloaded
+                    $(window).on('load', function() {
+                        $(window).scrollTop(scrollPosition);
+                    });
+                },
+                error: function(xhr) {
+                    alert(
+                        'An error occurred while trying to delete the comment. Please try again.');
+                }
+            });
+        });
+
 
     })
 </script>

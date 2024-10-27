@@ -482,7 +482,7 @@
                             <span class="sidebar-icon me-3">
                                 <i class="fas fa-user-alt fa-fw"></i>
                             </span>
-                            <span class="sidebar-text">{{ __('Official Player') }}</span>
+                            <span class="sidebar-text">{{ __('Official Performers') }}</span>
                         </a>
                     </li>
                 </ul>
