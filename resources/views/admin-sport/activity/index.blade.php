@@ -189,13 +189,13 @@
                             <!-- Activity Start Date -->
                             <div class="col-md-6">
                                 <label for="start_date" class="form-label">Activity Start Date</label>
-                                <input type="datetime-local" class="form-control" name="start_date" required>
+                                <input type="datetime-local" class="form-control" name="start_date" id="start_date" required>
                             </div>
-
+                            
                             <!-- Activity End Date -->
                             <div class="col-md-6">
                                 <label for="end_date" class="form-label">Activity End Date</label>
-                                <input type="datetime-local" class="form-control" name="end_date" required>
+                                <input type="datetime-local" class="form-control" name="end_date" id="end_date" required>
                             </div>
                         </div>
 
@@ -420,21 +420,27 @@
             });
         }
 
+        function getCurrentDateTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2);
+            var day = ('0' + now.getDate()).slice(-2);
+            var hours = ('0' + now.getHours()).slice(-2);
+            var minutes = ('0' + now.getMinutes()).slice(-2);
+            return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        }
+
         $(() => {
-            // $('.viewBtn').click(function() {
-            //     fetch('/activity/' + $(this).data('id'))
-            //         .then(response => response.json())
-            //         .then(activity => {
-            //             $('#view_title').val(activity.title)
-            //             $('#view_target_players').val(activity.target_player)
-            //             $('#view_content').val(activity.content)
-            //             $('#view_type').val(activity.type)
-            //             $('#view_start_date').val(activity.start_date)
-            //             $('#view_end_date').val(activity.end_date)
-            //             $('#view_venue').val(activity.venue)
-            //             $('#view_address').val(activity.address)
-            //         })
-            // })
+
+            const currentDateTime = getCurrentDateTime();
+
+            $('#start_date').attr('min', currentDateTime);
+            $('#end_date').attr('min', currentDateTime);
+
+            $('#start_date').on('change', function() {
+                var startDate = $(this).val();
+                $('#end_date').attr('min', startDate);
+            });
 
             $('.viewBtn').click(function() {
                 const activityId = $(this).data('id');
