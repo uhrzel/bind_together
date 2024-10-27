@@ -76,7 +76,7 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editCompetitionModal"
                                             onclick="loadActivityData({{ $activity->id }})"
-                                            {{ $activity->type == 1 ? 'disabled' : '' }}>
+                                            {{ $activity->status == 1 ? 'disabled' : '' }}>
                                             Edit
                                         </button>
 
@@ -87,7 +87,7 @@
 
                                         <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
-                                            {{ $activity->type == 1 ? 'disabled' : '' }}>
+                                            {{ $activity->status == 1 ? 'disabled' : '' }}>
                                             Delete
                                         </button>
 
