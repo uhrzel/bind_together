@@ -55,7 +55,9 @@ class ReportedPostController extends Controller
         ]);
 
         alert()->success('Success', 'Post reported successfully!');
-        return redirect()->route('newsfeed.index');
+        return response()->json([
+            'message' => 'Post Reported Successfully!'
+        ]);
     }
 
     /**

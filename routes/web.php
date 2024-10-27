@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ActivateUserController;
+use App\Http\Controllers\ActivityAction\ApproveController;
+use App\Http\Controllers\ActivityAction\DeclineController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityRegistrationController;
 use App\Http\Controllers\AuditionListController;
@@ -78,6 +80,9 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::post('delete-activity/{activityId}', StatusActivityController::class)->name('delete.activity');
     Route::get('deleted-activities', DeletedActivityController::class)->name('deleted.activities');
     Route::get('view-user/{userId}', ViewStudentController::class)->name('view.user');
+
+    Route::put('approve-activity/{activity}', ApproveController::class)->name('approve');
+    Route::put('decline-activity/{activity}', DeclineController::class)->name('decline');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

@@ -69,7 +69,20 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $user->update($request->all());
+        if ($request->filled(['password', 'password_confirmation'])) {
+            $request->validate([
+                'password' => 'required|confirmed|min:8', // Validation rules
+            ]);
+
+            // Update the password if both fields are provided
+            $user->update([
+                'password' => bcrypt($request->password),
+            ]);
+        }
+
+        // Update other fields that don't include password
+        $user->update($request->except(['password', 'password_confirmation']));
+
         return redirect()->route('users.index', ['role' => $user->getRoleNames()->first()]);
     }
 
@@ -80,5 +93,4 @@ class UserController extends Controller
         alert()->success('User deactived successfully');
         return redirect()->route('users.index', ['role' => $user->getRoleNames()->first()]);
     }
-
 }

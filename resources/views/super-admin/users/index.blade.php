@@ -218,19 +218,21 @@
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="password" name="password"
                                         placeholder="Enter Password" required>
-                                    <button class="btn btn-outline-secondary create-toggle-password" type="button" data-target="password">
+                                    <button class="btn btn-outline-secondary create-toggle-password" type="button"
+                                        data-target="password">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
                                 <div id="passwordError" class="text-danger"></div>
                             </div>
-                        
+
                             <div class="col-md-6 mt-3">
                                 <label for="password_confirmation" class="form-label">Confirm Password</label>
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
-                                        placeholder="Retype Password" required>
-                                    <button class="btn btn-outline-secondary create-toggle-password" type="button" data-target="password_confirmation">
+                                    <input type="password" class="form-control" id="password_confirmation"
+                                        name="password_confirmation" placeholder="Retype Password" required>
+                                    <button class="btn btn-outline-secondary create-toggle-password" type="button"
+                                        data-target="password_confirmation">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </div>
@@ -328,13 +330,26 @@
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
 
-                            <div class="form-group col">
+
+
+                            <div class="form-group col role">
                                 <label for="role">Role</label>
                                 <select name="role" id="roleId" class="form-select">
                                     <option value="admin_org">Admin Org</option>
                                     <option value="admin_sport">Admin Sport</option>
                                 </select>
                             </div>
+
+                            <div class="form-group col coach">
+                                <label for="">Sport</label>
+                                <select name="sport_id" id="" class="form-select">
+                                    <option value="" selected disabled>Select Sport</option>
+                                    @foreach ($sports as $sport)
+                                        <option value="{{ $sport->id }}">{{ $sport->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                         </div>
                         <div class="mt-3">
                             <label for="editPassword" class="form-label">Password</label>
@@ -494,7 +509,6 @@
             });
         });
 
-        // Define the editUser function globally so it's accessible on button click
         function editUser(id) {
             $.get('/users/' + id, function(user) {
                 $('#editUserId').val(user.user.id);
@@ -513,8 +527,24 @@
                 $('#editPasswordConfirmation').val('');
 
                 $('#editUserForm').attr('action', '/users/' + id);
+
+                const role = user.roles[0];
+
+                function toggleSportDropdown(role) {
+                    console.log('Role being checked:', role); // Debugging line
+                    if (role === 'coach') {
+                        $('.coach').show();
+                        $('.role').hide();
+                    } else {
+                        $('.coach').hide();
+                        $('.role').show(); // Ensure you show it back for non-coach roles
+                    }
+                }
+
+                toggleSportDropdown(role);
             });
         }
+
 
         function viewUser(id) {
             $.get('/users/' + id, function(user) {
@@ -605,20 +635,20 @@
         //     }
         // });
 
-        $('.create-toggle-password').on('click', function () {
-        var target = $(this).data('target'); // Get the input field associated with the button
-        var input = $('#' + target); // Target the specific input
-        var icon = $(this).find('i'); // Target the icon inside the button
+        $('.create-toggle-password').on('click', function() {
+            var target = $(this).data('target'); // Get the input field associated with the button
+            var input = $('#' + target); // Target the specific input
+            var icon = $(this).find('i'); // Target the icon inside the button
 
-        // Toggle between password and text
-        if (input.attr('type') === 'password') {
-            input.attr('type', 'text');
-            icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Change the icon to 'eye-slash'
-        } else {
-            input.attr('type', 'password');
-            icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Change the icon back to 'eye'
-        }
-    });
+            // Toggle between password and text
+            if (input.attr('type') === 'password') {
+                input.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash'); // Change the icon to 'eye-slash'
+            } else {
+                input.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye'); // Change the icon back to 'eye'
+            }
+        });
 
         $('.toggle-password').on('click', function() {
             var target = $(this).data('target');

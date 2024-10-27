@@ -31,6 +31,7 @@
                                 <th>Title</th>
                                 <th>Type</th>
                                 <th>Venue</th>
+                                <th>Address</th>
                                 <th>Target Audience</th>
                                 <th>Activity Duration</th>
                                 <th>Status</th>
@@ -51,6 +52,7 @@
                                     <td>{{ $activity->title }}</td>
                                     <td>{{ $activityTypes[$activity->type] ?? 'Unknown Type' }}</td>
                                     <td>{{ $activity->venue }}</td>
+                                    <td>{{ $activity->address }}</td>
                                     @if ($activity->target_player == 0)
                                         <td>All Students</td>
                                     @else
@@ -74,14 +76,38 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editCompetitionModal"
                                             onclick="loadActivityData({{ $activity->id }})"
-                                            {{ $activity->status != 0 ? 'disabled' : '' }}>Edit</button>
+                                            {{ $activity->type == 1 ? 'disabled' : '' }}>
+                                            Edit
+                                        </button>
+
                                         <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
                                             data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
+
                                         <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
-                                            {{ $activity->status != 0 ? 'disabled' : '' }}>Delete</button>
+                                            {{ $activity->type == 1 ? 'disabled' : '' }}>
+                                            Delete
+                                        </button>
+
+                                        <form action="{{ route('approve', $activity->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-success">
+                                                Approve
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('decline', $activity->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-danger">
+                                                Decline
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
@@ -218,10 +244,12 @@
                             <ul class="list-unstyled">
                                 {{-- <li><strong>Sport Name:</strong> <span id="view_sport_name"></span></li> --}}
                                 <li class="pt-2"><strong>Title:</strong> <span id="view_title"></span></li>
-                                <li class="pt-2"><strong>Target Players:</strong> <span id="view_target_players"></span></li>
+                                <li class="pt-2"><strong>Target Players:</strong> <span id="view_target_players"></span>
+                                </li>
                                 <li class="pt-2"><strong>Content:</strong> <span id="view_content"></span></li>
                                 <li class="pt-2"><strong>Activity Type:</strong> <span id="view_type"></span></li>
-                                <li class="pt-2"><strong>Activity Duration:</strong> <br> <span id="view_start_date"></span> -
+                                <li class="pt-2"><strong>Activity Duration:</strong> <br> <span
+                                        id="view_start_date"></span> -
                                     <span id="view_end_date"></span>
                                 </li>
                                 <li class="pt-2"><strong>Venue:</strong> <span id="view_venue"></span></li>
@@ -352,7 +380,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
                     </div>
                 </form>
 
@@ -415,12 +443,35 @@
                 fetch('/activity/' + activityId)
                     .then(response => response.json())
                     .then(activity => {
+                        // Convert activity type number to text
+                        let activityTypeText;
+                        switch (activity.type) {
+                            case '0':
+                            case 0:
+                                activityTypeText = 'Audition';
+                                break;
+                            case '1':
+                            case 1:
+                                activityTypeText = 'Tryout';
+                                break;
+                            case '2':
+                            case 2:
+                                activityTypeText = 'Practice';
+                                break;
+                            case '3':
+                            case 3:
+                                activityTypeText = 'Competition';
+                                break;
+                            default:
+                                activityTypeText = activity.type || 'N/A';
+                        }
+
                         // Populate the fields in the modal
                         // $('#view_sport_name').text(activity.sport_name || 'N/A');
                         $('#view_title').text(activity.title || 'N/A');
                         $('#view_target_players').text(activity.target_players || 'N/A');
                         $('#view_content').text(activity.content || 'N/A');
-                        $('#view_type').text(activity.type || 'N/A');
+                        $('#view_type').text(activityTypeText); // Using the converted type text
                         $('#view_start_date').text(activity.start_date || 'N/A');
                         $('#view_end_date').text(activity.end_date || 'N/A');
                         $('#view_venue').text(activity.venue || 'N/A');
@@ -438,7 +489,6 @@
                 // Show the modal
                 $('#viewActivityModal').modal('show');
             });
-
 
             $('.deleteBtn').click(function() {
                 $('#deleteForm').attr('action', 'delete-activity/' + $(this).data('id'));

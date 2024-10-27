@@ -42,11 +42,22 @@
                             <small>{{ $newsfeed->created_at->diffForHumans() }}</small>
                         </div>
                     </div>
-                    <div class="dropdown">
+                    @php
+                        $userHasReportedPost = \App\Models\ReportedPost::where('newsfeed_id', $newsfeed->id)
+                            ->where('user_id', auth()->id())
+                            ->exists();
+
+                        $buttonText = $userHasReportedPost ? 'Reported' : 'Report';
+                        $isDisabledReportPost = $userHasReportedPost ? 'disabled' : '';
+                        $buttonClass = $userHasReportedPost ? 'btn-danger' : 'btn-outline-primary';
+                    @endphp
+
+                    <div class="dropdown" {{ $isDisabledReportPost }}>
                         <button class="btn btn-link text-muted" type="button" id="dropdownMenuButton"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-ellipsis-h"></i>
                         </button>
+
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             @if ($newsfeed->user_id == auth()->id())
                                 <li>
@@ -63,43 +74,53 @@
                                 </li>
                             @else
                                 @student
-                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button></li>
+                                    <li>
+                                        <button type="button" class="dropdown-item reportBtn {{ $buttonClass }}"
+                                            data-bs-toggle="modal" data-bs-target="#reportPostModal"
+                                            data-id="{{ $newsfeed->id }}" {{ $isDisabledReportPost }}>
+                                            {{ $buttonText }}
+                                        </button>
+                                    </li>
                                 @endstudent
                                 @admin_org
-                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    <li>
+                                        <button type="button" class="dropdown-item reportBtn {{ $buttonClass }}"
+                                            data-bs-toggle="modal" data-bs-target="#reportPostModal"
+                                            data-id="{{ $newsfeed->id }}" {{ $isDisabledReportPost }}>
+                                            {{ $buttonText }}
+                                        </button>
                                     </li>
-                                    {{-- <li><a class="dropdown-item"
-                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li> --}}
                                 @endadmin_org
                                 @admin_sport
-                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    <li>
+                                        <button type="button" class="dropdown-item reportBtn {{ $buttonClass }}"
+                                            data-bs-toggle="modal" data-bs-target="#reportPostModal"
+                                            data-id="{{ $newsfeed->id }}" {{ $isDisabledReportPost }}>
+                                            {{ $buttonText }}
+                                        </button>
                                     </li>
-                                    {{-- <li><a class="dropdown-item"
-                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li> --}}
                                 @endadmin_sport
                                 @adviser
-                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    <li>
+                                        <button type="button" class="dropdown-item reportBtn {{ $buttonClass }}"
+                                            data-bs-toggle="modal" data-bs-target="#reportPostModal"
+                                            data-id="{{ $newsfeed->id }}" {{ $isDisabledReportPost }}>
+                                            {{ $buttonText }}
+                                        </button>
                                     </li>
-                                    {{-- <li><a class="dropdown-item"
-                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li> --}}
                                 @endadviser
                                 @coach
-                                    <li><button type="button" class="dropdown-item reportBtn" data-bs-toggle="modal"
-                                            data-bs-target="#reportPostModal" data-id="{{ $newsfeed->id }}">Report</button>
+                                    <li>
+                                        <button type="button" class="dropdown-item reportBtn {{ $buttonClass }}"
+                                            data-bs-toggle="modal" data-bs-target="#reportPostModal"
+                                            data-id="{{ $newsfeed->id }}" {{ $isDisabledReportPost }}>
+                                            {{ $buttonText }}
+                                        </button>
                                     </li>
-                                    {{-- <li><a class="dropdown-item"
-                                            href="{{ route('deactivate-post', ['newsfeedId' => $newsfeed->id]) }}">Deactivate</a>
-                                    </li> --}}
                                 @endcoach
                             @endif
                         </ul>
+
                     </div>
                 </div>
                 <div class="card-body">
@@ -739,38 +760,40 @@
 
             $('.reportBtn').click(function() {
                 const newsfeedId = $(this).data('id');
+                console.log(newsfeedId)
                 $('#newsfeedReportId').val(newsfeedId);
-                $('#reportPostForm').attr('action', '/reported-post/' +
-                    newsfeedId);
+                $('#reportPostForm').attr('action', '/reported-post/');
             });
 
             $('#reportPostForm').submit(function(event) {
                 event.preventDefault();
-
+                console.log($(this));
                 var formData = $(this).serialize();
                 var actionUrl = $(this).attr('action');
 
                 $.ajax({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
+                    }, // Missing comma added here
                     url: actionUrl,
                     type: 'POST',
                     data: formData, // Send the serialized form data
                     success: function(response) {
                         $('#reportPostModal').modal(
                             'hide'); // Hide the modal after successful submission
+                        location.reload();
 
                         // Optionally show a success message
-                        alert('Report submitted successfully!');
+                        console.log('success')
                     },
                     error: function(xhr) {
                         // Handle error response
                         alert(
                             'An error occurred while submitting the report. Please try again.'
-                            );
+                        );
                     }
                 });
+
             });
 
             $('.editBtn').click(function() {
