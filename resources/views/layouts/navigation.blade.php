@@ -13,8 +13,6 @@
     </li>
 
 
-
-
     @super_admin
         <li class="nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
             <a href="{{ route('home') }}" class="nav-link">
@@ -664,8 +662,8 @@
                 <span class="sidebar-text">{{ __('Calendar of Act') }}</span>
             </a>
         </li>
-        <li class="nav-item {{ request()->routeIs('report.view') ? 'active' : '' }}">
-            <a href="{{ route('report.view') }}" class="nav-link">
+        <li class="nav-item {{ request()->routeIs('report.coach') ? 'active' : '' }}">
+            <a href="{{ route('report.coach') }}" class="nav-link">
                 <span class="sidebar-icon me-3">
                     <i class="fas fa-user-alt fa-fw"></i>
                 </span>

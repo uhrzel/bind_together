@@ -24,6 +24,7 @@ use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\RegisteredParticipantController;
+use App\Http\Controllers\ReportCoachController;
 use App\Http\Controllers\ReportedCommentController;
 use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\ReportGenerationViewController;
@@ -80,6 +81,8 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::post('delete-activity/{activityId}', StatusActivityController::class)->name('delete.activity');
     Route::get('deleted-activities', DeletedActivityController::class)->name('deleted.activities');
     Route::get('view-user/{userId}', ViewStudentController::class)->name('view.user');
+    Route::get('report-coach', [ReportCoachController::class, 'index'])->name('report.coach');
+    Route::post('report-coach', [ReportCoachController::class, 'generateReport'])->name('report.generate');
 
     Route::put('approve-activity/{activity}', ApproveController::class)->name('approve');
     Route::put('decline-activity/{activity}', DeclineController::class)->name('decline');
