@@ -7,17 +7,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
@@ -36,9 +25,17 @@ class LoginController extends Controller
         return '/home';
     }
 
-
+    /**
+     * Handle post-authentication logic and redirection.
+     */
     protected function authenticated(\Illuminate\Http\Request $request, $user)
     {
+        // Check if the user is not completed (is_completed is not 1)
+        // if ($user->is_completed != 1) {
+        //     // Redirect the user to a different page if not completed
+        //     return redirect()->route('completion.page'); // Change to your specific route
+        // }
+
         // Trigger SweetAlert after successful login
         alert()->success('Sign in successful', 'Redirecting...');
 

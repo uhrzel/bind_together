@@ -37,13 +37,15 @@
                         <tbody>
                             @foreach ($auditions as $audition)
                                 @php
-                                    function ordinal($number)
-                                    {
-                                        $suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
-                                        if ((int) $number % 100 >= 11 && (int) $number % 100 <= 13) {
-                                            return $number . 'th';
+                                    if (!function_exists('ordinal')) {
+                                        function ordinal($number)
+                                        {
+                                            $suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
+                                            if ((int) $number % 100 >= 11 && (int) $number % 100 <= 13) {
+                                                return $number . 'th';
+                                            }
+                                            return $number . $suffixes[$number % 10];
                                         }
-                                        return $number . $suffixes[$number % 10];
                                     }
                                 @endphp
                                 <tr>
