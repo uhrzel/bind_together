@@ -163,13 +163,13 @@
                             <!-- Activity Start Date -->
                             <div class="col-md-6">
                                 <label for="start_date" class="form-label">Activity Start Date</label>
-                                <input type="datetime-local" class="form-control" name="start_date" required>
+                                <input type="datetime-local" class="form-control" name="start_date" id="start_date" required>
                             </div>
-
+                            
                             <!-- Activity End Date -->
                             <div class="col-md-6">
                                 <label for="end_date" class="form-label">Activity End Date</label>
-                                <input type="datetime-local" class="form-control" name="end_date" required>
+                                <input type="datetime-local" class="form-control" name="end_date" id="end_date" required>
                             </div>
                         </div>
 
@@ -218,10 +218,12 @@
                             <ul class="list-unstyled">
                                 {{-- <li><strong>Sport Name:</strong> <span id="view_sport_name"></span></li> --}}
                                 <li class="pt-2"><strong>Title:</strong> <span id="view_title"></span></li>
-                                <li class="pt-2"><strong>Target Players:</strong> <span id="view_target_players"></span></li>
+                                <li class="pt-2"><strong>Target Players:</strong> <span id="view_target_players"></span>
+                                </li>
                                 <li class="pt-2"><strong>Content:</strong> <span id="view_content"></span></li>
                                 <li class="pt-2"><strong>Activity Type:</strong> <span id="view_type"></span></li>
-                                <li class="pt-2"><strong>Activity Duration:</strong> <br> <span id="view_start_date"></span> -
+                                <li class="pt-2"><strong>Activity Duration:</strong> <br> <span
+                                        id="view_start_date"></span> -
                                     <span id="view_end_date"></span>
                                 </li>
                                 <li class="pt-2"><strong>Venue:</strong> <span id="view_venue"></span></li>
@@ -392,21 +394,27 @@
             });
         }
 
+        function getCurrentDateTime() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = ('0' + (now.getMonth() + 1)).slice(-2);
+            var day = ('0' + now.getDate()).slice(-2);
+            var hours = ('0' + now.getHours()).slice(-2);
+            var minutes = ('0' + now.getMinutes()).slice(-2);
+            return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        }
+
         $(() => {
-            // $('.viewBtn').click(function() {
-            //     fetch('/activity/' + $(this).data('id'))
-            //         .then(response => response.json())
-            //         .then(activity => {
-            //             $('#view_title').val(activity.title)
-            //             $('#view_target_players').val(activity.target_player)
-            //             $('#view_content').val(activity.content)
-            //             $('#view_type').val(activity.type)
-            //             $('#view_start_date').val(activity.start_date)
-            //             $('#view_end_date').val(activity.end_date)
-            //             $('#view_venue').val(activity.venue)
-            //             $('#view_address').val(activity.address)
-            //         })
-            // })
+
+            const currentDateTime = getCurrentDateTime();
+
+            $('#start_date').attr('min', currentDateTime);
+            $('#end_date').attr('min', currentDateTime);
+
+            $('#start_date').on('change', function() {
+                var startDate = $(this).val();
+                $('#end_date').attr('min', startDate);
+            });
 
             $('.viewBtn').click(function() {
                 const activityId = $(this).data('id');
