@@ -22,13 +22,13 @@
                                 <th>Relationship</th>
                                 <th>COR</th>
                                 <th>Photocopy</th>
-                                @if ($status == 0)
+                                @if ($status == 1)
                                     <th>Other File</th>
                                 @else
                                     <th>Parent Consent</th>
                                 @endif
-                                <th>Date Registered</th>
                                 <th>Status</th>
+                                <th>Date Registered</th>
                                 @if ($status == 0)
                                     <th>Action</th>
                                 @endif
@@ -36,11 +36,21 @@
                         </thead>
                         <tbody>
                             @foreach ($auditions as $audition)
+                                @php
+                                    function ordinal($number)
+                                    {
+                                        $suffixes = ['th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th'];
+                                        if ((int) $number % 100 >= 11 && (int) $number % 100 <= 13) {
+                                            return $number . 'th';
+                                        }
+                                        return $number . $suffixes[$number % 10];
+                                    }
+                                @endphp
                                 <tr>
                                     <td>{{ $audition->user->firstname }} {{ $audition->user->lastname }}</td>
-                                    <td>{{ $audition->user->year_level }} Year</td>
+                                    <td>{{ ordinal($audition->user->year_level) }} Year</td>
                                     <td>{{ $audition->user->campus->name }} Year</td>
-                                    <td>{{ $audition->user->email }} Year</td>
+                                    <td>{{ $audition->user->email }}</td>
                                     <td>{{ $audition->height }}</td>
                                     <td>{{ $audition->weight }}</td>
                                     <td>{{ $audition->emergency_contact }}</td>
@@ -48,7 +58,7 @@
                                     <td><img src="{{ asset('storage/' . $audition->certificate_of_registration) }}"
                                             alt=""></td>
                                     <td><img src="{{ asset('storage/' . $audition->photo_copy_id) }}" alt=""></td>
-                                    @if ($status == 0)
+                                    @if ($status == 1)
                                         <td><img src="{{ asset('storage/' . $audition->other_file) }}" alt="">
                                         </td>
                                     @else
@@ -258,7 +268,7 @@
                     .then(audition => {
                         console.log(audition);
                         $('#user-fullname').val(audition.user.firstname + ' ' + audition.user
-                        .lastname);
+                            .lastname);
                         $('#user-year-level').val(audition.user.year_level + ' Year');
                         $('#user-campus').val(audition.user.campus.name);
                         $('#user-email').val(audition.user.email);
