@@ -11,31 +11,31 @@
                     @csrf
                     <div class="row">
                         <div class="form-group col-4">
-                            <label for="">Type of Report</label>
-                            <select name="type" id="" class="form-select">
+                            <label for="type">Type of Report</label>
+                            <select name="type" id="type_of_report" class="form-select">
                                 <option value="" selected disabled>Select Type of Report</option>
                                 <option value="3">Activity</option>
                                 <option value="1">List of Registered Participants</option>
                                 <option value="2">List of Official Performers</option>
                             </select>
 
-                            <!-- Additional dropdown for activities -->
-                            <div id="activitiesDropdown" style="display: none;">
-                                <label for="">Activities</label>
-                                <select name="activity_type" id="" class="form-select">
-                                    <option value="competition">Competition</option>
-                                    <option value="tryouts">Tryouts</option>
+                            <div id="activitiesDropdown" style="display: none;" class="mt-3">
+                                <label for="activity_type">Activity Type</label>
+                                <select name="activity_type" id="activity_type" class="form-select">
+                                    <option value="" selected disabled>Select Activity Type</option>
+                                    <option value="3">Competition</option>
+                                    <option value="1">Tryouts</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group col-2">
-                            <label for="">Start Date</label>
+                            <label for="start_date">Start Date</label>
                             <input type="date" name="start_date" class="form-control">
                         </div>
 
                         <div class="form-group col-2">
-                            <label for="">End Date</label>
+                            <label for="end_date">End Date</label>
                             <input type="date" name="end_date" class="form-control">
 
                             <div class="form-group mt-3">
@@ -64,7 +64,7 @@
                         </div>
 
                         <div class="form-group col-4">
-                            <label for="">Sports</label><br>
+                            <label for="sports">Sports</label><br>
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" name="sports_all" id="all_sports">
                                 <label for="all_sports" class="form-check-label">All</label>
@@ -80,12 +80,10 @@
 
                     <div class="mt-5 d-flex">
                         <button type="submit" class="btn btn-primary">Download</button>
-                        {{-- <button class="btn btn-success mx-3">Download</button> --}}
-                        <select name="file_type" id="" class="form-select w-25">
+                        <select name="file_type" id="file_type" class="form-select w-25">
                             <option value="" disabled selected>Select File Type</option>
                             <option value="docx">Docx</option>
                             <option value="pdf">Pdf</option>
-                            {{-- <option value="excel">Excel</option> --}}
                         </select>
                     </div>
                 </form>
@@ -94,24 +92,27 @@
     </div>
 
     <script>
-        $('select[name="type"]').on('change', function() {
-            if ($(this).val() == 3) {
-                $('#activitiesDropdown').show();
-            } else {
-                $('#activitiesDropdown').hide();
-            }
-        });
+        $(document).ready(function () {
+            // Toggle visibility of activity type dropdown based on selected report type
+            $('#type_of_report').on('change', function () {
+                if ($(this).val() == 3) {
+                    $('#activitiesDropdown').slideDown();
+                } else {
+                    $('#activitiesDropdown').slideUp();
+                }
+            });
 
-        // Check or uncheck all sports when "All" is clicked
-        $('#all_sports').on('change', function() {
-            $('.sport-checkbox').prop('checked', $(this).is(':checked'));
-        });
+            // Check or uncheck all sports when "All" is clicked
+            $('#all_sports').on('change', function () {
+                $('.sport-checkbox').prop('checked', $(this).is(':checked'));
+            });
 
-        // Uncheck "All" if any individual sport is unchecked
-        $('.sport-checkbox').on('change', function() {
-            if (!$(this).is(':checked')) {
-                $('#all_sports').prop('checked', false);
-            }
+            // Uncheck "All" if any individual sport is unchecked
+            $('.sport-checkbox').on('change', function () {
+                if (!$(this).is(':checked')) {
+                    $('#all_sports').prop('checked', false);
+                }
+            });
         });
     </script>
 @endsection
