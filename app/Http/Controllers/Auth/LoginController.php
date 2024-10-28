@@ -31,10 +31,9 @@ class LoginController extends Controller
     protected function authenticated(\Illuminate\Http\Request $request, $user)
     {
         // Check if the user is not completed (is_completed is not 1)
-        // if ($user->is_completed != 1) {
-        //     // Redirect the user to a different page if not completed
-        //     return redirect()->route('completion.page'); // Change to your specific route
-        // }
+        if ($user->is_completed != 1) {
+            return redirect()->route('profile.completion'); // Change to your specific route
+        }
 
         // Trigger SweetAlert after successful login
         alert()->success('Sign in successful', 'Redirecting...');

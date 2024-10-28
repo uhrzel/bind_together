@@ -198,6 +198,7 @@
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" name="email" placeholder="Enter Email"
                                     required>
+                                    <small class="text-danger">Domain must be @bpsu.edu.ph</small>
                                 @error('email')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
@@ -562,7 +563,7 @@
 
                 $('#viewEmail').text(user.user.email);
 
-                if (user.avatar) {
+                if (user.user.avatar) {
                     $('#viewAvatar').attr('src', '{{ url('') }}' + '/storage/' + user.user.avatar);
                 } else {
                     $('#viewAvatar').attr('src',

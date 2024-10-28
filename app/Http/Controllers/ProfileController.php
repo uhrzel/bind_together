@@ -48,10 +48,13 @@ class ProfileController extends Controller
             'program_id' => $request->program_id,
             'gender' => $request->gender,
             'year_level' => $request->year_level,
+            'sport_id' => $request->sport_id,
+            'organization_id' => $request->organization_id,
+            'is_completed' => 1,
         ]);
 
         alert()->success('Profile updated successfully!');
-        return redirect()->back()->with('success', 'Profile updated.');
+        return redirect()->route('profile.show');
     }
 
 }

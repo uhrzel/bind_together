@@ -13,29 +13,35 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center; /* Align vertically in the center */
+            justify-content: center; /* Center horizontally */
         }
 
         .header img {
             width: 100px;
             height: auto;
+            margin-right: 20px; /* Adds space between the image and the text */
         }
 
         h1 {
             font-size: 24px;
             font-weight: bold;
             margin: 0;
+            color: #800000;
         }
 
         h3 {
             font-size: 16px;
             font-weight: normal;
             margin: 5px 0;
+            color: #800000;
         }
 
         .contact-info {
             margin-top: 5px;
             font-size: 12px;
-            text-align: center;
+            text-align: left;
             color: red;
         }
 
@@ -90,14 +96,14 @@
 </head>
 
 <body>
-    <div class="header">
+    <div class="header" style="display: flex">
         <img src="{{ public_path('images/bindtogether-logo.png') }}" alt="University Logo" style="float: left;">
         <div class="">
             <h1 style="color: #800000">Bataan Peninsula State University</h1>
             <h3 style="margin-left: 10px; color: #800000">Bind Together</h3>
             <div class="contact-info" style="margin-left: 10px; text-align: center">
                 <p>City of Balanga, 2100 Bataan</p>
-                <p style="margin-left: 70px">Tel: (047) 237-3309 | Email: bpsu.bindtogether@gmail.com</p>
+                <p style="margin-left: 70px">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
             </div>
         </div>
     </div>

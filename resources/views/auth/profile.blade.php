@@ -435,18 +435,6 @@
     </div>
 @endsection
 
-@section('scripts')
-    @if ($message = Session::get('success'))
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            Swal.fire({
-                icon: 'success',
-                text: '{{ $message }}',
-            })
-        </script>
-    @endif
-@endsection
-
 @push('scripts')
     <script>
         $(document).ready(function() {
@@ -459,51 +447,4 @@
             });
         });
     </script>
-
-    <script>
-        // $('#new_password').on('input', function() {
-        //     var password = $(this).val();
-        //     var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-        //     if (!regex.test(password)) {
-        //         $(this)[0].setCustomValidity(
-        //             'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.'
-        //         );
-        //     } else {
-        //         $(this)[0].setCustomValidity('');
-        //     }
-        // });
-    </script>
-
-
-    {{-- <script>
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-        $('#password').on('input', function() {
-            const password = $(this).val();
-            const passwordError = $('#passwordError');
-            if (!passwordRegex.test(password)) {
-                passwordError.text(
-                    "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
-                );
-                $(this).addClass('is-invalid');
-            } else {
-                passwordError.text("");
-                $(this).removeClass('is-invalid');
-            }
-        });
-
-        $('#password_confirmation').on('input', function() {
-            const password = $('#password').val();
-            const confirmPassword = $(this).val();
-            const confirmPasswordError = $('#confirmPasswordError');
-            if (password !== confirmPassword) {
-                confirmPasswordError.text("Passwords do not match.");
-                $(this).addClass('is-invalid');
-            } else {
-                confirmPasswordError.text("");
-                $(this).removeClass('is-invalid');
-            }
-        });
-    </script> --}}
 @endpush

@@ -16,9 +16,7 @@ class ActivityController extends Controller
     {
         $user = Auth::user()->load('organization');
 
-        // Check if the user is SuperAdmin or Admin-Sport
-        if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin-Sport')) {
-            // Retrieve all activities if the user is SuperAdmin or Admin-Sport
+        if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
             $activities = Activity::whereIn('status', [0, 1])->get();
         } else {
             // Retrieve only activities for the authenticated user

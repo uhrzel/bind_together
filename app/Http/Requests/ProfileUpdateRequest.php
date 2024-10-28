@@ -25,7 +25,6 @@ class ProfileUpdateRequest extends FormRequest
                     ->numbers()
                     ->symbols()
                     ->letters()
-                    ->uncompromised()
             ], // Ensure new password follows the same rules
             'old_password' => ['required_with:password'], // Old password required only if changing password
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif'], // Max 2MB for avatar
@@ -33,6 +32,8 @@ class ProfileUpdateRequest extends FormRequest
             'campus_id' => ['nullable', 'exists:campuses,id'], // Ensure campus exists
             'program_id' => ['nullable', 'exists:programs,id'], // Ensure program exists
             'year_level' => ['nullable', 'string',], // Valid year levels
+            'sport_id' => ['nullable', 'exists:sports,id'],
+            'organization_id' => ['nullable', 'exists:organizations,id'],
         ];
     }
 

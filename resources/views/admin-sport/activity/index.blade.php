@@ -91,23 +91,25 @@
                                             Delete
                                         </button>
 
-                                        <form action="{{ route('approve', $activity->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-success">
-                                                Approve
-                                            </button>
-                                        </form>
+                                        @if (auth()->user()->hasRole('admin_org') || auth()->user()->hasRole('admin_sport'))
+                                            <form action="{{ route('approve', $activity->id) }}" method="POST"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-success">
+                                                    Approve
+                                                </button>
+                                            </form>
 
-                                        <form action="{{ route('decline', $activity->id) }}" method="POST"
-                                            style="display: inline;">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-danger">
-                                                Decline
-                                            </button>
-                                        </form>
+                                            <form action="{{ route('decline', $activity->id) }}" method="POST"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-danger">
+                                                    Decline
+                                                </button>
+                                            </form>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -189,13 +191,15 @@
                             <!-- Activity Start Date -->
                             <div class="col-md-6">
                                 <label for="start_date" class="form-label">Activity Start Date</label>
-                                <input type="datetime-local" class="form-control" name="start_date" id="start_date" required>
+                                <input type="datetime-local" class="form-control" name="start_date" id="start_date"
+                                    required>
                             </div>
-                            
+
                             <!-- Activity End Date -->
                             <div class="col-md-6">
                                 <label for="end_date" class="form-label">Activity End Date</label>
-                                <input type="datetime-local" class="form-control" name="end_date" id="end_date" required>
+                                <input type="datetime-local" class="form-control" name="end_date" id="end_date"
+                                    required>
                             </div>
                         </div>
 
@@ -475,7 +479,11 @@
                         // Populate the fields in the modal
                         // $('#view_sport_name').text(activity.sport_name || 'N/A');
                         $('#view_title').text(activity.title || 'N/A');
-                        $('#view_target_players').text(activity.target_players || 'N/A');
+                        if (activity.target_player === 0) {
+                            $('#view_target_players').text('All Student');
+                        } else if (activity.target_player === 1) {
+                            $('#view_target_players').text('Official Player');
+                        }
                         $('#view_content').text(activity.content || 'N/A');
                         $('#view_type').text(activityTypeText); // Using the converted type text
                         $('#view_start_date').text(activity.start_date || 'N/A');

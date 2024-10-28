@@ -29,9 +29,7 @@
                                 @endif
                                 <th>Status</th>
                                 <th>Date Registered</th>
-                                @if ($status == 0)
-                                    <th>Action</th>
-                                @endif
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -78,12 +76,16 @@
                                             <button class="btn btn-secondary declineBtn" type="button"
                                                 data-bs-toggle="modal" data-bs-target="#declineModal"
                                                 data-id="{{ $audition->id }}">Decline</button>
+
+                                            {{-- <button class="btn btn-danger">Delete</button> --}}
+                                        </td>
+                                    @endif
+                                    @if ($status == 1)
+                                        <td>
                                             <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
                                                 data-bs-target="#viewAuditionModal" data-id="{{ $audition->id }}">
                                                 View
                                             </button>
-
-                                            {{-- <button class="btn btn-danger">Delete</button> --}}
                                         </td>
                                     @endif
                                 </tr>
