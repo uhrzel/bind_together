@@ -5,6 +5,7 @@ namespace App\Http\Controllers\ActivityAction;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class ApproveController extends Controller
 {
@@ -19,8 +20,14 @@ class ApproveController extends Controller
             ]
         );
 
+        // Mail::to($user->email)->send(new VerifyUserEmail(
+        //     $user,
+        //     $verificationUrl,
+        //     $request->password,
+        //     $request->role
+        // ));
+        
         alert()->success('Activity Approve Successfully!');
-
         return redirect()->route('activity.index');
     }
 }

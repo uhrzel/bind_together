@@ -19,6 +19,13 @@ class DeclineController extends Controller
             ]
         );
 
+        // Mail::to($user->email)->send(new VerifyUserEmail(
+        //     $user,
+        //     $verificationUrl,
+        //     $request->password,
+        //     $request->role
+        // ));
+
         alert()->success('Activity Approve Successfully!');
 
         return redirect()->route('activity.index');

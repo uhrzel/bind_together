@@ -13,10 +13,17 @@ class DeletedActivityController extends Controller
      */
     public function __invoke(Request $request)
     {
+        if (auth()->user()->hasRole('admin_sport') || auth()->user()->hasRole('admin_org') || auth()->user()->hasRole('super_admin'))
+        {
+            $activities = Activity::where('status', 2)->get();
+        } else {
+            $activities = Activity::where('user_id', Auth::id())
+                ->where('status', 2)->get();
+        }
+
         return view('admin-sport.activity.deleted', [
-            'activities' => Activity::where('user_id', Auth::id())
-                ->where('status', 2)->get(),
-            'user' => Auth::user()->load('organization')
+            'activities' => $activities,
+            'user' => Auth::user()->load('organization'),
         ]);
     }
 }

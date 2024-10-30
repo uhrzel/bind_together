@@ -24,7 +24,7 @@
     @endif
 
 
-    <form action="{{ route('profile.update') }}" method="POST">
+    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="container mt-4">
@@ -101,6 +101,7 @@
                 </div>
             </div>
 
+
             @if (auth()->user()->role('coach') || auth()->user()->role('admin_sport'))
                 <h5 class="text-primary mt-2">Assigned Sport</h5>
                 <div class=" mb-3 mt-2">
@@ -162,6 +163,11 @@
                     </div>
                 </div>
             @endstudent
+
+            <div class="form-group">
+                <label for="">Profile Picture</label>
+                <input type="file" name="avatar" class="form-control">
+            </div>
 
             <!-- Submit Button -->
             <div class="text-end">

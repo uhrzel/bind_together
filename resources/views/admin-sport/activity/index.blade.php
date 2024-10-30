@@ -378,6 +378,7 @@
                 </div>
                 <form action="" id="deleteForm" method="POST">
                     @csrf
+                    @method('DELETE')
                     <div class="modal-body">
                         Are you sure you want to delete this?
                         <input type="hidden" name="status" value="2">
@@ -505,7 +506,7 @@
             });
 
             $('.deleteBtn').click(function() {
-                $('#deleteForm').attr('action', 'delete-activity/' + $(this).data('id'));
+                $('#deleteForm').attr('action', 'activity/' + $(this).data('id'));
             })
 
         })

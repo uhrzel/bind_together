@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\ActivityType;
 use App\Http\Requests\StoreActivityRequest;
 use App\Models\Activity;
 use Illuminate\Http\Request;
@@ -17,9 +18,10 @@ class ActivityController extends Controller
         $user = Auth::user()->load('organization');
 
         if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
-            $activities = Activity::whereIn('status', [0, 1])->get();
+            $activities = Activity::whereIn('status', [0, 1])
+                ->whereIn('type', [ActivityType::Audition, ActivityType::Competition])
+                ->get();
         } else {
-            // Retrieve only activities for the authenticated user
             $activities = Activity::where('user_id', $user->id)
                 ->whereIn('status', [0, 1])
                 ->get();
@@ -45,20 +47,16 @@ class ActivityController extends Controller
      */
     public function store(StoreActivityRequest $request)
     {
-        // Determine the status based on the type and user roles
-        $status = 0; // Default status
+        $status = 0;
 
-        // Set status to 1 if the type is 2 or 3
         if (in_array($request->input('type'), [2, 3, 0])) {
             $status = 1;
         }
 
-        // Set status to 1 if the user has 'admin_org' or 'admin_sport' roles
         if (auth()->user()->hasRole(['admin_org', 'admin_sport'])) {
             $status = 1;
         }
 
-        // Handle file attachment if it exists
         if ($request->hasFile('attachment')) {
             $path = $request->file('attachment')->store('attachments', 'public');
             $data = $request->except('attachment') + [
@@ -73,10 +71,8 @@ class ActivityController extends Controller
             ];
         }
 
-        // Create the activity
         Activity::create($data);
 
-        // Show success message
         alert()->success('Activity created successfully');
         return redirect()->route('activity.index');
     }
@@ -115,6 +111,9 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        //
+        $activity->delete();
+
+        alert()->success('Activity deleted successfully');
+        return redirect()->route('activity.index');
     }
 }
