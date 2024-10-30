@@ -115,14 +115,14 @@ class GenerateReportController extends Controller
             //     $view = 'coach.reports.default-report'; // Add a default case if necessary
             //     break;
         }
-    
+
         // Load the selected view with the data
         $pdf = Pdf::loadView($view, [
             'registrations' => $results,
             'startDate' => $startDate,
             'endDate' => $endDate
         ])->setPaper('a4', 'landscape');
-    
+
         // Stream the PDF file with the current date in the filename
         return $pdf->stream('activities_report_' . now()->format('Y_m_d') . '.pdf');
     }
@@ -156,7 +156,7 @@ class GenerateReportController extends Controller
         $header->addText('Bataan Peninsula State University', ['bold' => true, 'size' => 16, 'color' => '800000'], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
         $header->addText('Bind Together', ['italic' => true, 'size' => 12, 'color' => '800000'], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
         $header->addText('City of Balanga, 2100 Bataan', ['italic' => true, 'size' => 10], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
-        $header->addText('Tel: (047) 237-3309 | Email: bpsu.bindtogether@gmail.com', ['italic' => true, 'size' => 10], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
+        $header->addText('Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com', ['italic' => true, 'size' => 10], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);
 
         $section->addTextBreak(1);
         $section->addText("Activities Report for $startDate - $endDate", ['bold' => true, 'size' => 12], ['alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER]);

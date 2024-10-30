@@ -13,7 +13,7 @@
                         <select name="type" id="" class="form-select">
                             <option value="" selected disabled>Select Type of Report</option>
                             <option value="1">List of Registered Participants</option>
-                            <option value="2">List of Official Performers</option>
+                            <option value="2">List of Official Players</option>
                             <option value="3">Adviser</option>
                             <option value="4">Activities</option>
                         </select>

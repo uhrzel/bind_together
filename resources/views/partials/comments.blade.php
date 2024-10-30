@@ -27,10 +27,7 @@
         </form>
         <div class="d-flex mt-2">
             @if ($comment->user_id != auth()->id())
-                <a class="like-comment ml-2" type="button" style="text-decoration: none; color: blue"
-                    data-comment-id="{{ $comment->id }}" onclick="toggleLike({{ $comment->id }})">
-                    <b><i class="far fa-thumbs-up"></i> Like</b>
-                </a>
+                
                 <button class="border-0 bg-transparent text-danger" type="button" data-bs-toggle="modal"
                     data-bs-target="#reportCommentModal" onclick="setCommentId({{ $comment->id }})"
                     {{ $isDisabled }}>

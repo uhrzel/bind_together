@@ -39,7 +39,7 @@
                             @enderror
                             <div class="mb-3">
                                 <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Respond here..."></textarea>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Enter Text..."></textarea>
                             </div>
                             @error('message')
                                 <div class="text-danger">{{ $message }}</div>

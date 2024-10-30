@@ -97,7 +97,7 @@
             <h3 style="margin-left: 10px; color: #800000">Bind Together</h3>
             <div class="contact-info" style="margin-left: 10px; text-align: center">
                 <p>City of Balanga, 2100 Bataan</p>
-                <p style="margin-left: 70px">Tel: (047) 237-3309 | Email: bpsu.bindtogether@gmail.com</p>
+                <p style="margin-left: 70px">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
             </div>
         </div>
     </div>

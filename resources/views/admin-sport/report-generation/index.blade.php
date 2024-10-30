@@ -16,7 +16,7 @@
                                 <option value="" selected disabled>Select Type of Report</option>
                                 <option value="3">Activity</option>
                                 <option value="1">List of Registered Participants</option>
-                                <option value="2">List of Official Performers</option>
+                                <option value="2">List of Official Players</option>
                             </select>
 
                             <div id="activitiesDropdown" style="display: none;" class="mt-3">

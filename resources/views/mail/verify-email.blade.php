@@ -1,19 +1,24 @@
-{{-- <!DOCTYPE html>
+{{--
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Your Email Address</title>
 </head>
+
 <body>
     <h1>Verify Your Email Address</h1>
     <p>Hello {{ $name }},</p>
     <p>Please click the button below to verify your email address:</p>
-    <a href="{{ $verificationUrl }}" style="padding: 10px 15px; background-color: #3498db; color: white; text-decoration: none;">
+    <a href="{{ $verificationUrl }}"
+        style="padding: 10px 15px; background-color: #3498db; color: white; text-decoration: none;">
         Verify Email Address
     </a>
     <p>If you did not create an account, no further action is required.</p>
 </body>
+
 </html> --}}
 
 <!DOCTYPE html>
@@ -92,8 +97,8 @@
         </div>
         <h2>Welcome to Bind Together</h2>
         <p>Dear {{ $user->firstname }} {{ $user->lastname }},</p>
-        <p>We are pleased to inform you that your student account has been successfully created. Please verify your
-            email by entering the verification code below:</p>
+        <p>We are pleased to inform you that your (role) account has been successfully created. Please verify your email
+            by clicking the link below:</p>
         <ul>
             <li><strong>Role:</strong> {{ $role ?? 'Student' }}</li>
             <li><strong>Email:</strong>{{ $user->email }}</li>
@@ -101,11 +106,11 @@
             {{-- <li><strong>Verification Code:</strong> ' . $key . '</li> --}}
         </ul>
         <p>Please keep this information confidential and do not share it with others.</p>
-        <p>To verify your account, please visit the following link: 
+        <p>To verify your account, please visit the following link:
             <a href="{{ $verificationUrl }}">
                 Verify Email Address
             </a>
-            </p>
+        </p>
         <p class="note"><strong>NOTE:</strong> This is a system-generated email. Please do not reply.</p>
     </div>
 </body>

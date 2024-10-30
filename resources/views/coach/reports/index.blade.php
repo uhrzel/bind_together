@@ -17,7 +17,7 @@
                                 <option value="4">Activities</option>
                                 <option value="3">Practice</option>
                                 <option value="1">List of Tryout Participants</option>
-                                <option value="2">List of Official Performers</option>
+                                <option value="2">List of Official Players</option>
                             </select>
                         </div>
                         <div class="form-group col-2">

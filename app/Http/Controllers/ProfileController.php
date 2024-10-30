@@ -23,6 +23,13 @@ class ProfileController extends Controller
         ]);
     }
 
+    public function up()
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('avatar')->nullable()->default('images/avatar/default.jpg'); // Default image path
+        });
+    }
+
     public function update(ProfileUpdateRequest $request)
     {
         $user = auth()->user();
@@ -34,6 +41,9 @@ class ProfileController extends Controller
 
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $user->update(['avatar' => $avatarPath]);
+        } else {
+            // Set default avatar if none is uploaded
+            $user->update(['avatar' => 'images/avatar/default.jpg']);
         }
 
         if ($request->filled('password')) {
@@ -56,5 +66,6 @@ class ProfileController extends Controller
         alert()->success('Profile updated successfully!');
         return redirect()->route('profile.show');
     }
+
 
 }
