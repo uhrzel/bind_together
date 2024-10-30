@@ -23,7 +23,6 @@
         </div>
     @endif
 
-
     <form action="{{ route('profile.update') }}" method="POST">
         @csrf
         @method('PUT')
@@ -65,12 +64,13 @@
                 <div class="col-md-6 mt-2">
                     <label for="dob" class="form-label">Date of Birth</label>
                     <input type="date" class="form-control" id="dob" name="birthdate"
-                        value="{{ auth()->user()->birthdate ? \Illuminate\Support\Carbon::parse(auth()->user()->birthdate)->format('Y-m-d') : '' }}">
+                        value="{{ auth()->user()->birthdate ? \Illuminate\Support\Carbon::parse(auth()->user()->birthdate)->format('Y-m-d') : '' }}" required>
                 </div>
 
                 <div class="col-md-6 mt-2">
                     <label for="gender" class="form-label">Gender</label>
-                    <select class="form-control" id="gender" name="gender">
+                    <select class="form-control" id="gender" name="gender" required>
+                        <option value="" disabled>Select Gender</option>
                         <option value="Female" {{ auth()->user()->gender == 'Female' ? 'selected' : '' }}>Female
                         </option>
                         <option value="Male" {{ auth()->user()->gender == 'Male' ? 'selected' : '' }}>Male</option>
@@ -80,20 +80,21 @@
                 <div class="col mt-2">
                     <label for="address" class="form-label">Address</label>
                     <input type="text" class="form-control" id="address" name="address"
-                        value="{{ auth()->user()->address }}">
+                        value="{{ auth()->user()->address }}" required>
                 </div>
             </div>
 
             <h5 class="text-primary mt-2">Contact Information</h5>
             <div class="row mb-3 mt-2">
-                <div class="col-md-6 mt-2">
-                    <label for="contact_number" class="form-label">Contact Number</label>
-                    <div class="input-group">
-                        <span class="input-group-text">+63</span>
-                        <input type="text" class="form-control" maxlength="10" id="contact_number" name="contact"
-                            value="{{ auth()->user()->contact }}">
-                    </div>
-                </div>
+            <div class="col-md-6 mt-2"> 
+    <label for="contact_number" class="form-label">Contact Number</label>
+    <div class="input-group">
+        <span class="input-group-text">+63</span>
+        <input type="text" class="form-control" maxlength="10" id="contact_number" name="contact"
+               value="{{ auth()->user()->contact }}"  inputmode="numeric" pattern="\d*" required>
+    </div>
+</div>
+
                 <div class="col-md-6 mt-2">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" class="form-control" id="email" name="email"
@@ -101,29 +102,14 @@
                 </div>
             </div>
 
-            @if (auth()->user()->role('coach') || auth()->user()->role('admin_sport'))
-                <h5 class="text-primary mt-2">Assigned Sport</h5>
-                <div class=" mb-3 mt-2">
-                    <div class="mt-2">
-                        <label for="sport_id" class="form-label">Sport</label>
-                        <select name="sport_id" id="sport_id" class="form-control w-50">
-                            @foreach ($sports as $sport)
-                                <option value="{{ $sport->id }}"
-                                    {{ auth()->user()->sport_id == $sport->id ? 'selected' : '' }}>
-                                    {{ $sport->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            @endif
+            
 
             @student
                 <h5 class="text-primary mt-2">School Information</h5>
                 <div class="row mb-3">
                     <div class="col-md-6 mt-2">
                         <label for="campus_id" class="form-label">Campus Name</label>
-                        <select name="campus_id" id="campus_id" class="form-select">
+                        <select name="campus_id" id="campus_id" class="form-select" >
                             <option value="" selected disabled>Select Campus</option>
                             @foreach ($campuses as $campus)
                                 <option value="{{ $campus->id }}"
@@ -136,7 +122,7 @@
 
                     <div class="col-md-6 mt-2">
                         <label for="program_id" class="form-label">Program Name</label>
-                        <select name="program_id" id="program_id" class="form-select">
+                        <select name="program_id" id="program_id" class="form-select" onchange="toggleOtherProgramInput(this)">
                             <option value="" selected disabled>Select Program</option>
                             @foreach ($programs as $program)
                                 <option value="{{ $program->id }}"
@@ -144,12 +130,18 @@
                                     {{ $program->name }}
                                 </option>
                             @endforeach
+                            <option value="other">Other</option>
                         </select>
+                    </div>
+
+                    <div class="col-md-6 mt-2" id="other_program_input" style="display: none;">
+                        <label for="other_program" class="form-label">Enter Program Name</label>
+                        <input type="text" class="form-control" id="other_program" name="other_program">
                     </div>
 
                     <div class="col mt-2">
                         <label for="year_level" class="form-label">Year Level</label>
-                        <select class="form-select" id="year_level" name="year_level">
+                        <select class="form-select" id="year_level" name="year_level" required>
                             <option value="1" {{ auth()->user()->year_level == 1 ? 'selected' : '' }}>1st Year
                             </option>
                             <option value="2" {{ auth()->user()->year_level == 2 ? 'selected' : '' }}>2nd Year
@@ -175,6 +167,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <script>
+        function toggleOtherProgramInput(select) {
+            const otherProgramInput = document.getElementById('other_program_input');
+            if (select.value === 'other') {
+                otherProgramInput.style.display = 'block';
+                document.getElementById('other_program').setAttribute('required', 'required');
+            } else {
+                otherProgramInput.style.display = 'none';
+                document.getElementById('other_program').removeAttribute('required');
+            }
+        }
+    </script>
 </body>
 
 </html>

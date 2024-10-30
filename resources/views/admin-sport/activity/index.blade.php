@@ -76,7 +76,7 @@
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#editCompetitionModal"
                                             onclick="loadActivityData({{ $activity->id }})"
-                                            {{ $activity->status == 1 ? 'disabled' : '' }}>
+                                            {{ $activity->status == 1 ? '' : '' }}>
                                             Edit
                                         </button>
 
@@ -87,7 +87,7 @@
 
                                         <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
-                                            {{ $activity->status == 1 ? 'disabled' : '' }}>
+                                            {{ $activity->status == 1 ? '' : '' }}>
                                             Delete
                                         </button>
 
@@ -173,12 +173,13 @@
                                 </select>
                             </div>
                             @coach
-                                <div class="form-group col">
-                                    <label for="organization">Sport</label>
-                                    <input type="text" value="{{ $user->sport->name }}" class="form-control"
-                                        placeholder="Organization" readonly>
-                                </div>
-                            @endcoach
+    <div class="form-group col">
+        <label for="organization">Sport</label>
+        <input type="text" value="{{ $user->sport ? $user->sport->name : 'No sport assigned' }}" class="form-control"
+            placeholder="Organization" readonly>
+    </div>
+@endcoach
+
                             @adviser
                                 <div class="form-group col">
                                     <label for="organization">Organization</label>

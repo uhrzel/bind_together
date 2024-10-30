@@ -43,8 +43,9 @@
                     <div class="row">
                         <div class="col-3 card pb-4">
                             <div class="text-center">
-                                <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}"
-                                    class="rounded-circle" height="100" width="100" alt="AVATAR"> <br>
+                            <br>
+                            <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/default.jpg') }}" class="rounded-circle" height="100" width="100" alt="AVATAR">
+                            <br>
                                 <label for="">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</label>
                                 <br>
                                 <span
@@ -83,7 +84,7 @@
                                     <div class="tab-content mt-3">
                                         <div class="tab-pane fade show active" id="profile-info" role="tabpanel"
                                             aria-labelledby="profile-info-tab">
-                                            {{-- <h5 class="text-primary">Basic information</h5> --}}
+                                            {{-- <h5 class="text-primary"></h5> --}}
                                             <table class="table">
                                                 <tbody>
                                                     <tr>
@@ -130,20 +131,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            @if (auth()->user()->role('coach') || auth()->user()->role('admin_sport'))
-                                                <table class="table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th class="text-info">Assigned Sport</th>
-                                                            <th></th>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Sport</th>
-                                                            <td>{{ auth()->user()->sport->name }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            @endif
+                                            
                                             <!-- School Information Section -->
                                             {{-- <h5 class="text-primary">School information</h5> --}}
                                             @student
@@ -162,9 +150,22 @@
                                                             <td>{{ auth()->user()->program->name ?? '' }}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th>Year level</th>
-                                                            <td>{{ auth()->user()->year_level ?? '' }}th Year</td>
+                                                        <th>Year level</th>
+                                                        <td>
+                                                            @if (auth()->user()->year_level == 1)
+                                                                1<sup>st</sup> Year
+                                                            @elseif (auth()->user()->year_level == 2)
+                                                                2<sup>nd</sup> Year
+                                                            @elseif (auth()->user()->year_level == 3)
+                                                                3<sup>rd</sup> Year
+                                                            @elseif (auth()->user()->year_level == 4)
+                                                                4<sup>th</sup> Year
+                                                            @else
+                                                                {{ auth()->user()->year_level ?? '' }} Year
+                                                            @endif
+                                                        </td>
                                                         </tr>
+
                                                     </tbody>
                                                 </table>
                                             @endstudent
@@ -256,21 +257,7 @@
                                                             name="email" value="{{ auth()->user()->email }}" readonly>
                                                     </div>
                                                 </div>
-                                                @if (auth()->user()->role('coach') || auth()->user()->role('admin_sport'))
-                                                    <h5 class="text-primary mt-2">Assigned Sport</h5>
-                                                    <div class="row mb-3 mt-2">
-                                                        <div class=" mt-2">
-                                                            <label for="contact_number" class="form-label">Sport</label>
-                                                            <div class="input-group">
-                                                                <select name="sport_id" id="" class="form-select">
-                                                                    @foreach ($sports as $sport)
-                                                                        <option value="{{ $sport->id }}" @selected($sport->id) >{{ $sport->name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                                
                                                 <!-- School Information Section -->
                                                 @student
                                                     <h5 class="text-primary mt-2">School information</h5>

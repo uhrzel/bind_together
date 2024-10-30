@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Organization;
 use App\Models\Sport;
 use Illuminate\Http\Request;
+use App\Models\Campus;
+use App\Models\Program;
 
 class ProfileCompletionController extends Controller
 {
@@ -13,6 +15,11 @@ class ProfileCompletionController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return view('auth.profile-completion', ['sports' => Sport::all(), 'organizations' => Organization::class]);
+        return view('auth.profile-completion', [
+            'sports' => Sport::all(),
+            'organizations' => Organization::all(),
+            'campuses' => Campus::all(),
+            'programs' => Program::all()
+        ]);
     }
 }
