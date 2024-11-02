@@ -1062,9 +1062,10 @@
 
                     $.ajax({
                         url: url,
-                        type: 'GET',
+                        type: 'POST', // Changed to POST to match the controller method
                         data: {
-                            description: description // Pass the description text
+                            description: description, // Pass the description text
+                            _token: '{{ csrf_token() }}' // Include CSRF token for security
                         },
                         success: function(response) {
                             // Handle the response here
