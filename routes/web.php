@@ -36,6 +36,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ViewStudentController;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Requests\EmailVerificationRequest;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,11 +49,20 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, $id) {
+    $user = User::findOrFail($id);
 
-    return redirect('/home');
-})->name('verification.verify');
+    if (!hash_equals((string) $request->hash, sha1($user->getEmailForVerification()))) {
+        abort(403);
+    }
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+    }
+
+    return redirect('/home')->with('status', 'Email verified!');
+})->middleware(['signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendCustomEmailVerification();

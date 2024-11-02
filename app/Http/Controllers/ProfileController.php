@@ -41,9 +41,6 @@ class ProfileController extends Controller
 
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $user->update(['avatar' => $avatarPath]);
-        } else {
-            // Set default avatar if none is uploaded
-            $user->update(['avatar' => 'images/avatar/default.jpg']);
         }
 
         if ($request->filled('password')) {
