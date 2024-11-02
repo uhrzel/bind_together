@@ -314,20 +314,24 @@
                             <textarea class="form-control" id="content" name="content" placeholder="Content" rows="3" required></textarea>
                         </div>
 
-                 <div class="">
-            <label for="activity_type" class="form-label">Activity Type</label>
-            <select class="form-select" id="type" name="type" required>
-                @if (auth()->user()->hasRole('coach'))
-                    <option value="1">Tryout</option> <!-- Coach can select "Tryout" -->
-                    <option value="2">Practice</option> <!-- Coach can select "Practice" -->
-                @elseif (auth()->user()->hasRole('adviser'))
-                    <option value="0">Audition</option> <!-- Adviser can select "Audition" -->
-                    <option value="2">Practice</option> <!-- Adviser can select "Practice" -->
-                @elseif (auth()->user()->hasRole(['admin_sport', 'admin_org']))
-                    <option value="3" selected>Competition</option> <!-- Admin can select "Competition" -->
-                @endif
-            </select>
-        </div>
+                 <div class="row">
+                            <div class="form-group col">
+                                <label for="activity_type" class="form-label">Activity Type</label>
+                                <select class="form-select" name="type" required>
+                                    @if (auth()->user()->hasRole('adviser'))
+                                        <option value="0">Audition</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole('coach'))
+                                        <option value="1">Tryout</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole(['admin_sport', 'admin_org']))
+                                        <option value="3" selected>Competition</option>
+                                    @endif
+                                </select>
+                            </div>
+
                         
                         <div class="row mb-3 mt-3">
                             <!-- Activity Start Date -->
