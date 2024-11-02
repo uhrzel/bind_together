@@ -310,8 +310,7 @@
                         </div>
                     @endif
                     <div>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-danger">Post</button>
+                        <button type="submit" class="btn btn-danger" id="postButton">Post</button>
                     </div>
                 </div>
             </form>
@@ -1092,7 +1091,15 @@
                         success: function(response) {
                             // Handle the response here
                             console.log(response);
-                            // You can update the UI with the fetched users
+                            // Trigger the post button click
+                            $('#postButton').click();
+
+                            // Show success message
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sent and Posted!',
+                                text: 'Your message has been sent and the post has been created successfully.',
+                            });
                         },
                         error: function(xhr) {
                             if (xhr.status === 404) {
@@ -1109,10 +1116,6 @@
                 }
             });
         });
-
     </script>
-
-
-
 
 @endpush
