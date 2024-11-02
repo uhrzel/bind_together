@@ -18,7 +18,7 @@ class SmsController extends Controller
             'description' => 'required|string',
         ]);
         $description = $request->input('description');
-
+        Log::info($description);
         $users = User::where('campus_id', $campusId)->pluck('contact');
         if ($users->isEmpty()) {
             return response()->json(['error' => 'No users found for the selected campus.'], 404);
@@ -58,7 +58,7 @@ class SmsController extends Controller
             'description' => 'required|string',
         ]);
         $description = $request->input('description');
-
+        Log::info($description);
         // Get all official players
         $officialPlayers = ActivityRegistration::where('status', 1)
             ->pluck('user_id');

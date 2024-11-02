@@ -1052,7 +1052,7 @@
                 var campusId = $('#campus').val();
                 var description = $('textarea[name="description"]').val(); // Get the description text
                 var targetAudience = $('#target_audience').val(); // Get the selected target audience
-
+                console.log(campusId, description, targetAudience);
                 if (campusId) {
                     var url = '/send-message/' + campusId; // Default URL for all students
 
