@@ -117,8 +117,8 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('feedback', FeedbackController::class);
     Route::resource('practice', PracticeController::class);
 
-    Route::get('/send-message/{campusId}', [SmsController::class, 'sendMessage']);
-    Route::get('/send-message/oficialplayer/{campusId}', [SmsController::class, 'sendMessageOfficialPlayers']);
+    Route::post('/send-message/{campusId}', [SmsController::class, 'sendMessage']);
+    Route::post('/send-message/oficialplayer/{campusId}', [SmsController::class, 'sendMessageOfficialPlayers']);
 
     //SMS
     Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');

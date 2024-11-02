@@ -284,7 +284,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCompetitionModalLabel">Edit Competition</h5>
+                    <h5 class="modal-title" id="editCompetitionModalLabel">Edit Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -315,12 +315,25 @@
                             <textarea class="form-control" id="content" name="content" placeholder="Content" rows="3" required></textarea>
                         </div>
 
-                        <div class="">
-                            <label for="activity_type" class="form-label">Activity Type</label>
-                            <select class="form-select" id="type" name="type" required>
-                                <option value="3" selected>Competition</option>
-                            </select>
-                        </div>
+                 <div class="row">
+                            <div class="form-group col">
+                                <label for="activity_type" class="form-label">Activity Type</label>
+                                <select class="form-select" name="type" required>
+                                    @if (auth()->user()->hasRole('adviser'))
+                                        <option value="0">Audition</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole('coach'))
+                                        <option value="1">Tryout</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole(['admin_sport', 'admin_org']))
+                                        <option value="3" selected>Competition</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                        
                         <div class="row mb-3 mt-3">
                             <!-- Activity Start Date -->
                             <div class="col-md-6">

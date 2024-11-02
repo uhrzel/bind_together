@@ -290,9 +290,8 @@
 
                     <!-- New Target Audience Selection -->
 
-
                     <div class="form-group mb-3">
-                        <textarea class="form-control" name="description"
+                        <textarea class="form-control" name="description" id="description"
                                   placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
                                   style="background-color: #3E4348; color: white; border: none;"></textarea>
                     </div>
@@ -1050,9 +1049,9 @@
             // Handle the send message button click
             $('#sendMessageButton').on('click', function() {
                 var campusId = $('#campus').val();
-                var description = $('textarea[name="description"]').val(); // Get the description text
+                var description = $('#description').val(); // Get the description text using the id
                 var targetAudience = $('#target_audience').val(); // Get the selected target audience
-
+                console.log(campusId, description, targetAudience);
                 if (campusId) {
                     var url = '/send-message/' + campusId; // Default URL for all students
 
@@ -1062,9 +1061,10 @@
 
                     $.ajax({
                         url: url,
-                        type: 'GET',
+                        type: 'POST', // Changed to POST to match the controller method
                         data: {
-                            description: description // Pass the description text
+                            description: description, // Pass the description text
+                            _token: '{{ csrf_token() }}' // Include CSRF token for security
                         },
                         success: function(response) {
                             // Handle the response here
