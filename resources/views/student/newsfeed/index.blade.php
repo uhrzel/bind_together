@@ -1040,36 +1040,8 @@
             });
         });
 
-
-
-
-
-
-            $('#postButton').on('click', function() {
-                var campusId = $('#campus').val();
-                var description = $('textarea[name="description"]').val(); // Get the description text
-
-                if (campusId) {
-                    $.ajax({
-                        url: '/send-message/' + campusId,
-                        type: 'GET',
-                        data: {
-                            description: description // Pass the description text
-                        },
-                        success: function(response) {
-                            // Handle the response here
-                            console.log(response);
-                            // You can update the UI with the fetched users
-                        },
-                        error: function(xhr) {
-                            console.error('Error fetching users:', xhr.responseText);
-                        }
-                    });
-                }
-            });
-
-
         $(document).ready(function() {
+            // Handle the send message button click
             $('#sendMessageButton').on('click', function() {
                 var campusId = $('#campus').val();
                 var description = $('textarea[name="description"]').val(); // Get the description text
@@ -1091,31 +1063,41 @@
                         success: function(response) {
                             // Handle the response here
                             console.log(response);
-                            // Trigger the post button click
-                            $('#postButton').click();
-
-                            // Show success message
+                            // Show a SweetAlert notification
                             Swal.fire({
+                                title: 'Success!',
+                                text: 'Message has been sent.',
                                 icon: 'success',
-                                title: 'Sent and Posted!',
-                                text: 'Your message has been sent and the post has been created successfully.',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Trigger the post button click
+                                    $('#postButton').click();
+                                }
                             });
                         },
                         error: function(xhr) {
-                            if (xhr.status === 404) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: xhr.responseJSON.error,
-                                });
-                            } else {
-                                console.error('Error fetching users:', xhr.responseText);
-                            }
+                            console.error('Error fetching users:', xhr.responseText);
+                            // Show a SweetAlert notification for errors
+                            Swal.fire({
+                                title: 'Error!',
+                                text: JSON.parse(xhr.responseText).error,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         }
                     });
                 }
             });
+
+            // Handle the post button click
+            $('#postButton').on('click', function() {
+                var form = $('#newsfeedModal form');
+                form.submit();
+            });
         });
+
+
     </script>
 
 @endpush
