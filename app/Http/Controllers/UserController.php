@@ -69,6 +69,15 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if($request->organization_id == 'select_other'){
+            $created = Organization::create([
+                "name" => $request->txtSelectOther
+            ]);
+            if($created){
+                $request['organization_id'] = $created['id'];
+            }
+        }
+
         if ($request->filled(['password', 'password_confirmation'])) {
             $request->validate([
                 'password' => 'required|confirmed|min:8', // Validation rules

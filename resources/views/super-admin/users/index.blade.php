@@ -327,12 +327,17 @@
                             @if ($role === 'adviser')
                                 <div class="col-md-6 mt-3">
                                     <label for="editOrganization" class="form-label">Organizations</label>
-                                    <select class="form-select" id="editOrganization" name="organization_id" required>
+                                    <select class="form-select" id="editOrganization" name="organization_id" onchange="otherSpecify();" required>
                                         <option value="" selected disabled>Select Organization</option>
                                         @foreach ($organizations as $organization)
                                             <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                         @endforeach
+                                        <option value="select_other">Other</option>
                                     </select>
+                                    <div id="main-layout">
+                                        <input type="text" class="form-control mtop-1" name="txtSelectOther" id="txt-other-specify" 
+                                        placeholder="Please specify">
+                                    </div>
                                     @error('organization')
                                         <div class="text-danger">{{ $message }}</div>
                                     @enderror
@@ -531,6 +536,25 @@
                 // scrollX: true
             });
         });
+
+        function otherSpecify(){
+           const org_id   = document.getElementById('editOrganization');
+           const other_id = document.getElementById('txt-other-specify');
+           
+           other_id.style.marginTop = '10px';
+
+           if(org_id.value == 'select_other'){
+                other_id.style.display = 'block';
+                other_id.setAttribute('required', true);
+           }else{
+                other_id.style.display = 'none';
+                other_id.removeAttribute('required');
+           }
+        }
+
+        window.onload = function() {
+            otherSpecify();
+        };
 
         function editUser(id) {
             $.get('/users/' + id, function(user) {
