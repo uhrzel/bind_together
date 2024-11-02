@@ -276,7 +276,13 @@
                                 <select name="target_player" id="target_audience" class="form-select mt-2"
                                         style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
                                     <option value="0">All Students</option>
-                                    <option value="1">Official Players</option>
+                                    <option value="1">
+                                        @if(auth()->user()->isAdminOrg())
+                                            Official Performers
+                                        @else
+                                            Official Players
+                                        @endif
+                                    </option>
                                 </select>
                             </div>
                         @endif
