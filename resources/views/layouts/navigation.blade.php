@@ -478,7 +478,7 @@
         </a>
     </li>
 
-    <li class="nav-item {{ request()->routeIs('deleted.activities') ? 'active' : '' }}">
+    <!-- <li class="nav-item {{ request()->routeIs('deleted.activities') ? 'active' : '' }}">
         <a href="{{ route('deleted.activities') }}" class="nav-link">
             <span class="sidebar-icon">
                 <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
@@ -489,7 +489,7 @@
             </span>
             <span class="sidebar-text">{{ __('Deleted Activity') }}</span>
         </a>
-    </li>
+    </li> -->
 
     <li class="nav-item {{ request()->routeIs('deleted.activities') ? 'active' : '' }}">
         <a href="{{ route('deleted.activities') }}" class="nav-link">
