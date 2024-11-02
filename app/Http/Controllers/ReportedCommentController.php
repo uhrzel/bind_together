@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApproveReport;
 use App\Models\Comments;
 use App\Models\DeletedComment;
 use App\Models\ReportedComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ReportedCommentController extends Controller
 {
@@ -97,10 +99,28 @@ class ReportedCommentController extends Controller
     {
         // $comment = $reportedComment->comments_id;
 
+        $reported_data = Comments::where('id', $reportedComment)->first();
+        // dd($reported_data);
+        $user_email =  $reported_data->user->email;
+        $fullname = $reported_data->user->firstname . ' '. $reported_data->user->lastname;
+       
+
+        //put to deleted comments
+        DeletedComment::create([
+            'comments_id' => $reported_data->id,
+            'user_id' => $reported_data->user_id,
+            'reason' => $reported_data->description,
+            'status' => 2,
+        ]);
+
+        
+
+
         $comment = Comments::with('reportedComments')->find($reportedComment);
-        if ($request->status == 2) {
-            $comment->update(['status' => 0]);
-        }
+        // if ($request->status == 2) {
+        //     $comment->update(['status' => 0]);
+        // }
+    
 
         
         foreach ($comment->reportedComments as $rComment) {
@@ -110,7 +130,7 @@ class ReportedCommentController extends Controller
             ]);
         }
 
-
+        Mail::to($user_email)->send(new ApproveReport($fullname, $reported_data->description));
         alert()->success('Reported comment status has been updated');
         return redirect()->back();
     }
