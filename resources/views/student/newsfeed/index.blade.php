@@ -10,7 +10,6 @@
         </ul>
     </div>
 @endif
-
 <div class="container my-4">
     <!-- Create Post Section -->
     <div class="card mb-4">
@@ -254,13 +253,13 @@
                 <div class="modal-header border-0">
                     <h5 class="modal-title col" id="newsfeedModalLabel" style="color: white;">Create post</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="filter: invert(1);"></button>
+                            style="filter: invert(1);"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="">
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
-                                style="width: 40px; height: 40px;" alt="Avatar">
+                                 style="width: 40px; height: 40px;" alt="Avatar">
                             <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
                                 {{ auth()->user()->lastname }}</span>
                         </div>
@@ -275,7 +274,7 @@
 
                                 <!-- Target audience select (Initially hidden) -->
                                 <select name="target_player" id="target_audience" class="form-select mt-2"
-                                    style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
+                                        style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
                                     <option value="0">All Students</option>
                                     <option value="1">Official Players</option>
                                 </select>
@@ -288,29 +287,38 @@
 
                     <div class="form-group mb-3">
                         <textarea class="form-control" name="description"
-                            placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
-                            style="background-color: #3E4348; color: white; border: none;"></textarea>
+                                  placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
+                                  style="background-color: #3E4348; color: white; border: none;"></textarea>
                     </div>
 
                     <input type="file" name="attachments[]" id="attachments" class="d-none" multiple>
 
                     <div class="add-photos">
                         <button type="button" class="btn btn-secondary w-100 py-3"
-                            style="background-color: #4B4F54; color: white; border: none;"
-                            onclick="document.getElementById('attachments').click();">
+                                style="background-color: #4B4F54; color: white; border: none;"
+                                onclick="document.getElementById('attachments').click();">
                             <i class="fas fa-plus-circle"></i> Add Photos/Videos
                         </button>
                     </div>
 
                     <div id="preview" class="row mt-3"></div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-danger">Post</button>
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdminSport() || auth()->user()->isAdminOrg())
+                        <div>
+                            <button type="button" class="btn btn-primary" id="sendMessageButton">Send Message</button>
+                        </div>
+                    @endif
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Post</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 
 <!-- Report Comment Modal -->
@@ -1032,5 +1040,79 @@
                 }
             });
         });
+
+
+
+
+
+
+            $('#postButton').on('click', function() {
+                var campusId = $('#campus').val();
+                var description = $('textarea[name="description"]').val(); // Get the description text
+
+                if (campusId) {
+                    $.ajax({
+                        url: '/send-message/' + campusId,
+                        type: 'GET',
+                        data: {
+                            description: description // Pass the description text
+                        },
+                        success: function(response) {
+                            // Handle the response here
+                            console.log(response);
+                            // You can update the UI with the fetched users
+                        },
+                        error: function(xhr) {
+                            console.error('Error fetching users:', xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+
+        $(document).ready(function() {
+            $('#sendMessageButton').on('click', function() {
+                var campusId = $('#campus').val();
+                var description = $('textarea[name="description"]').val(); // Get the description text
+                var targetAudience = $('#target_audience').val(); // Get the selected target audience
+
+                if (campusId) {
+                    var url = '/send-message/' + campusId; // Default URL for all students
+
+                    if (targetAudience == 1) { // Check if "Official Players" is selected
+                        url = '/send-message/oficialplayer/' + campusId;
+                    }
+
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        data: {
+                            description: description // Pass the description text
+                        },
+                        success: function(response) {
+                            // Handle the response here
+                            console.log(response);
+                            // You can update the UI with the fetched users
+                        },
+                        error: function(xhr) {
+                            if (xhr.status === 404) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: xhr.responseJSON.error,
+                                });
+                            } else {
+                                console.error('Error fetching users:', xhr.responseText);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
     </script>
+
+
+
+
 @endpush

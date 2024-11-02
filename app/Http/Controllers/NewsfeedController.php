@@ -8,8 +8,11 @@ use App\Models\Campus;
 use App\Models\Newsfeed;
 use App\Models\NewsfeedFile;
 use App\Models\ReportedComment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class NewsfeedController extends Controller
 {
@@ -82,6 +85,9 @@ class NewsfeedController extends Controller
 
         return view('student.newsfeed.index', ['newsfeeds' => $newsfeeds, 'campuses' => $campuses]);
     }
+
+
+
 
     /**
      * Show the form for creating a new resource.

@@ -29,6 +29,7 @@ use App\Http\Controllers\ReportCoachController;
 use App\Http\Controllers\ReportedCommentController;
 use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\ReportGenerationViewController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\StatusActivityController;
 use App\Http\Controllers\UserController;
@@ -104,6 +105,12 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('deleted-comment', DeletedCommentController::class);
     Route::resource('feedback', FeedbackController::class);
     Route::resource('practice', PracticeController::class);
+
+    Route::get('/send-message/{campusId}', [SmsController::class, 'sendMessage']);
+    Route::get('/send-message/oficialplayer/{campusId}', [SmsController::class, 'sendMessageOfficialPlayers']);
+
+    //SMS
+    Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
