@@ -91,7 +91,7 @@
                                             Delete
                                         </button>
 
-                                        @if (auth()->user()->hasRole('admin_org') || auth()->user()->hasRole('admin_sport'))
+                                        @if (auth()->user()->hasRole('admin_sport'))
                                             <form action="{{ route('approve', $activity->id) }}" method="POST"
                                                 style="display: inline;">
                                                 @csrf
@@ -291,6 +291,7 @@
                     <!-- Form inside modal -->
                     <form action="" id="editActivityForm" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="_method" value="PUT">
                         <div class="row mb-3">
                             <!-- Title -->
                             <div class="col-md-6">
