@@ -62,7 +62,6 @@
                                     src="{{ $user->avatar ? asset('storage/' . $user->avatar ) : asset('images/avatar/image_place.jpg') }}"
                                     alt="avatar"
                                     height="30">
-
                             </td>
                             <td><span class="fw-normal">{{ $user->firstname }} {{ $user->lastname }}</span></td>
                             <td><span class="fw-normal">{{ $user->gender }}</span></td>
