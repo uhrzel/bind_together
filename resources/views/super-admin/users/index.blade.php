@@ -59,7 +59,7 @@
                         <tr>
                             <td class="text-center">
                             <img class="rounded-circle"
-                                    src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}"
+                                    src="{{ $user->avatar ? asset('storage/' . $user->avatar ) : asset('images/avatar/image_place.jpg') }}"
                                     alt="avatar"
                                     height="30">
 
