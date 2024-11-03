@@ -1052,6 +1052,17 @@
                 var description = $('#description').val(); // Get the description text using the id
                 var targetAudience = $('#target_audience').val(); // Get the selected target audience
                 console.log(campusId, description, targetAudience);
+
+                if (description.length > 255) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'The description may not be greater than 255 characters.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return; // Stop further execution
+                }
+
                 if (campusId) {
                     var url = '/send-message/' + campusId; // Default URL for all students
 
