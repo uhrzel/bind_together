@@ -6,7 +6,9 @@ return [
     | Messenger display name
     |-------------------------------------
     */
-    'name' => env('CHATIFY_NAME', 'firstname'),
+    'firstname' => env('CHATIFY_FIRSTNAME'),
+    'middlename' => env('CHATIFY_MIDDLENAME'),
+    'lastname' => env('CHATIFY_LASTNAME'),
 
     /*
     |-------------------------------------
@@ -59,7 +61,7 @@ return [
     |-------------------------------------
     */
     'user_avatar' => [
-        'folder' => 'users-avatar',
+        'folder' => '',
         'default' => 'avatar.png',
     ],
 
