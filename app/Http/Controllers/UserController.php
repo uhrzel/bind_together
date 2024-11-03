@@ -35,7 +35,7 @@ class UserController extends Controller
     {
         $payload = $request->validated();
 
-        if ($payload['organization_id'] == 'select_other') {
+        if (isset($payload['organization_id']) && $payload['organization_id'] == 'select_other') {
             $created = Organization::create([
                 "name" => $payload['txtAddSelectOther']
             ]);
