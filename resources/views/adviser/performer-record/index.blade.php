@@ -5,7 +5,7 @@
         <div class="card">
             <div class="card-header">
                 @if ($status == 0)
-                    <h4>List of Auditonees</h4>
+                    <h4>List of Auditionees</h4>
                 @else
                     <h4>Official Performers</h4>
                 @endif
@@ -60,8 +60,8 @@
                                         </td>
                                     @endif
                                     {{-- <td>{{ $audition->type ?? '' }}</td> --}}
-                                    <td>{{ $audition->status == 0 ? 'Pending' : 'Approved' }}</td>
                                     <td>{{ $audition->created_at }}</td>
+                                    <td>{{ $audition->status == 0 ? 'Pending' : 'Approved' }}</td>
                                     @if ($status == 0)
                                         <td>
                                             <button class="btn btn-primary approveBtn" type="button" data-bs-toggle="modal"
