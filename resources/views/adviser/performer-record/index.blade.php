@@ -5,7 +5,7 @@
         <div class="card">
             <div class="card-header">
                 @if ($status == 0)
-                    <h4>Registered Participants</h4>
+                    <h4>List of Auditonees</h4>
                 @else
                     <h4>Official Performers</h4>
                 @endif
@@ -43,8 +43,8 @@
                                 <tr>
                                     <td>{{ $audition->user->firstname }} {{ $audition->user->lastname }}</td>
                                     <td>{{ $audition->user->year_level }} Year</td>
-                                    <td>{{ $audition->user->campus->name }} Year</td>
-                                    <td>{{ $audition->user->email }} Year</td>
+                                    <td>{{ $audition->user->campus->name }}</td>
+                                    <td>{{ $audition->user->email }}</td>
                                     <td>{{ $audition->height }}</td>
                                     <td>{{ $audition->weight }}</td>
                                     <td>{{ $audition->emergency_contact }}</td>
