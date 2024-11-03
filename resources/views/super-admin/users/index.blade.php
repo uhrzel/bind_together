@@ -61,8 +61,7 @@
                             <img class="rounded-circle"
                                     src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}"
                                     alt="avatar"
-                                    height="30"
-                                    onerror="this.onerror=null; this.src='{{ asset('images/avatar/image_place.jpg') }}';">
+                                    height="30">
 
                             </td>
                             <td><span class="fw-normal">{{ $user->firstname }} {{ $user->lastname }}</span></td>
