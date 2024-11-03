@@ -15,7 +15,9 @@ class SmsController extends Controller
         Log::info('sendMessage');
 
         $request->validate([
-            'description' => 'required|string',
+            'description' => 'required|string|max:255',
+        ], [
+            'description.max' => 'The description may not be greater than 255 characters.',
         ]);
         $description = $request->input('description');
         Log::info($description);
@@ -55,7 +57,9 @@ class SmsController extends Controller
     {
         Log::info('sendMessageOfficialPlayers');
         $request->validate([
-            'description' => 'required|string',
+            'description' => 'required|string|max:255',
+        ], [
+            'description.max' => 'The description may not be greater than 255 characters.',
         ]);
         $description = $request->input('description');
         Log::info($description);
