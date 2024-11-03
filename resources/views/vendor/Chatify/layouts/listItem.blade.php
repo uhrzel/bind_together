@@ -24,7 +24,7 @@
     $lastMessageBody = strlen($lastMessageBody) > 30 ? mb_substr($lastMessageBody, 0, 30, 'UTF-8') . '..' : $lastMessageBody;
     ?>
     <table class="messenger-list-item" data-contact="{{ $user->id }}">
-        <tr data-action="0" class="user-row" data-user-id="{{ $user->id }}" >
+        <tr data-action="0" class="user-row" data-user-id="{{ $user->id }}">
             {{-- Avatar side --}}
             <td style="position: relative">
                 @if ($user->active_status)
@@ -42,7 +42,7 @@
                     <span class="contact-item-time" data-time="{{ $lastMessage->created_at }}">
                         {{ $lastMessage->timeAgo }}
                     </span>
-                </p>    
+                </p>
                 <span>
                     {{-- Last Message user indicator --}}
                     {!! $lastMessage->from_id == Auth::user()->id ? '<span class="lastMessageIndicator">You :</span>' : '' !!}
@@ -63,27 +63,32 @@
 
 {{-- -------------------- Search Item -------------------- --}}
 @if ($get == 'search_item')
-    <table class="messenger-list-item" data-contact="{{ $user->id }}">
-        <tr data-action="0">
-            {{-- Avatar side --}}
-            <td>
-                <div class="avatar av-m" style="background-image: url('{{ $user->avatar }}');"></div>
-            </td>
-            {{-- center side --}}
-            <td>
-                <p data-id="{{ $user->id }}" data-type="user">
-                    {{-- Show full name with ellipsis if too long --}}
-                    {{ strlen($user->full_name) > 25 ? trim(substr($user->full_name, 0, 25)) . '..' : $user->full_name }}
-                </p>
-                {{-- Optional: Show individual name parts --}}
-                <span class="text-muted small">
-                    {{ $user->firstname }}
-                    {{ $user->middlename ? $user->middlename . ' ' : '' }}
-                    {{ $user->lastname }}
-                </span>
-            </td>
-        </tr>
-    </table>
+    <a href="{{ url('chatify/' . $user->id) }}" class="" style="text-decoration: none">
+        <table class="messenger-list-item" data-contact="{{ $user->id }}">
+            <tr data-action="0">
+                {{-- Avatar side --}}
+                <td>
+                    <div class="avatar av-m">
+                        {{-- <img src="{{ $avatar }}" alt="User Avatar"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"> --}}
+                    </div>
+                </td>
+                {{-- center side --}}
+                <td>
+                    <p data-id="{{ $user->id }}" data-type="user">
+                        {{-- Show full name with ellipsis if too long --}}
+                        {{ strlen($user->full_name) > 25 ? trim(substr($user->full_name, 0, 25)) . '..' : $user->full_name }}
+                    </p>
+                    {{-- Optional: Show individual name parts --}}
+                    <span class="text-muted small">
+                        {{ $user->firstname }}
+                        {{ $user->middlename ? $user->middlename . ' ' : '' }}
+                        {{ $user->lastname }}
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </a>
 @endif
 
 {{-- -------------------- Shared photos Item -------------------- --}}

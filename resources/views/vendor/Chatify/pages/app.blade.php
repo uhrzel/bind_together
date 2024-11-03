@@ -56,9 +56,10 @@
                 {{-- header back button, avatar and user name --}}
                 <div class="chatify-d-flex chatify-justify-content-between chatify-align-items-center">
                     <a href="#" class="show-listView"><i class="fas fa-arrow-left"></i></a>
-                    <div class="avatar av-s header-avatar" style="margin: 0px 10px; margin-top: -5px; margin-bottom: -5px;">
+                    <div class="avatar av-s" style="margin: 0px 10px; margin-top: -5px; margin-bottom: -5px;">
+                        <img src="{{ $avatar }}" alt="User Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                     </div>
-                    <a href="#" class="user-name">{{ config('chatify.name') }}</a>
+                    <a href="#" class="user-name">{{ $full_name }}</a>
                 </div>
                 {{-- header buttons --}}
                 <nav class="m-header-right">
@@ -104,7 +105,7 @@
             <p>User Details</p>
             <a href="#"><i class="fas fa-times"></i></a>
         </nav>
-        {!! view('Chatify::layouts.info')->render() !!}
+        {!! view('Chatify::layouts.info')->with('full_name', $full_name)->with('avatar', $avatar)->render() !!}
     </div>
 </div>
 
