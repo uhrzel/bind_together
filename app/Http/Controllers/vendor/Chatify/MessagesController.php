@@ -366,7 +366,6 @@ class MessagesController extends Controller
             $getRecords .= view('Chatify::layouts.listItem', [
                 'get' => 'search_item',
                 'user' => $record,
-                'avatar' => $avatar,
             ])->render();
         }
 
