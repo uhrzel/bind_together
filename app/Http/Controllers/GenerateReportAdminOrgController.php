@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 
-namespace App\Http\Controllers;
-
 use App\Models\Activity;
 use App\Models\ActivityRegistration;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use PhpOffice\PhpWord\PhpWord;
 use Illuminate\Support\Facades\View;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use App\Enums\UserTypeEnum;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\User;
+
 
 class GenerateReportAdminOrgController extends Controller
 {
@@ -67,13 +71,22 @@ class GenerateReportAdminOrgController extends Controller
 
             $results = $query->get();
 
-            // Check for file type
+
             if ($fileType === 'pdf') {
-                return $this->generatePDF($results, $startDate, $endDate, $reportType);
+                return $reportType == 1
+                    ? $this->generateRegisteredParticipantPDF($results, $startDate, $endDate)
+                    : $this->generateOfficialParticipantPDF($results, $startDate, $endDate);
             } elseif ($fileType === 'docx') {
-                return $this->generateActivityDocx($results, $startDate, $endDate);
+                return $reportType == 1
+                    ? $this->generateRegisteredParticipantDocx($results, $startDate, $endDate)
+                    : $this->generateOfficialParticipantDocx($results, $startDate, $endDate);
+            } elseif ($fileType === 'excel') {
+                return $reportType == 1
+                    ? $this->generateRegisteredParticipantExcel($results, $startDate, $endDate)
+                    : $this->generateOfficialParticipantExcel($results, $startDate, $endDate);
             }
-        } elseif ($reportType == 3) {
+        }
+        if ($reportType == 3) {
             $query = Activity::query();
 
             if ($startDate && $endDate) {
@@ -95,6 +108,11 @@ class GenerateReportAdminOrgController extends Controller
                     });
                 }
             }
+            if ($sports && count($sports) > 0) {
+                $query->whereHas('activity', function ($q) use ($sports) {
+                    $q->whereIn('sport_id', $sports);
+                });
+            }
 
             $results = $query->get();
             $results->load('user');
@@ -104,6 +122,24 @@ class GenerateReportAdminOrgController extends Controller
             }
             if ($fileType === 'docx') {
                 return $this->generateActivityDocx($results, $startDate, $endDate);
+            }
+            if ($fileType === 'excel') {
+                return $this->generateActivityExcel($results, $startDate, $endDate);
+            }
+        } elseif ($reportType == 4) {
+            $query = ActivityRegistration::query();
+            $results = $query->get();
+            $results->load('user');
+
+            Log::info($results);
+
+            if ($fileType == 'pdf') {
+                return $this->generateAdvisersPDF($results, $startDate, $endDate);
+            }
+            if ($fileType === 'docx') {
+                return $this->generateAdvisersDocx($results, $startDate, $endDate);
+            } elseif ($fileType === 'excel') {
+                return $this->generateCoachesExcel($results, $startDate, $endDate);
             }
         }
     }
@@ -125,7 +161,7 @@ class GenerateReportAdminOrgController extends Controller
                 //     break;
         }
 
-        // Load the selected view with the data
+
         $pdf = Pdf::loadView($view, [
             'registrations' => $results,
             'startDate' => $startDate,
@@ -136,7 +172,7 @@ class GenerateReportAdminOrgController extends Controller
         return $pdf->stream('activities_report_' . now()->format('Y_m_d') . '.pdf');
     }
 
-    protected function generateDocx($results, $startDate, $endDate)
+    protected function generateActivityDocx($results, $startDate, $endDate)
     {
         $phpWord = new PhpWord();
 
@@ -184,20 +220,50 @@ class GenerateReportAdminOrgController extends Controller
 
         $table = $section->addTable('activityTable');
         $table->addRow();
-        $table->addCell(2000)->addText('User', ['bold' => true]);
-        $table->addCell(2000)->addText('Sport', ['bold' => true]);
-        $table->addCell(2000)->addText('Height', ['bold' => true]);
-        $table->addCell(2000)->addText('Weight', ['bold' => true]);
-        $table->addCell(2000)->addText('Date Registered', ['bold' => true]);
+        $table->addCell(2000)->addText('Title', ['bold' => true]);
+        $table->addCell(2000)->addText('Target Type', ['bold' => true]);
+        $table->addCell(2000)->addText('Target Audience', ['bold' => true]);
+        $table->addCell(2000)->addText('Venue', ['bold' => true]);
+        $table->addCell(2000)->addText('Address', ['bold' => true]);
+        $table->addCell(2000)->addText('Activity Duration', ['bold' => true]);
 
-        // Loop through the registrations and add rows to the table
+
+
+
+        // Helper function to get activity type
+        function getActivityType($type)
+        {
+            switch ($type) {
+                case \App\Enums\ActivityType::Audition:
+                    return 'Audition';
+                case \App\Enums\ActivityType::Tryout:
+                    return 'Tryout';
+                case \App\Enums\ActivityType::Practice:
+                    return 'Practice';
+                case \App\Enums\ActivityType::Competition:
+                    return 'Competition';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Helper function to get target player
+        function getTargetPlayer($target)
+        {
+            return $target == 1 ? 'Official Player' : 'All Student';
+        }
+
+
         foreach ($results as $registration) {
+            $startDate = Carbon::parse($registration->start_date)->format('Y-m-d');
+            $endDate = Carbon::parse($registration->end_date)->format('Y-m-d');
             $table->addRow();
-            $table->addCell(2000)->addText($registration->user->firstname . ' ' . $registration->user->lastname);
-            $table->addCell(2000)->addText($registration->activity->sport->name);
-            $table->addCell(2000)->addText($registration->height);
-            $table->addCell(2000)->addText($registration->weight);
-            $table->addCell(2000)->addText($registration->created_at->format('Y-m-d'));
+            $table->addCell(2000)->addText($registration->title);
+            $table->addCell(2000)->addText(getActivityType($registration->activity_type));
+            $table->addCell(2000)->addText(getTargetPlayer($registration->target_player));
+            $table->addCell(2000)->addText($registration->venue);
+            $table->addCell(2000)->addText($registration->address);
+            $table->addCell(2000)->addText($startDate . ' ' . $endDate);
         }
 
         // Add footer for signature with right alignment
@@ -214,7 +280,7 @@ class GenerateReportAdminOrgController extends Controller
         return response()->download($tempFile)->deleteFileAfterSend(true);
     }
 
-    protected function generateActivityDocx($results, $startDate, $endDate)
+    /* protected function generateActivityDocx($results, $startDate, $endDate)
     {
         $query = Activity::query();
 
@@ -255,7 +321,7 @@ class GenerateReportAdminOrgController extends Controller
 
         return response()->download($tempFile)->deleteFileAfterSend(true);
     }
-
+ */
     /*    protected function generateCoachesPDF($fileType)
     {
         $coaches = Coach::all(); // Fetch all coaches, or you can apply filters based on request parameters.
@@ -268,4 +334,465 @@ class GenerateReportAdminOrgController extends Controller
         // Stream the PDF file with the current date in the filename
         return $pdf->stream('coaches_report_' . now()->format('Y_m_d') . '.pdf');
     } */
+
+    /* Activity Excel */
+    protected function generateActivityExcel($results, $startDate, $endDate)
+    {
+        $query = Activity::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with('user')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+        $sheet->setTitle('Activities Report');
+        $sheet->setCellValue('A1', 'Bataan Peninsula State University')
+            ->setCellValue('A2', 'Bind Together')
+            ->setCellValue('A3', "Activities Report for $startDate - $endDate");
+
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('800000');
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+
+        $sheet->setCellValue('A5', 'Title')
+            ->setCellValue('B5', 'Type')
+            ->setCellValue('C5', 'Venue')
+            ->setCellValue('D5', 'Target Audience')
+            ->setCellValue('E5', 'Activity Duration');
+
+
+        $sheet->getStyle('A5:E5')->getFont()->setBold(true);
+        function getActivityTypeAct($type)
+        {
+            switch ($type) {
+                case \App\Enums\ActivityType::Audition:
+                    return 'Audition';
+                case \App\Enums\ActivityType::Tryout:
+                    return 'Tryout';
+                case \App\Enums\ActivityType::Practice:
+                    return 'Practice';
+                case \App\Enums\ActivityType::Competition:
+                    return 'Competition';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        function getTargetPlayerAct($target)
+        {
+            return $target == 1 ? 'Official Player' : 'All Student';
+        }
+        $row = 6;
+        foreach ($results as $activity) {
+            $sheet->setCellValue("A$row", $activity->title);
+            $sheet->setCellValue("B$row", $activity->type);
+            $sheet->setCellValue("C$row", $activity->venue);
+            $sheet->setCellValue("D$row", getTargetPlayerAct($activity->target_player));
+            $sheet->setCellValue("E$row", "{$activity->start_date} to {$activity->end_date}");
+            $row++;
+        }
+
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'activity_report_') . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFile);
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+
+    /* Registered Particiant PDF */
+    protected function generateRegisteredParticipantPDF($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+        $results = $query->with('user')->get();
+
+        $pdf = Pdf::loadView('admin-org.reports.register_participant-report', [
+            'registered_participants' => $results,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ])->setPaper('a4', 'landscape');
+        log::info($results);
+
+        return $pdf->stream('registered-participant-report' . now()->format('Y_m_d') . '.pdf');
+    }
+
+    /* Official Player PDF */
+    protected function generateOfficialParticipantPDF($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with('user')->get();
+
+        $pdf = Pdf::loadView('admin-org.reports.official_player-report', [
+            'official_players' => $results,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->stream('official-player-report' . now()->format('Y_m_d') . '.pdf');
+    }
+
+    /* Registered Participants Docx */
+    protected function generateRegisteredParticipantDocx($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with('user')->get();
+
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection([
+            'orientation' => 'landscape'
+        ]);
+
+        $section->addText("Bataan Peninsula State University", ['bold' => true, 'size' => 16, 'color' => '800000']);
+        $section->addText("Bind Together", ['bold' => true, 'size' => 14, 'color' => '800000']);
+        $section->addText("Registered Participants Report for $startDate - $endDate", ['bold' => true, 'size' => 12]);
+        $section->addTextBreak(1);
+
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(1500)->addText("Name", ['bold' => true]);
+        $table->addCell(1500)->addText("Year Level", ['bold' => true]);
+        $table->addCell(1500)->addText("Campus", ['bold' => true]);
+        $table->addCell(1500)->addText("Email", ['bold' => true]); // This was previously missing in the loop
+        $table->addCell(1500)->addText("Height", ['bold' => true]);
+        $table->addCell(1500)->addText("Weight", ['bold' => true]);
+        $table->addCell(1500)->addText("Person to Contact", ['bold' => true]);
+        $table->addCell(1500)->addText("Emergency Contact", ['bold' => true]); // Corrected typo
+
+        foreach ($results as $registered_participant) {
+            $table->addRow();
+            $table->addCell(1500)->addText($registered_participant->user->firstname . ' ' . $registered_participant->user->lastname ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->user->year_level ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->user->campus ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->user->email ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->height ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->weight ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->emergency_contact ?? 'N/A');
+            $table->addCell(1500)->addText($registered_participant->user->contact ?? 'N/A');
+        }
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'registered_participant_report_') . '.docx';
+        $phpWord->save($tempFile, 'Word2007');
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+
+    /* Official Players Docx */
+    protected function generateOfficialParticipantDocx($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with(['user.sport', 'user.campus'])->get();
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+        Log::info($results);
+
+        $section->addText("Bataan Peninsula State University", ['bold' => true, 'size' => 16, 'color' => '800000']);
+        $section->addText("Bind Together", ['bold' => true, 'size' => 14, 'color' => '800000']);
+        $section->addText("Official Players Report for $startDate - $endDate", ['bold' => true, 'size' => 12]);
+        $section->addTextBreak(1);
+
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(2000)->addText("Student Number", ['bold' => true]);
+        $table->addCell(2000)->addText("Name", ['bold' => true]);
+        $table->addCell(2000)->addText("Year Level", ['bold' => true]);
+        $table->addCell(2000)->addText("Campus", ['bold' => true]);
+        $table->addCell(2000)->addText("Sports NAME", ['bold' => true]);
+        $table->addCell(2000)->addText("Coach", ['bold' => true]);
+        $table->addCell(2000)->addText("Date Registered", ['bold' => true]);
+
+        foreach ($results as $official_player) {
+            $table->addRow();
+            $table->addCell(2000)->addText($official_player->user->student_number ?? 'N/A');
+            $table->addCell(2000)->addText(($official_player->user->firstname ?? '') . ' ' . ($official_player->user->lastname ?? ''));
+            $table->addCell(2000)->addText($official_player->user->year_level ?? 'N/A');
+            $table->addCell(2000)->addText($official_player->user->campus->name ?? 'N/A');
+            $table->addCell(2000)->addText($official_player->user->sport->name ?? 'N/A');
+            $table->addCell(2000)->addText($official_player->coach ?? 'N/A');
+            $table->addCell(2000)->addText($official_player->created_at ? $official_player->created_at->format('Y-m-d') : 'N/A');
+        }
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'official_players_report_') . '.docx';
+        $phpWord->save($tempFile, 'Word2007');
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+
+    /* Registered Participants Excel */
+    protected function generateRegisteredParticipantExcel($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with('user')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+        $sheet->setTitle('Registered Participants Report');
+        $sheet->setCellValue('A1', 'Bataan Peninsula State University')
+            ->setCellValue('A2', 'Bind Together')
+            ->setCellValue('A3', "Registered Participants Report for $startDate - $endDate");
+
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('800000');
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+
+        $sheet->setCellValue('A5', 'Name')
+            ->setCellValue('B5', 'Year Level')
+            ->setCellValue('C5', 'Campus')
+            ->setCellValue('D5', 'Email')
+            ->setCellValue('E5', 'Height')
+            ->setCellValue('F5', 'Weight')
+            ->setCellValue('G5', 'Person to Contact')
+            ->setCellValue('H5', 'Emergency Contact');
+
+
+        $sheet->getStyle('A5:H5')->getFont()->setBold(true);
+
+
+        $row = 6;
+        foreach ($results as $registered_participant) {
+            $sheet->setCellValue("A$row", $registered_participant->user->firstname . ' ' . $registered_participant->user->lastname ?? 'N/A');
+            $sheet->setCellValue("B$row", $registered_participant->user->year_level ?? 'N/A');
+            $sheet->setCellValue("C$row", $registered_participant->user->campus ?? 'N/A');
+            $sheet->setCellValue("D$row", $registered_participant->user->email ?? 'N/A');
+            $sheet->setCellValue("E$row", $registered_participant->height ?? 'N/A');
+            $sheet->setCellValue("F$row", $registered_participant->weight ?? 'N/A');
+            $sheet->setCellValue("G$row", $registered_participant->emergency_contact ?? 'N/A');
+            $sheet->setCellValue("H$row", $registered_participant->user->contact ?? 'N/A');
+            $row++;
+        }
+
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'registered_participants_report_') . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFile);
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+
+    /* Official Players Excel */
+    protected function generateOfficialParticipantExcel($results, $startDate, $endDate)
+    {
+        $query = ActivityRegistration::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with(['user.sport', 'user.campus'])->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+        $sheet->setTitle('Official Players Report');
+        $sheet->setCellValue('A1', 'Bataan Peninsula State University')
+            ->setCellValue('A2', 'Bind Together')
+            ->setCellValue('A3', "Official Players Report for $startDate - $endDate");
+
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('800000');
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+
+        $sheet->setCellValue('A5', 'Student Number')
+            ->setCellValue('B5', 'Name')
+            ->setCellValue('C5', 'Year Level')
+            ->setCellValue('D5', 'Campus')
+            ->setCellValue('E5', 'Sports Name')
+            ->setCellValue('F5', 'Coach')
+            ->setCellValue('G5', 'Date Registered');
+
+
+        $sheet->getStyle('A5:G5')->getFont()->setBold(true);
+
+
+        $row = 6;
+        foreach ($results as $official_player) {
+            $sheet->setCellValue("A$row", $official_player->user->student_number ?? 'N/A');
+            $sheet->setCellValue("B$row", $official_player->user->firstname . ' ' . $official_player->user->lastname ?? 'N/A');
+            $sheet->setCellValue("C$row", $official_player->user->year_level ?? 'N/A');
+            $sheet->setCellValue("D$row", $official_player->user->campus->name ?? 'N/A');
+            $sheet->setCellValue("E$row", $official_player->user->sport->name ?? 'N/A');
+            $sheet->setCellValue("F$row", $official_player->user->coach->name ?? 'N/A');
+            $sheet->setCellValue("G$row", $official_player->created_at);
+
+            $row++;
+        }
+
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'official_players_report_') . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFile);
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+    /* Coach List PDF */
+    protected function generateAdvisersPDF($results, $startDate, $endDate)
+    {
+        $advisers = User::role(UserTypeEnum::ADVISER);
+
+
+        if ($startDate && $endDate) {
+            $advisers->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $advisers->get();
+        // Load the selected view with the data
+        $pdf = Pdf::loadView('admin-org.reports.adviser-list-report', [
+            'advisers' => $advisers,
+            'results' => $results,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ])->setPaper('a4', 'landscape');
+
+        // Stream the PDF file with the current date in the filename
+        return $pdf->stream('adviser_report_' . now()->format('Y_m_d') . '.pdf');
+    }
+
+
+    /* Coaches List Docx */
+    protected function generateAdvisersDocx($results, $startDate, $endDate)
+    {
+
+        $coaches = User::role(UserTypeEnum::COACH);
+        Log::info($coaches);
+
+        if ($startDate && $endDate) {
+            $coaches->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+
+        $section->addText("Bataan Peninsula State University", ['bold' => true, 'size' => 16, 'color' => '800000']);
+        $section->addText("Bind Together", ['bold' => true, 'size' => 14, 'color' => '800000']);
+        $section->addText("Coaches List Report for $startDate - $endDate", ['bold' => true, 'size' => 12]);
+        $section->addTextBreak(1);
+
+        $table = $section->addTable();
+        $table->addRow();
+        $table->addCell(2000)->addText("Name", ['bold' => true]);
+        $table->addCell(2000)->addText("Gender", ['bold' => true]);
+        $table->addCell(2000)->addText("Email", ['bold' => true]);
+        $table->addCell(2000)->addText("Date", ['bold' => true]);
+
+        foreach ($results as $coach) {
+            $table->addRow();
+            $table->addCell(2000)->addText($coach->firstname . ' ' . $coach->lastname);
+            $table->addCell(2000)->addText($coach->gender);
+            $table->addCell(2000)->addText($coach->email);
+            $table->addCell(2000)->addText($coach->created_at);
+        }
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'coaches_list_report') . '.docx';
+        $phpWord->save($tempFile, 'Word2007');
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+
+
+    /* Coaches List Excel */
+    protected function generateAdvisersExcel($results, $startDate, $endDate)
+    {
+        $coaches = User::getCoaches();
+
+        if ($startDate && $endDate) {
+            $coaches->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $coaches->with('user')->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+
+        $sheet->setTitle('Registered Participants Report');
+        $sheet->setCellValue('A1', 'Bataan Peninsula State University')
+            ->setCellValue('A2', 'Bind Together')
+            ->setCellValue('A3', "Registered Participants Report for $startDate - $endDate");
+
+
+        $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('800000');
+        $sheet->getStyle('A3')->getFont()->setSize(12);
+
+
+        $sheet->setCellValue('A5', 'Name')
+            ->setCellValue('B5', 'Gender')
+            ->setCellValue('C5', 'Email')
+            ->setCellValue('D5', 'Sports')
+            ->setCellValue('E5', 'Date');
+
+
+        $sheet->getStyle('A5:H5')->getFont()->setBold(true);
+
+
+        $row = 6;
+        foreach ($results as $coaches) {
+            $sheet->setCellValue("A$row", $coaches->name);
+            $sheet->setCellValue("B$row", $coaches->gender);
+            $sheet->setCellValue("C$row", $coaches->email);
+            $sheet->setCellValue("D$row", $coaches->sports);
+            $sheet->setCellValue("D$row", $coaches->created_at);
+
+            $row++;
+        }
+
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'coaches_report_') . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($tempFile);
+
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
 }

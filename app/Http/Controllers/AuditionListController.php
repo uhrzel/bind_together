@@ -13,8 +13,10 @@ class AuditionListController extends Controller
      */
     public function __invoke(Request $request)
     {
+        // Get status from the request, defaulting to '0' if not provided
         $status = $request->query('status', '0');
 
+        // Fetch audition registrations with related activity and user details
         $auditions = ActivityRegistration::query()
             ->with(['activity', 'user'])
             ->where('status', $status)
@@ -23,6 +25,7 @@ class AuditionListController extends Controller
             })
             ->get();
 
+        // Return view with auditions and the status filter
         return view('adviser.performer-record.index', ['auditions' => $auditions, 'status' => $status]);
     }
 }

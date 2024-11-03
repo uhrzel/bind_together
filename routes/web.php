@@ -16,6 +16,7 @@ use App\Http\Controllers\DeletedPostController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FetchActivityRegistration;
 use App\Http\Controllers\GenerateReportAdminSportController;
+use App\Http\Controllers\GenerateReportAdviserController;
 use App\Http\Controllers\GenerateReportAdminOrgController;
 use App\Http\Controllers\JoinedActivityController;
 use App\Http\Controllers\LikedCommentController;
@@ -94,6 +95,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::get('report-view-adviser', AdviserReportController::class)->name('report.view-adviser');
     Route::post('report-generate-sport', GenerateReportAdminSportController::class)->name('reports.generateAdminSport');
     Route::post('report-generate-org', GenerateReportAdminOrgController::class)->name('reports.generateAdminOrg');
+    Route::post('report-generate-adviser', GenerateReportAdviserController::class)->name('reports.generateAdviser');
 
     Route::resource('users', UserController::class);
     Route::resource('campus', CampusController::class);

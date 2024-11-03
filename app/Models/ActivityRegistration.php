@@ -25,14 +25,13 @@ class ActivityRegistration extends Model
         'status'
     ];
 
-    public function activity() : BelongsTo
+    public function activity(): BelongsTo
     {
         return $this->belongsTo(Activity::class);
     }
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
 }

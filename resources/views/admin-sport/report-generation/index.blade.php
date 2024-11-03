@@ -82,7 +82,7 @@
                     </div>
 
                     <div class="form-group col-4" id="sportsCheckbox">
-                        <label for="sports">Sports</label><br>
+                        <label for="sports">Sports Name</label><br>
 
                         <!-- "All" checkbox -->
                         <div class="form-check">
@@ -142,11 +142,11 @@
             } else {
                 $('#yearLevelSection').slideDown();
             }
-            if (selectedValue == 3) {
+            /* if (selectedValue == 3) {
                 $('#sportsCheckbox').slideUp();
             } else {
                 $('#sportsCheckbox').slideDown();
-            }
+            } */
         });
 
 
