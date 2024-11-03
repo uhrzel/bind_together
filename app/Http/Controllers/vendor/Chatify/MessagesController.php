@@ -318,8 +318,11 @@ class MessagesController extends Controller
         foreach ($favorites->get() as $favorite) {
             // get user data
             $user = User::where('id', $favorite->favorite_id)->first();
+            $avatar = $user && $user->avatar ? asset('storage/' . $user->avatar) : 'default-avatar-url.jpg';
+
             $favoritesList .= view('Chatify::layouts.favorite', [
                 'user' => $user,
+                'avatar' => $avatar,
             ]);
         }
         // send the response
@@ -358,9 +361,12 @@ class MessagesController extends Controller
                     $record->lastname
             );
 
+            $avatar = $record && $record->avatar ? asset('storage/' . $record->avatar) : 'default-avatar-url.jpg';
+
             $getRecords .= view('Chatify::layouts.listItem', [
                 'get' => 'search_item',
-                'user' => Chatify::getUserWithAvatar($record),
+                'user' => $record,
+                'avatar' => $avatar,
             ])->render();
         }
 

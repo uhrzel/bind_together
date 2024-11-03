@@ -22,6 +22,7 @@
     <?php
     $lastMessageBody = mb_convert_encoding($lastMessage->body, 'UTF-8', 'UTF-8');
     $lastMessageBody = strlen($lastMessageBody) > 30 ? mb_substr($lastMessageBody, 0, 30, 'UTF-8') . '..' : $lastMessageBody;
+    $userAvatar = $user && $user->avatar ? asset('storage/' . $user->avatar) : '';
     ?>
     <table class="messenger-list-item" data-contact="{{ $user->id }}">
         <tr data-action="0" class="user-row" data-user-id="{{ $user->id }}">
@@ -30,7 +31,7 @@
                 @if ($user->active_status)
                     <span class="activeStatus"></span>
                 @endif
-                <div class="avatar av-m" style="background-image: url('{{ $user->avatar }}');">
+                <div class="avatar av-m" style="background-image: url('{{ $user->avatar }}')">
                 </div>
             </td>
             {{-- Center side --}}
@@ -69,8 +70,7 @@
                 {{-- Avatar side --}}
                 <td>
                     <div class="avatar av-m">
-                        {{-- <img src="{{ $avatar }}" alt="User Avatar"
-                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"> --}}
+                        {{-- <img src="{{ $avatar }}" alt="User Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"> --}}
                     </div>
                 </td>
                 {{-- center side --}}
