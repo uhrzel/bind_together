@@ -142,9 +142,9 @@
                                                     <tr>
                                                         <th>Organization Name:</th>
                                                         <td></td>
-                                                        <pre>
+                                                        <!-- <pre>
                                                             {{auth()->user() }}
-                                                        </pre>
+                                                        </pre> -->
                                                     </tr>
                                                 </tbody>
                                             </table>
