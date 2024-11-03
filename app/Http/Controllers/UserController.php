@@ -33,19 +33,29 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $user = User::create($request->validated());
+        $payload = $request->validated();
 
-        $user->assignRole($request->role);
+        if ($payload['organization_id'] == 'select_other') {
+            $created = Organization::create([
+                "name" => $payload['txtAddSelectOther']
+            ]);
+            if ($created) {
+                $payload['organization_id'] = $created->id;
+            }
+        }
+
+        $user = User::create($payload);
+
+        $user->assignRole($payload['role']);
 
         $verificationUrl = $this->generateVerificationUrl($user);
 
         Mail::to($user->email)->send(new VerifyUserEmail(
             $user,
             $verificationUrl,
-            $request->password,
-            $request->role
+            $payload['password'],
+            $payload['role']
         ));
-
 
         alert()->success('User created successfully');
         return redirect()->back();
@@ -64,16 +74,16 @@ class UserController extends Controller
     {
         $user->load('sport', 'organization', 'campus', 'program', 'course', 'roles');
 
-        return response()->json(['user' => $user, 'roles' => $user->getRoleNames()]);
+        return response()->json(['user' => $user, 'roles' => $user->getRoleNames(), 'organizations' => $user->organization()]);
     }
 
     public function update(Request $request, User $user)
     {
-        if($request->organization_id == 'select_other'){
+        if ($request->organization_id == 'select_other') {
             $created = Organization::create([
                 "name" => $request->txtSelectOther
             ]);
-            if($created){
+            if ($created) {
                 $request['organization_id'] = $created['id'];
             }
         }

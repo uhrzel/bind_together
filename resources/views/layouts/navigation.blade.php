@@ -6,7 +6,7 @@
             <!-- Text -->
             <div>
                 <span class="sidebar-text" style="font-size: 18px; font-weight: bold;">Bind Together</span> <br>
-                <small class="text-muted" style="font-size: 10px">sula State University</small>
+                <small class="text-muted" style="font-size: 10px">Bataan Peninsula State University</small>
             </div>
         </a>
     </li>
@@ -541,7 +541,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Audition List') }}</span>
+                        <span class="sidebar-text">{{ __('Registered Participants') }}</span>
                     </a>
                 </li>
 
@@ -550,7 +550,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Official Players') }}</span>
+                        <span class="sidebar-text">{{ __('Official Performers') }}</span>
                     </a>
                 </li>
             </ul>
@@ -767,7 +767,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Audition List') }}</span>
+                        <span class="sidebar-text">{{ __('Registered Participants') }}</span>
                     </a>
                 </li>
 

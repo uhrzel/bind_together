@@ -5,9 +5,9 @@
         <div class="card">
             <div class="card-header">
                 @if ($status == 0)
-                    <h4>Audition List</h4>
+                    <h4>Registered Participants</h4>
                 @else
-                    <h4>Official Player</h4>
+                    <h4>Official Performers</h4>
                 @endif
             </div>
             <div class="card-body">

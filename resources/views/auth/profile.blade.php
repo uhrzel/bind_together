@@ -132,6 +132,23 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            @if(auth()->user()->roles[0]->id == 4)
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="text-info">Assigned Organization</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Organization Name:</th>
+                                                        <td></td>
+                                                        <pre>
+                                                            {{auth()->user() }}
+                                                        </pre>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            @endif
 
                                             <!-- School Information Section -->
                                             {{-- <h5 class="text-primary">School information</h5> --}}

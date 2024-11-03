@@ -189,12 +189,17 @@
                         @elseif ($role == 'adviser')
                             <div class="form-group mt-3">
                                 <label for="">Organization</label>
-                                <select name="organization_id" id="" class="form-select">
+                                <select name="organization_id" id="addOrganization" class="form-select" onchange="otherSpecify(true);">
                                     <option value="" selected disabled>Select Organization</option>
                                     @foreach ($organizations as $organization)
                                         <option value="{{ $organization->id }}">{{ $organization->name }}</option>
                                     @endforeach
+                                    <option value="select_other">Other</option>
                                 </select>
+                                <div id="main-layout">
+                                    <input type="text" class="form-control mtop-1" name="txtAddSelectOther" id="txt-add-other-specify" 
+                                    placeholder="Please specify">
+                                </div>
                             </div>
                         @endif
                         <div class="mt-3 row">
@@ -537,9 +542,10 @@
             });
         });
 
-        function otherSpecify(){
-           const org_id   = document.getElementById('editOrganization');
-           const other_id = document.getElementById('txt-other-specify');
+        function otherSpecify(is_add = false){
+
+           const org_id   = document.getElementById(is_add ? 'addOrganization' : 'editOrganization');
+           const other_id = document.getElementById(is_add ? 'txt-add-other-specify' :'txt-other-specify');
            
            other_id.style.marginTop = '10px';
 
@@ -550,10 +556,20 @@
                 other_id.style.display = 'none';
                 other_id.removeAttribute('required');
            }
+
+           if(is_add){
+                document.getElementById('txt-other-specify').style.display = 'none';
+                document.getElementById('txt-other-specify').removeAttribute('required');
+           }else{
+                document.getElementById('txt-add-other-specify').style.display = 'none';
+                document.getElementById('txt-add-other-specify').removeAttribute('required');
+           }
+
         }
 
         window.onload = function() {
             otherSpecify();
+            otherSpecify(true);
         };
 
         function editUser(id) {
