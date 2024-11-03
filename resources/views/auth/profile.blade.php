@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @if ($errors->any())
+    <!-- @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)
@@ -10,7 +10,7 @@
                 @endforeach
             </ul>
         </div>
-    @endif
+    @endif -->
 
     <style>
         /* Custom styling for the active tab */
@@ -371,6 +371,15 @@
                                         </div>
                                         <div class="tab-pane fade" id="account-security" role="tabpanel"
                                             aria-labelledby="account-security-tab">
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger" style="margin-left: 10px; margin-right: 10px;">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
                                             <div class="container mt-5">
                                                 <!-- Old Password -->
                                                 <div class="row mb-3">
