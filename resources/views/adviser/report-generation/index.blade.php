@@ -133,7 +133,7 @@
             } else {
                 $('#activitiesDropdown').slideUp();
             }
-            if (selectedValue == 2 || selectedValue == 4) {
+            if (selectedValue == 2) {
                 $('#approvalCheckboxes').slideDown();
             } else {
                 $('#approvalCheckboxes').slideUp();
@@ -148,6 +148,7 @@
             } else {
                 $('#sportsCheckbox').slideDown();
             }
+
         });
 
 

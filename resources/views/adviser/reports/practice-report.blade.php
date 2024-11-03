@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activities Report</title>
+    <title>Practice List Report</title>
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
@@ -13,44 +13,35 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            /* Align vertically in the center */
-            justify-content: center;
-            /* Center horizontally */
         }
 
         .header img {
             width: 100px;
             height: auto;
-            margin-right: 20px;
-            /* Adds space between the image and the text */
         }
 
         h1 {
             font-size: 24px;
             font-weight: bold;
             margin: 0;
-            color: #800000;
         }
 
         h3 {
             font-size: 16px;
             font-weight: normal;
-            margin: 5px 0;
-            color: #800000;
+            /*    margin: 5px 0; */
         }
 
-        .contact-info {
+        /*  .contact-info {
             margin-top: 5px;
             font-size: 12px;
-            text-align: left;
-            color: red;
+            text-align: center;
+            color: #800000;
         }
-
+ */
         .report-info {
-            margin-top: 30px;
-            margin-bottom: 20px;
+            margin-top: 5px;
+            /*   margin-bottom: 20px; */
             text-align: center;
         }
 
@@ -99,23 +90,23 @@
 </head>
 
 <body>
-    <div class="header" style="display: flex">
-        <img src="{{ public_path('images/bindtogether-logo.png') }}" alt="University Logo" style="float: left;">
-        <div class="">
-            <h1 style="color: #800000">Bataan Peninsula State University</h1>
-            <h3 style="margin-left: 10px; color: #800000">Bind Together</h3>
-            <div class="contact-info" style="margin-left: 10px; text-align: center">
-                <p>City of Balanga, 2100 Bataan</p>
-                <p style="margin-left: 70px">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+        <!-- Logo -->
+        <img src="{{ public_path('images/bindtogether-logo.png') }}" alt="University Logo" style="width: 100px; margin-left: 100px;">
+
+        <!-- Header Content -->
+        <div class="header" style="text-align: center;">
+            <h1 style="color: #800000; margin: -70px;">Bataan Peninsula State University</h1>
+            <h3 style="color: #800000; margin:  70px">Bind Together</h3>
+            <div class="contact-info" style="color: #800000;">
+                <p style="margin: -65px">City of Balanga, 2100 Bataan</p>
+                <p style="margin-top: 65px;">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
+                <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
+                <p style="font-weight: bold;">
+                    Type of Report <span style="font-weight: normal;">(Practice List Report)</span>
+                </p>
             </div>
         </div>
-    </div>
-
-    <div class="report-info">
-        <h3 style="color: black;">Practices Report for {{ $startDate }} - {{ $endDate }}</h3>
-        <p style="font-weight: bold;">
-            Type of Report <span style="font-weight: normal;">(Practices)</span>
-        </p>
 
     </div>
 
@@ -129,18 +120,16 @@
             </tr>
         </thead>
         <tbody>
-
-            @foreach ($practice as $practices)
+            @foreach($practices as $practice)
             <tr>
-                <td>{{ $practices->name }}</td>
-                <td>{{ $practices->name }}</td>
-                <td>{{ $practices->reason }}</td>
-                <td>{{ $practices->created_at }}</td>
-
-
+                <td>{{ $practice->user->firstname }} {{ $practice->user->lastname  ?? 'N/A'}}</td>
+                <td>{{ $practice->activity->response ?? 'N/A' }}</td>
+                <td>{{ $practice->reason?? 'N/A' }}</td>
+                <td>{{ $practice->created_at->format('Y-m-d') }}</td>
             </tr>
             @endforeach
         </tbody>
+
     </table>
 
     <div class="signature" style="float: right">

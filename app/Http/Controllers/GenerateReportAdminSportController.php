@@ -390,7 +390,7 @@ class GenerateReportAdminSportController extends Controller
         $row = 6;
         foreach ($results as $activity) {
             $sheet->setCellValue("A$row", $activity->title);
-            $sheet->setCellValue("B$row", $activity->type);
+            $sheet->setCellValue("B$row", getActivityTypeAct($activity->type));
             $sheet->setCellValue("C$row", $activity->venue);
             $sheet->setCellValue("D$row", getTargetPlayerAct($activity->target_player));
             $sheet->setCellValue("E$row", "{$activity->start_date} to {$activity->end_date}");
