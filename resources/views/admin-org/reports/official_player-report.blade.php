@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Player Report</title>
+    <title>Official Participant List Report</title>
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
@@ -103,46 +103,40 @@
                 <p style="margin-top: 65px;">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
                 <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
                 <p style="font-weight: bold;">
-                    Type of Report <span style="font-weight: normal;">(Official Players)</span>
+                    Type of Report <span style="font-weight: normal;">(Official Participant List Report)</span>
                 </p>
             </div>
         </div>
 
     </div>
 
-
-    <!-- <div class="report-info">
-     
-    </div> -->
-
     <table>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Year Level</th>
-                <th>Email</th>
-                <th>Height</th>
-                <th>Weight</th>
-                <th>Person to Contact</th>
-                <th>Emergency Contact Number</th>
+                <th>Gender</th>
+                <th>Campus</th>
+                <th>Sports Name</th>
+                <th>Coach</th>
                 <th>Date Registered</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($official_players as $registration)
+            @foreach ($official_players as $oplayers)
             <tr>
-                <td>{{ $registration->user->firstname }} {{ $registration->user->lastname }}</td>
-                <td>{{ $registration->user->year_level }}</td>
-                <td>{{ $registration->user->email }}</td>
-                <td>{{ $registration->height }}</td>
-                <td>{{ $registration->weight }}</td>
-                <td>{{ $registration->relationship }}</td>
-                <td>{{ $registration->emergency_contact }}</td>
-                <td>{{ $registration->created_at->format('Y-m-d') }}</td>
+                <td>{{ $oplayers->user->firstname . ' ' . $oplayers->user->lastname }}</td>
+                <td>{{ $oplayers->user->year_level }}</td>
+                <td>{{ $oplayers->user->gender ?? 'N/A' }}</td>
+                <td>{{ $oplayers->user->campus->name ?? 'N/A' }}</td>
+                <td>{{ $oplayers->user->sport->name ?? 'N/A' }}</td>
+                <td>{{ $oplayers->activity->coaches ?? 'N/A' }}</td>
+                <td>{{ $oplayers->created_at->format('Y-m-d') }}</td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
 
     <div class="signature" style="float: right">
         {{-- <p>Reported by:</p> --}}
