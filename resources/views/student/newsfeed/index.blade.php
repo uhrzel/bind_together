@@ -10,7 +10,6 @@
         </ul>
     </div>
 @endif
-
 <div class="container my-4">
     <!-- Create Post Section -->
     <div class="card mb-4">
@@ -254,13 +253,13 @@
                 <div class="modal-header border-0">
                     <h5 class="modal-title col" id="newsfeedModalLabel" style="color: white;">Create post</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        style="filter: invert(1);"></button>
+                            style="filter: invert(1);"></button>
                 </div>
                 <div class="modal-body">
                     <div class="d-flex justify-content-between mb-3">
                         <div class="">
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" class="rounded-circle"
-                                style="width: 40px; height: 40px;" alt="Avatar">
+                                 style="width: 40px; height: 40px;" alt="Avatar">
                             <span class="ms-2 fw-bold">{{ auth()->user()->firstname }}
                                 {{ auth()->user()->lastname }}</span>
                         </div>
@@ -275,9 +274,15 @@
 
                                 <!-- Target audience select (Initially hidden) -->
                                 <select name="target_player" id="target_audience" class="form-select mt-2"
-                                    style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
+                                        style="background-color: #4B4F54; color: white; border: none; display: none; float: right">
                                     <option value="0">All Students</option>
-                                    <option value="1">Official Players</option>
+                                    <option value="1">
+                                        @if(auth()->user()->isAdminOrg())
+                                            Official Performers
+                                        @else
+                                            Official Players
+                                        @endif
+                                    </option>
                                 </select>
                             </div>
                         @endif
@@ -285,32 +290,39 @@
 
                     <!-- New Target Audience Selection -->
 
-
                     <div class="form-group mb-3">
-                        <textarea class="form-control" name="description"
-                            placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
-                            style="background-color: #3E4348; color: white; border: none;"></textarea>
+                        <textarea class="form-control" name="description" id="description"
+                                  placeholder="What's on your mind, {{ auth()->user()->firstname }}?" rows="3"
+                                  style="background-color: #3E4348; color: white; border: none;"></textarea>
                     </div>
 
                     <input type="file" name="attachments[]" id="attachments" class="d-none" multiple>
 
                     <div class="add-photos">
                         <button type="button" class="btn btn-secondary w-100 py-3"
-                            style="background-color: #4B4F54; color: white; border: none;"
-                            onclick="document.getElementById('attachments').click();">
+                                style="background-color: #4B4F54; color: white; border: none;"
+                                onclick="document.getElementById('attachments').click();">
                             <i class="fas fa-plus-circle"></i> Add Photos/Videos
                         </button>
                     </div>
 
                     <div id="preview" class="row mt-3"></div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="submit" class="btn btn-danger">Post</button>
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    @if (auth()->user()->isSuperAdmin() || auth()->user()->isAdminSport() || auth()->user()->isAdminOrg())
+                        <div>
+                            <button type="button" class="btn btn-primary" id="sendMessageButton">Send Message</button>
+                        </div>
+                    @endif
+                    <div>
+                        <button type="submit" class="btn btn-danger" id="postButton">Post</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 
 
 <!-- Report Comment Modal -->
@@ -1032,5 +1044,77 @@
                 }
             });
         });
+
+        $(document).ready(function() {
+            // Handle the send message button click
+            $('#sendMessageButton').on('click', function() {
+                var campusId = $('#campus').val();
+                var description = $('#description').val(); // Get the description text using the id
+                var targetAudience = $('#target_audience').val(); // Get the selected target audience
+                console.log(campusId, description, targetAudience);
+
+                if (description.length > 255) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'The description may not be greater than 255 characters.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                    return; // Stop further execution
+                }
+
+                if (campusId) {
+                    var url = '/send-message/' + campusId; // Default URL for all students
+
+                    if (targetAudience == 1) { // Check if "Official Players" is selected
+                        url = '/send-message/oficialplayer/' + campusId;
+                    }
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST', // Changed to POST to match the controller method
+                        data: {
+                            description: description, // Pass the description text
+                            _token: '{{ csrf_token() }}' // Include CSRF token for security
+                        },
+                        success: function(response) {
+                            // Handle the response here
+                            console.log(response);
+                            // Show a SweetAlert notification
+                            Swal.fire({
+                                title: 'Success!',
+                                text: 'Message has been sent.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    // Trigger the post button click
+                                    $('#postButton').click();
+                                }
+                            });
+                        },
+                        error: function(xhr) {
+                            console.error('Error fetching users:', xhr.responseText);
+                            // Show a SweetAlert notification for errors
+                            Swal.fire({
+                                title: 'Error!',
+                                text: JSON.parse(xhr.responseText).error,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Handle the post button click
+            $('#postButton').on('click', function() {
+                var form = $('#newsfeedModal form');
+                form.submit();
+            });
+        });
+
+
     </script>
+
 @endpush

@@ -61,7 +61,7 @@ class FeedbackController extends Controller
      */
     public function update(Request $request, Feedback $feedback)
     {
-        // $feedback->update(['response' => $request->response, 'status' => 1]);
+        $feedback->update(['response' => $request->response, 'status' => 1]);
         $feedback->load('user');
 
         Mail::to($feedback->user->email)->send(new FeedbackResponse(

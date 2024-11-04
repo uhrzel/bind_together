@@ -19,11 +19,17 @@ class ActivityController extends Controller
 
         if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
             $activities = Activity::whereIn('status', [0, 1])
-                ->whereIn('type', [ActivityType::Audition, ActivityType::Competition])
+                ->whereIn('status', [0, 1])
+                ->where('is_deleted', 0)
+                ->whereIn('type', [
+                    ActivityType::Tryout, 
+                    ActivityType::Competition
+                ])
                 ->get();
         } else {
             $activities = Activity::where('user_id', $user->id)
                 ->whereIn('status', [0, 1])
+                ->where('is_deleted', 0)
                 ->get();
         }
 
@@ -100,7 +106,7 @@ class ActivityController extends Controller
      */
     public function update(StoreActivityRequest $request, Activity $activity)
     {
-        $activity->update($request->validated() + ['status' => 0]);
+        $activity->update($request->validated());
 
         alert()->success('Activity updated successfully');
         return redirect()->route('activity.index');
@@ -111,7 +117,9 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        $activity->delete();
+        $activity->update([
+            "is_deleted" => 1
+        ]);
 
         alert()->success('Activity deleted successfully');
         return redirect()->route('activity.index');

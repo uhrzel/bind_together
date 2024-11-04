@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -16,29 +17,38 @@ class LoginController extends Controller
      */
     protected function redirectTo()
     {
-        // Check if the authenticated user has the 'student' role using Spatie's hasRole method
+        // Redirect students to the newsfeed
         if (auth()->user()->hasRole('student')) {
             return route('newsfeed.index');
         }
 
-        // Default redirect to home if the user does not have the 'student' role
+        // Default redirect to home if user is not a student
         return '/home';
     }
 
     /**
      * Handle post-authentication logic and redirection.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  mixed $user
+     * @return \Illuminate\Http\RedirectResponse
      */
-    protected function authenticated(\Illuminate\Http\Request $request, $user)
+    protected function authenticated(Request $request, $user)
     {
-        // Check if the user is not completed (is_completed is not 1)
+        // Check if the user account is active
+        if (!auth()->user()->is_active) {
+            auth()->logout();
+            alert()->error('Deactivated Account', 'You no longer have access to your account. Please contact the admin at bpsu.bindtogether@gmail.com if you have any concerns. Thank you!');
+            return redirect()->route('login');
+        }
+
+        // Check if the user profile is completed
         if ($user->is_completed != 1) {
-            return redirect()->route('profile.completion'); // Change to your specific route
+            return redirect()->route('profile.completion');
         }
 
         // Trigger SweetAlert after successful login
         alert()->success('Sign in successful', 'Redirecting...');
-
-        // Continue with the default redirect behavior
         return redirect()->intended($this->redirectPath());
     }
 

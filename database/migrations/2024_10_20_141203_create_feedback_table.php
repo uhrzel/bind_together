@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('subject');
             $table->string('message')->nullable();
             $table->integer('status');
+            $table->longText('response')->nullable();
             $table->timestamps();
         });
     }

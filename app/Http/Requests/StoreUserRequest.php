@@ -37,10 +37,11 @@ class StoreUserRequest extends FormRequest
             'course_id' => ['nullable', 'exists:course,id'],
             'campus_id' => ['nullable', 'exists:campus,id'],
             'program_id' => ['nullable', 'exists:program,id'],
-            'organization_id' => ['nullable', 'exists:organizations,id'],
+            'organization_id' => ['nullable'],
             'avatar' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'string'],
+            'txtAddSelectOther' => 'nullable|string',
         ];
     }
 }

@@ -10,7 +10,10 @@
                             <!-- Avatar Image -->
                             <img class="avatar rounded-circle"
                                 src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}"
-                                alt="{{ Auth::user()->firstname }}" style="width: 40px; height: 40px;">
+                                alt="{{ Auth::user()->firstname }}"
+                                style="width: 40px; height: 40px;"
+                                onerror="this.onerror=null; this.src='{{ asset('images/avatar/image_place.jpg') }}';">
+
                             <!-- Username -->
                             <div class="media-body ms-2 text-dark align-items-center d-none d-lg-block">
                                 <span class="mb-0 font-small fw-bold text-gray-900">{{ auth()->user()->firstname }}</span>
@@ -22,9 +25,14 @@
                     <div class="dropdown-menu dropdown-menu-end mt-2 py-1" style="width: 250px; padding: 0;">
                         <!-- Profile Header Section -->
                         <div class="p-3 text-center" style="background-color: #a40000; color: white;">
-                            <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}" alt="Profile"
-                                class="rounded-circle mb-2" width="70" height="70"
-                                style="border: 3px solid white;">
+                        <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/image_place.jpg') }}"
+                            alt="Profile"
+                            class="rounded-circle mb-2"
+                            width="70"
+                            height="70"
+                            style="border: 3px solid white;"
+                            onerror="this.onerror=null; this.src='{{ asset('images/avatar/image_place.jpg') }}';">
+
                             <h5 class="mb-0" style="color: white">{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</h5>
                             <small style="color: #fff;">{{ ucfirst(str_replace('_', ' ', auth()->user()->getRoleNames()->first())) }}</small>
                         </div>

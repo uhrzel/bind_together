@@ -33,6 +33,7 @@ use App\Http\Controllers\ReportedPostController;
 use App\Http\Controllers\ReportGenerationViewController;
 use App\Http\Controllers\OrgReportController;
 use App\Http\Controllers\SportReportController;
+use App\Http\Controllers\SmsController;
 use App\Http\Controllers\SportController;
 use App\Http\Controllers\StatusActivityController;
 use App\Http\Controllers\UserController;
@@ -40,8 +41,14 @@ use App\Http\Controllers\ViewStudentController;
 use App\Http\Controllers\AdviserReportController;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Requests\EmailVerificationRequest;
+use App\Mail\UserMailer;
+use App\Models\User;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('welcome');
@@ -51,11 +58,20 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request, $id) {
+    $user = User::findOrFail($id);
 
-    return redirect('/home');
-})->name('verification.verify');
+    if (!hash_equals((string) $request->hash, sha1($user->getEmailForVerification()))) {
+        abort(403);
+    }
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+        event(new Verified($user));
+    }
+
+    return redirect('/home')->with('status', 'Email verified!');
+})->middleware(['signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendCustomEmailVerification();
@@ -63,6 +79,20 @@ Route::post('/email/verification-notification', function (Request $request) {
     alert()->success('Email verification sent successfully');
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
+Route::get('/test-mail-config', function () {
+    try {
+        Mail::raw('This is a test message', function ($message) {
+            $message->to('kikomataks@gmail.com')
+                ->subject('Test Email Configuration');
+        });
+        return 'Test email sent successfully!';
+    } catch (Exception $e) {
+        return 'Failed to send test email: ' . $e->getMessage();
+    }
+});
+
 
 Auth::routes();
 
@@ -108,10 +138,17 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('reported-post', ReportedPostController::class);
     Route::resource('activity', ActivityController::class);
     Route::resource('activity-registration', ActivityRegistrationController::class);
+    Route::get('activity-registration-delete/{id}', [ActivityRegistrationController::class, 'deletion']);
     Route::resource('deleted-post', DeletedPostController::class);
     Route::resource('deleted-comment', DeletedCommentController::class);
     Route::resource('feedback', FeedbackController::class);
     Route::resource('practice', PracticeController::class);
+
+    Route::post('/send-message/{campusId}', [SmsController::class, 'sendMessage']);
+    Route::post('/send-message/oficialplayer/{campusId}', [SmsController::class, 'sendMessageOfficialPlayers']);
+
+    //SMS
+    Route::post('send-sms', [SmsController::class, 'sendSms'])->name('send.sms');
 
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');

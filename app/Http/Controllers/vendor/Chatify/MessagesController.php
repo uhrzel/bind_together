@@ -44,11 +44,19 @@ class MessagesController extends Controller
     public function index($id = null)
     {
         $messenger_color = Auth::user()->messenger_color;
+        $user = User::find($id);
+    
+        // Check if user exists, then format the full name
+        $fullName = $user ? "{$user->firstname} {$user->lastname}" : 'User';
+        $avatar = $user && $user->avatar ? asset('storage/' . $user->avatar) : 'default-avatar-url.jpg';
+
         return view('Chatify::pages.app', [
             'id' => $id ?? 0,
             'messengerColor' => $messenger_color ? $messenger_color : Chatify::getFallbackColor(),
             'dark_mode' => Auth::user()->dark_mode < 1 ? 'light' : 'dark',
-            'user' => User::find($id),
+            'user' => $user,
+            'full_name' => $fullName,
+            'avatar' => $avatar,
         ]);
     }
 
@@ -310,8 +318,11 @@ class MessagesController extends Controller
         foreach ($favorites->get() as $favorite) {
             // get user data
             $user = User::where('id', $favorite->favorite_id)->first();
+            $avatar = $user && $user->avatar ? asset('storage/' . $user->avatar) : 'default-avatar-url.jpg';
+
             $favoritesList .= view('Chatify::layouts.favorite', [
                 'user' => $user,
+                'avatar' => $avatar,
             ]);
         }
         // send the response
@@ -350,9 +361,11 @@ class MessagesController extends Controller
                     $record->lastname
             );
 
+            $avatar = $record && $record->avatar ? asset('storage/' . $record->avatar) : 'default-avatar-url.jpg';
+
             $getRecords .= view('Chatify::layouts.listItem', [
                 'get' => 'search_item',
-                'user' => Chatify::getUserWithAvatar($record),
+                'user' => $record,
             ])->render();
         }
 

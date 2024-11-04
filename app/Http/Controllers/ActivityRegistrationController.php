@@ -7,6 +7,8 @@ use App\Models\Activity;
 use App\Models\ActivityRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 
 class ActivityRegistrationController extends Controller
 {
@@ -16,7 +18,7 @@ class ActivityRegistrationController extends Controller
     public function index()
     {
         return view('student.activity.index', [
-            'activities' => Activity::with('sport')->where('status', 1)->get(),
+            'activities' => Activity::with('sport')->where('status', 1)->where('is_deleted', 0)->get(),
         ]);
     }
 
@@ -37,6 +39,7 @@ class ActivityRegistrationController extends Controller
             'activity_id' => $request->activity_id,
             'height' => $request->height,
             'weight' => $request->weight,
+            'person_to_contact' => $request->person_to_contact,
             'emergency_contact' => $request->emergency_contact,
             'relationship' => $request->relationship,
             'user_id' => Auth::id(),
@@ -82,10 +85,46 @@ class ActivityRegistrationController extends Controller
      */
     public function update(Request $request, int $activityRegistrationId)
     {
-        $act = ActivityRegistration::find($activityRegistrationId);
+        $act = ActivityRegistration::with(['user', 'activity'])->find($activityRegistrationId);
         $act->update(['status' => $request->status]);
 
-        alert()->success('Updated successfully');
+        if ((int)$request->status === 1) {
+            $user = Auth::user();
+            Mail::send([], [], function ($message) use ($act, $user) {
+                $htmlContent = '
+                <p>Dear ' . $act["user"]["firstname"] . ' ' . $act["user"]["lastname"] . ',</p>
+                <p>We are pleased to inform you that your registration for ' . $act["activity"]["title"] . ' has been approved! We are excited to have you on board and look forward to seeing you participate.</p>
+                <p>Please stay tuned for further updates and information.</p>
+                <p>Best regards,<br>
+                ' . $user["firstname"] . ' ' . $user["lastname"] . '<br>
+                Admin</p>';
+
+                $message->to($act["user"]["email"])
+                    ->subject('Registration Approved - Welcome to ' . $act["activity"]["title"] . '!')
+                    ->html($htmlContent);
+            });
+            alert()->success('Approved');
+        } else if ((int)$request->status === 2) {
+            $user = Auth::user();
+            Mail::send([], [], function ($message) use ($act, $user) {
+                $htmlContent = '
+                <p>Dear ' . $act["user"]["firstname"] . ' ' . $act["user"]["lastname"] . ',</p>
+                <p>Thank you for registering for ' . $act["activity"]["title"] . '. After reviewing all applications, we regret to inform you that your registration has not been approved for this event.</p>
+                <p>Please note that each activity/event has specific requirements, and some criteria were not fully met in this instance.</p>
+                <p>We encourage you to stay involved and consider applying for future activities.</p>
+                <p>If you have any questions or need more information, please don’t hesitate to reach out.</p>
+                <p>Best regards,<br>
+                ' . $user["firstname"] . ' ' . $user["lastname"] . '<br>
+                Admin</p>';
+            
+                $message->to($act["user"]["email"])
+                    ->subject('Registration Status - ' . $act["activity"]["title"])
+                    ->html($htmlContent);
+            });
+            alert()->success('Declined');
+        } else {
+            alert()->success('Updated successfully');
+        }
         return redirect()->back();
     }
 
@@ -95,5 +134,12 @@ class ActivityRegistrationController extends Controller
     public function destroy(ActivityRegistration $activityRegistration)
     {
         //
+    }
+
+    public function deletion($id)
+    {
+        $act = ActivityRegistration::find($id);
+        alert()->success('Deleted successfully');
+        return redirect()->back();
     }
 }

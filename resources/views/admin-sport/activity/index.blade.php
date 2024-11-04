@@ -23,6 +23,7 @@
                         New</button>
                 </div>
             </div>
+            
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered">
@@ -53,11 +54,7 @@
                                     <td>{{ $activityTypes[$activity->type] ?? 'Unknown Type' }}</td>
                                     <td>{{ $activity->venue }}</td>
                                     <td>{{ $activity->address }}</td>
-                                    @if ($activity->target_player == 0)
-                                        <td>All Students</td>
-                                    @else
-                                        <td>Official Players</td>
-                                    @endif
+                                    <td>{{ $activity->target_player == 0 ? 'All Students' : 'Official Players' }}</td>
                                     <td>
                                         {{ \Carbon\Carbon::parse($activity->start_date)->format('F d, Y h:i A') }} -
                                         {{ \Carbon\Carbon::parse($activity->end_date)->format('F d, Y h:i A') }}
@@ -71,49 +68,81 @@
                                             <span class="badge bg-danger">Declined</span>
                                         @endif
                                     </td>
-
+                        
                                     <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#editCompetitionModal"
-                                            onclick="loadActivityData({{ $activity->id }})"
-                                            {{ $activity->status == 1 ? '' : '' }}>
-                                            Edit
-                                        </button>
-
+                                        @if (auth()->user()->hasRole('admin_sport'))
+                                            @if ($activity->type == \App\Enums\ActivityType::Competition)
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                        data-bs-target="#editCompetitionModal"
+                                                        onclick="loadActivityData({{ $activity->id }})">
+                                                    Edit
+                                                </button>
+                        
+                                                <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal" data-id="{{ $activity->id }}">
+                                                    Delete
+                                                </button>
+                                            @else
+                                                @if ($activity->status == 1)
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Edit
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Delete
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Approve
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Decline
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Edit
+                                                    </button>
+                                                    <button type="button" class="btn btn-secondary" disabled>
+                                                        Delete
+                                                    </button>
+                        
+                                                    <form action="{{ route('approve', $activity->id) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" class="btn btn-success">
+                                                            Approve
+                                                        </button>
+                                                    </form>
+                        
+                                                    <form action="{{ route('decline', $activity->id) }}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <button type="submit" class="btn btn-danger">
+                                                            Decline
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            @endif
+                                        @else
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#editCompetitionModal"
+                                                    onclick="loadActivityData({{ $activity->id }})">
+                                                Edit
+                                            </button>
+                        
+                                            <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal" data-id="{{ $activity->id }}">
+                                                Delete
+                                            </button>
+                                        @endif
+                        
                                         <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
-                                            data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
+                                                data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
-
-                                        <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
-                                            {{ $activity->status == 1 ? '' : '' }}>
-                                            Delete
-                                        </button>
-
-                                        @if (auth()->user()->hasRole('admin_org') || auth()->user()->hasRole('admin_sport'))
-                                            <form action="{{ route('approve', $activity->id) }}" method="POST"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-success">
-                                                    Approve
-                                                </button>
-                                            </form>
-
-                                            <form action="{{ route('decline', $activity->id) }}" method="POST"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn btn-danger">
-                                                    Decline
-                                                </button>
-                                            </form>
-                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
+                        
                     </table>
                 </div>
             </div>
@@ -277,6 +306,30 @@
         </div>
     </div>
 
+     <!-- Delete Modal -->
+     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Delete Modal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="" id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <div class="modal-body">
+                        Are you sure you want to delete this?
+                        <input type="hidden" name="status" value="2">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
 
     <!-- Edit Modal -->
     <div class="modal fade" id="editCompetitionModal" tabindex="-1" aria-labelledby="editCompetitionModalLabel"
@@ -284,13 +337,14 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCompetitionModalLabel">Edit Competition</h5>
+                    <h5 class="modal-title" id="editCompetitionModalLabel">Edit Details</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Form inside modal -->
                     <form action="" id="editActivityForm" method="POST" enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="_method" value="PUT">
                         <div class="row mb-3">
                             <!-- Title -->
                             <div class="col-md-6">
@@ -314,12 +368,25 @@
                             <textarea class="form-control" id="content" name="content" placeholder="Content" rows="3" required></textarea>
                         </div>
 
-                        <div class="">
-                            <label for="activity_type" class="form-label">Activity Type</label>
-                            <select class="form-select" id="type" name="type" required>
-                                <option value="3" selected>Competition</option>
-                            </select>
-                        </div>
+                 <div class="row">
+                            <div class="form-group col">
+                                <label for="activity_type" class="form-label">Activity Type</label>
+                                <select class="form-select" name="type" required>
+                                    @if (auth()->user()->hasRole('adviser'))
+                                        <option value="0">Audition</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole('coach'))
+                                        <option value="1">Tryout</option>
+                                        <option value="2">Practice</option>
+                                    @endif
+                                    @if (auth()->user()->hasRole(['admin_sport', 'admin_org']))
+                                        <option value="3" selected>Competition</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                        
                         <div class="row mb-3 mt-3">
                             <!-- Activity Start Date -->
                             <div class="col-md-6">
@@ -369,30 +436,7 @@
     </div>
 
 
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Modal</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="" id="deleteForm" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <div class="modal-body">
-                        Are you sure you want to delete this?
-                        <input type="hidden" name="status" value="2">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Delete</button>
-                    </div>
-                </form>
-
-            </div>
-        </div>
-    </div>
+   
 
 @endsection
 
