@@ -14,29 +14,31 @@ class ActivityController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $user = Auth::user()->load('organization');
+{
+    $user = Auth::user()->load('organization');
 
-        if ($user->hasRole('super_admin') || $user->hasRole('admin_org')) {
-            $activities = Activity::whereIn('status', [0, 1])
-                ->whereIn('type', [ActivityType::Audition, ActivityType::Competition])
-                ->where('is_deleted', 0)
-                ->whereHas('user.roles', function ($query) {
-                    $query->where('roles.id', '!=', 3);
-                })
-                ->get();
-        } else {
-            $activities = Activity::where('user_id', $user->id)
-                ->whereIn('status', [0, 1])
-                ->where('is_deleted', 0)
-                ->get();
-        }
-
-        return view('admin-sport.activity.index', [
-            'activities' => $activities,
-            'user' => $user,
-        ]);
+    if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
+        // Fetch only Tryouts and Competitions for admin_sport
+        $activities = Activity::with(['sport', 'user']) // Load related models
+            ->whereIn('status', [0, 1]) // Only include activities that are Pending or Approved
+            ->whereIn('type', [
+                ActivityType::Tryout, 
+                ActivityType::Competition
+            ])
+            ->get();
+    } else {
+        // For non-admin roles, show all their activities
+        $activities = Activity::with(['sport', 'user']) // Load related models
+            ->where('user_id', $user->id)
+            ->whereIn('status', [0, 1])
+            ->get();
     }
+
+    return view('admin-sport.activity.index', [
+        'activities' => $activities,
+        'user' => $user,
+    ]);
+}
 
 
     /**
@@ -82,7 +84,6 @@ class ActivityController extends Controller
         return redirect()->route('activity.index');
     }
 
-
     /**
      * Display the specified resource.
      */
@@ -101,26 +102,22 @@ class ActivityController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     */
-    public function update(StoreActivityRequest $request, Activity $activity)
-    {
-        $activity->update($request->validated());
-
-        alert()->success('Activity updated successfully');
-        return redirect()->route('activity.index');
+ * Update the specified resource in storage.
+ */
+public function update(StoreActivityRequest $request, Activity $activity)
+{
+    
+    if ($request->input('type') == ActivityType::Competition) {
+        $activity->status = 1; 
+    } else {
+        
+        $activity->status = 0; 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Activity $activity)
-    {
-        $activity->update([
-            "is_deleted" => 1
-        ]);
+    $activity->update($request->validated() + ['status' => $activity->status]);
 
-        alert()->success('Activity deleted successfully');
-        return redirect()->route('activity.index');
-    }
+    alert()->success('Activity updated successfully');
+    return redirect()->route('activity.index');
 }
+}
+
