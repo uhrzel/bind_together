@@ -85,11 +85,11 @@ Route::get('/test-mail-config', function () {
     try {
         Mail::raw('This is a test message', function ($message) {
             $message->to('kikomataks@gmail.com')
-                    ->subject('Test Email Configuration');
+                ->subject('Test Email Configuration');
         });
         return 'Test email sent successfully!';
     } catch (Exception $e) {
-        return 'Failed to send test email: ' . $e->getMessage(); 
+        return 'Failed to send test email: ' . $e->getMessage();
     }
 });
 
@@ -138,6 +138,7 @@ Route::middleware(['auth', 'email.verified'])->group(function () {
     Route::resource('reported-post', ReportedPostController::class);
     Route::resource('activity', ActivityController::class);
     Route::resource('activity-registration', ActivityRegistrationController::class);
+    Route::get('activity-registration-delete/{id}', [ActivityRegistrationController::class, 'deletion']);
     Route::resource('deleted-post', DeletedPostController::class);
     Route::resource('deleted-comment', DeletedCommentController::class);
     Route::resource('feedback', FeedbackController::class);

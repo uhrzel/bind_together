@@ -89,8 +89,9 @@
                                     data-bs-target="#viewAuditionModal" data-id="{{ $audition->id }}">
                                     View
                                 </button>
-
-                                {{-- <button class="btn btn-danger">Delete</button> --}}
+                                <button class="btn btn-secondary deleteBtn" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    data-id="{{ $audition->id }}">Delete</button>
                             </td>
                             @endif
                         </tr>
@@ -101,6 +102,30 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteForm" action="" method="POST">
+                @csrf
+                @method('GET')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to proceed with this deletion?</p>
+                    <input type="hidden" id="deleteUserId" name="id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Approve -->
 <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -259,7 +284,12 @@
 
 @push('scripts')
 <script>
+
     $(() => {
+        $('.deleteBtn').click(function() {
+            $('#deleteForm').attr('action', '/activity-registration-delete/' + $(this).data('id'))
+        })
+
         $('#datatable').DataTable();
 
         $('.approveBtn').click(function() {

@@ -53,7 +53,7 @@
                                                     <td>{{ $audition->user->email ?? 'N/A' }}</td>
                                                     <td>{{ $audition->height }}</td>
                                                     <td>{{ $audition->weight }}</td>
-                                                    <td>{{ $audition->contact_person ?? 'N/A' }}</td>
+                                                    <td>{{ $audition->person_to_contact ?? 'N/A' }}</td>
                                                     <td>{{ $audition->emergency_contact }}</td>
                                                     <td>{{ $audition->relationship }}</td>
                                                     <td><img src="{{ asset('storage/' . $audition->certificate_of_registration) }}" alt=""></td>
@@ -380,7 +380,7 @@
                     $('#audition-weight').val(audition.weight);
                     $('#audition-emergency-contact').val(audition.emergency_contact);
                     $('#audition-relationship').val(audition.relationship);
-                    $('#audition-contact-person').val(audition.contact_person);  // Set contact person
+                    $('#audition-contact-person').val(audition.person_to_contact);  // Set contact person
 
                     // Image sources
                     $('#certificate-of-registration').attr('src', '/storage/' + audition.certificate_of_registration);
