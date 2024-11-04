@@ -4,10 +4,10 @@
 <div class="container-fluid">
     <div class="card">
         <div class="card-header">
-            <h4>Report Generation Adviser</h4>
+            <h4>Report Generation admin org</h4>
         </div>
         <div class="card-body" style="min-height: 70vh">
-            <form action=" {{ route('reports.generateAdviser') }}" method="POST">
+            <form action="{{ route('reports.generateAdminOrg') }}" method="POST">
                 @csrf
                 <div class="row">
                     <div class="form-group col-4">
@@ -15,31 +15,34 @@
                         <select name="type" id="type_of_report" class="form-select">
                             <option value="" selected disabled>Select Type of Report</option>
                             <option value="3">Activity</option>
-                            <option value="1">Practices</option>
-                            <option value="2">List of Auditionee</option>
-                            <option value="4">Official Performer</option>
+                            <option value="1">List of Registered Participants</option>
+                            <option value="2">List of Official Players</option>
+                            <option value="4">List of Advisers</option>
                         </select>
 
                         <div id="activitiesDropdown" style="display: none;" class="mt-3">
                             <label for="activity_type">Activity Type</label>
                             <select name="activity_type" id="activity_type" class="form-select">
                                 <option value="" selected disabled>Select Activity Type</option>
-                                <option value="3">Audition</option>
-
+                                <option value="3">Competition</option>
+                                <option value="1">Audition</option>
                             </select>
                         </div>
                         <div class="form-group col-4 mt-5" id="approvalCheckboxes" style="display: none;">
                             <label>Status</label><br>
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="status[]" value="1" id="approve"> <!-- assuming 1 is for approved -->
-                                <label for="approve" class="form-check-label">Approved</label>
+                                <input type="checkbox" class="form-check-input" name="status[]" value="approve" id="approve">
+                                <label for="approve" class="form-check-label">Approve</label>
                             </div>
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" name="status[]" value="0" id="declined"> <!-- assuming 0 is for declined -->
-                                <label for="declined" class="form-check-label">Declined</label>
+                                <input type="checkbox" class="form-check-input" name="status[]" value="declined" id="declined">
+                                <label for="declined" class="form-check-label">Decline</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="status[]" value="all" id="all">
+                                <label for="all" class="form-check-label">All</label>
                             </div>
                         </div>
-
 
                     </div>
 
@@ -52,7 +55,6 @@
                     <div class="form-group col-2">
                         <label for="end_date">End Date</label>
                         <input type="date" name="end_date" class="form-control">
-
 
                         <div class="form-group mt-3" id="yearLevelSection">
                             <label for="">Year Level</label><br>
@@ -133,12 +135,12 @@
             } else {
                 $('#activitiesDropdown').slideUp();
             }
-            if (selectedValue == 2) {
+            if (selectedValue == 1) {
                 $('#approvalCheckboxes').slideDown();
             } else {
                 $('#approvalCheckboxes').slideUp();
             }
-            if (selectedValue == 3) {
+            if (selectedValue == 3 || selectedValue == 4) {
                 $('#yearLevelSection').slideUp();
             } else {
                 $('#yearLevelSection').slideDown();
@@ -148,7 +150,6 @@
             } else {
                 $('#sportsCheckbox').slideDown();
             }
-
         });
 
 

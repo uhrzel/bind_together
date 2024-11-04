@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Player Report</title>
+    <title>Practice List Report</title>
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
@@ -103,45 +103,33 @@
                 <p style="margin-top: 65px;">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
                 <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
                 <p style="font-weight: bold;">
-                    Type of Report <span style="font-weight: normal;">(Official Players)</span>
+                    Type of Report <span style="font-weight: normal;">(Practice List Report)</span>
                 </p>
             </div>
         </div>
 
     </div>
 
-
-    <!-- <div class="report-info">
-     
-    </div> -->
-
     <table>
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Year Level</th>
-                <th>Email</th>
-                <th>Height</th>
-                <th>Weight</th>
-                <th>Person to Contact</th>
-                <th>Emergency Contact Number</th>
+                <th>Response</th>
+                <th>Reason</th>
                 <th>Date Registered</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($official_players as $registration)
+            @foreach($practices as $practice)
             <tr>
-                <td>{{ $registration->user->firstname }} {{ $registration->user->lastname }}</td>
-                <td>{{ $registration->user->year_level }}</td>
-                <td>{{ $registration->user->email }}</td>
-                <td>{{ $registration->height }}</td>
-                <td>{{ $registration->weight }}</td>
-                <td>{{ $registration->relationship }}</td>
-                <td>{{ $registration->emergency_contact }}</td>
-                <td>{{ $registration->created_at->format('Y-m-d') }}</td>
+                <td>{{ $practice->user->firstname }} {{ $practice->user->lastname  ?? 'N/A'}}</td>
+                <td>{{ $practice->activity->response ?? 'N/A' }}</td>
+                <td>{{ $practice->reason?? 'N/A' }}</td>
+                <td>{{ $practice->created_at->format('Y-m-d') }}</td>
             </tr>
             @endforeach
         </tbody>
+
     </table>
 
     <div class="signature" style="float: right">
