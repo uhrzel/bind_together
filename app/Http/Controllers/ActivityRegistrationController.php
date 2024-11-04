@@ -108,17 +108,17 @@ class ActivityRegistrationController extends Controller
             $user = Auth::user();
             Mail::send([], [], function ($message) use ($act, $user) {
                 $htmlContent = '
-                <p>Thank you for your interest in participating in ' . $act["activity"]["title"] . '.</p>
-                <p>Unfortunately, we regret to inform you that your registration has not been approved at this time.</p>
-                <p><strong>Reason for declining:</strong><br>
-                We observe that your height and weight did not meet our criteria to join the competition.</p>
-                <p>We appreciate your enthusiasm and encourage you to apply for future activities. If you have any questions or would like feedback, please feel free to reach out.</p>
+                <p>Dear ' . $act["user"]["firstname"] . ' ' . $act["user"]["lastname"] . ',</p>
+                <p>Thank you for registering for ' . $act["activity"]["title"] . '. After reviewing all applications, we regret to inform you that your registration has not been approved for this event.</p>
+                <p>Please note that each activity/event has specific requirements, and some criteria were not fully met in this instance.</p>
+                <p>We encourage you to stay involved and consider applying for future activities.</p>
+                <p>If you have any questions or need more information, please don’t hesitate to reach out.</p>
                 <p>Best regards,<br>
                 ' . $user["firstname"] . ' ' . $user["lastname"] . '<br>
                 Admin</p>';
-
+            
                 $message->to($act["user"]["email"])
-                    ->subject('Registration Status - Welcome to ' . $act["activity"]["title"] . '!')
+                    ->subject('Registration Status - ' . $act["activity"]["title"])
                     ->html($htmlContent);
             });
             alert()->success('Declined');
