@@ -42,7 +42,24 @@
                         @foreach ($auditions as $audition)
                         <tr>
                             <td>{{ $audition->user->firstname }} {{ $audition->user->lastname }}</td>
-                            <td>{{ $audition->user->year_level }} Year</td>
+                            @php
+                            $yearLevel = $audition->user->year_level; // Assuming year_level is an integer
+                            $suffix = '';
+
+                            if ($yearLevel == 1) {
+                            $suffix = 'st';
+                            } elseif ($yearLevel == 2) {
+                            $suffix = 'nd';
+                            } elseif ($yearLevel == 3) {
+                            $suffix = 'rd';
+                            } else {
+                            $suffix = 'th';
+                            }
+
+                            $formattedYearLevel = $yearLevel . $suffix;
+                            @endphp
+
+                            <td>{{ $formattedYearLevel }} Year</td>
                             <td>{{ $audition->user->campus->name }}</td>
                             <td>{{ $audition->user->email }}</td>
                             <td>{{ $audition->height }}</td>
@@ -284,7 +301,6 @@
 
 @push('scripts')
 <script>
-
     $(() => {
         $('.deleteBtn').click(function() {
             $('#deleteForm').attr('action', '/activity-registration-delete/' + $(this).data('id'))
