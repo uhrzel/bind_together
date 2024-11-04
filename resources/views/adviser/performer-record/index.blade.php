@@ -5,7 +5,7 @@
         <div class="card">
             <div class="card-header">
                 @if ($status == 0)
-                    <h4>List of Auditionees</h4>
+                    <h4>{{ request()->query('type') && request()->query('type') == '3' ? 'Registered Participants' : 'List of Auditionees' }}</h4>
                 @else
                     <h4>Official Performers</h4>
                 @endif
