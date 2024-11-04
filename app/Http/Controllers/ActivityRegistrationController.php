@@ -35,7 +35,7 @@ class ActivityRegistrationController extends Controller
     {
         $data = [
             'activity_id' => $request->activity_id,
-            'person_to_contact' => $request->person_to_contact,
+        'person_to_contact' => $request->person_to_contact,
             'height' => $request->height,
             'weight' => $request->weight,
             'emergency_contact' => $request->emergency_contact,
