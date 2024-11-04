@@ -763,11 +763,11 @@
         <div class="multi-level collapse" role="list" id="submenu-app" aria-expanded="false">
             <ul class="flex-column nav">
                 <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
-                    <a href="{{ route('audition.list', ['status' => '0', 'type' => '3']) }}" class="nav-link">
+                    <a href="{{ route('audition.list', ['status' => '0']) }}" class="nav-link">
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Registered Participants') }}</span>
+                        <span class="sidebar-text">{{ __('Audition List') }}</span>
                     </a>
                 </li>
 
@@ -776,7 +776,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Official Player') }}</span>
+                        <span class="sidebar-text">{{ __('Official Performers') }}</span>
                     </a>
                 </li>
 
