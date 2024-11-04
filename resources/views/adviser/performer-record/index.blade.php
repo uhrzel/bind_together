@@ -21,7 +21,7 @@
                                 <th>Email</th>
                                 <th>Height</th>
                                 <th>Weight</th>
-                                {{-- <th>Person in Contact</th> --}}
+                                <th>Person in Contact</th> 
                                 <th>Emergency Contact</th>
                                 <th>Relationship</th>
                                 <th>COR</th>
@@ -47,6 +47,7 @@
                                     <td>{{ $audition->user->email }}</td>
                                     <td>{{ $audition->height }}</td>
                                     <td>{{ $audition->weight }}</td>
+                                    <td>{{ $audition->person_to_contact ? $audition->person_to_contact : 'N/A' }}</td>
                                     <td>{{ $audition->emergency_contact }}</td>
                                     <td>{{ $audition->relationship }}</td>
                                     <td><img src="{{ asset('storage/' . $audition->certificate_of_registration) }}"
