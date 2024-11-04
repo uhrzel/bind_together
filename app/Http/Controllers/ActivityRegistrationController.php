@@ -7,6 +7,8 @@ use App\Models\Activity;
 use App\Models\ActivityRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 
 class ActivityRegistrationController extends Controller
 {
@@ -83,9 +85,47 @@ class ActivityRegistrationController extends Controller
      */
     public function update(Request $request, int $activityRegistrationId)
     {
-        $act = ActivityRegistration::find($activityRegistrationId);
+        $act = ActivityRegistration::with(['user', 'activity'])->find($activityRegistrationId);
         $act->update(['status' => $request->status]);
 
+        if ((int)$request->status === 1) {
+            $user = Auth::user();
+            Mail::send([], [], function ($message) use($act, $user) {
+                $htmlContent = '
+                <p>DEAR '.$act["user"]["firstname"] .' '. $act["user"]["lastname"] .',</p>
+                <p>WE ARE PLEASED TO INFORM YOU THAT YOUR REGISTRATION FOR '.$act["activity"]["title"].' HAS BEEN APPROVED! WE ARE EXCITED TO HAVE YOU ON BOARD AND LOOK FORWARD TO SEEING YOU PARTICIPATE.</p>
+                <p>PLEASE STAY TUNED FOR FURTHER UPDATES AND INFORMATION.</p>
+                <p>BEST REGARDS,<br>
+                '.$user["firstname"] .' '. $user["lastname"] .'<br>
+                ADMIN</p>';
+        
+                $message->to($act["user"]["email"])
+                        ->subject('REGISTRATION APPROVED - WELCOME TO '.$act["activity"]["title"].'!')
+                        ->html($htmlContent); 
+            });
+
+        }
+
+        if ((int)$request->status === 2) {
+            $user = Auth::user();
+            Mail::send([], [], function ($message) use($act, $user) {
+                $htmlContent = '
+                <p>THANK YOU FOR YOUR INTEREST IN PARTICIPATING IN '.$act["activity"]["title"].'.</p>
+                <p>UNFORTUNATELY, WE REGRET TO INFORM YOU THAT YOUR REGISTRATION HAS NOT BEEN APPROVED AT THIS TIME.</p>
+                <p><strong>REASON FOR DECLINING:</strong><br>
+                WE OBSERVE THAT YOUR HEIGHT AND WEIGHT DID NOT MEET OUR CRITERIA TO JOIN THE COMPETITION.</p>
+                <p>WE APPRECIATE YOUR ENTHUSIASM AND ENCOURAGE YOU TO APPLY FOR FUTURE ACTIVITIES. IF YOU HAVE ANY QUESTIONS OR WOULD LIKE FEEDBACK, PLEASE FEEL FREE TO REACH OUT.</p>
+                <p>BEST REGARDS,<br>
+                '.$user["firstname"].' '.$user["lastname"].'<br>
+                ADMIN</p>';
+                
+                $message->to($act["user"]["email"])
+                        ->subject('REGISTRATION STATUS - WELCOME TO '.$act["activity"]["title"].'!')
+                        ->html($htmlContent); 
+            });
+
+        }
+        
         alert()->success('Updated successfully');
         return redirect()->back();
     }

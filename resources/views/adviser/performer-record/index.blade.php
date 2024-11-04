@@ -62,7 +62,7 @@
                             @endif
                             {{-- <td>{{ $audition->type ?? '' }}</td> --}}
                             <td>{{ $audition->created_at }}</td>
-                            <td>{{ $audition->status == 0 ? 'Pending' :  ($audition->status == 2 ? 'Declined' : 'Approved') }}</td>
+                            <td> <span class="{{ $audition->status == 2 ? 'badge bg-danger' : ''}}">{{ $audition->status == 0 ? 'Pending' :  ($audition->status == 2 ? 'Declined' : 'Approved') }}</span></td>
                             @if ($status == 0)
                             <td>
                                 @if($audition->status == 0)
