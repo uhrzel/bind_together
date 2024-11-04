@@ -16,14 +16,15 @@ class ActivityRegistration extends Model
         'user_id',
         'height',
         'weight',
+        'contact_person',
         'emergency_contact',
         'relationship',
         'certificate_of_registration',
         'photo_copy_id',
         'other_file',
         'parent_consent',
-        'status',
-        'person_to_contact'
+        'status'
+        
     ];
 
     public function activity(): BelongsTo
