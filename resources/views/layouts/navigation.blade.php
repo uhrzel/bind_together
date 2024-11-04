@@ -537,7 +537,7 @@
         <div class="multi-level collapse" role="list" id="submenu-app1" aria-expanded="false">
             <ul class="flex-column nav">
                 <li class="nav-item {{ request()->query('status') == '0' ? 'active' : '' }}">
-                    <a href="{{ route('audition.list', ['status' => '0', 'type' =>'3']) }}" class="nav-link">
+                    <a href="{{ route('audition.list', ['status' => '0']) }}" class="nav-link">
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
@@ -767,7 +767,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Audition List') }}</span>
+                        <span class="sidebar-text">{{ __('Registered Participants') }}</span>
                     </a>
                 </li>
 
@@ -776,7 +776,7 @@
                         <span class="sidebar-icon me-3">
                             <i class="fas fa-user-alt fa-fw"></i>
                         </span>
-                        <span class="sidebar-text">{{ __('Official Performers') }}</span>
+                        <span class="sidebar-text">{{ __('Official Player') }}</span>
                     </a>
                 </li>
 
@@ -890,8 +890,8 @@
     </li>
     @endstudent
 
-    <li class="nav-item {{ request()->routeIs('about') ? 'active' : '' }}">
-        <a href="{{ route('about') }}" class="nav-link">
+    <li class="nav-item">
+        <a href="{{ url('chatify/1') }}" class="nav-link">
             <span class="sidebar-icon">
                 <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg">
@@ -899,7 +899,7 @@
                     <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                 </svg>
             </span>
-            <span class="sidebar-text">{{ __('About us') }}</span>
+            <span class="sidebar-text">{{ __('Direct Message') }}</span>
         </a>
     </li>
 </ul>
