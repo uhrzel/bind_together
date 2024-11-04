@@ -17,13 +17,24 @@ class AuditionListController extends Controller
         $status = $request->query('status', '0');
 
         // Fetch audition registrations with related activity and user details
+        $type   = null;
+
+        if ($request->has('type')) {
+            $type = $request->query('type');
+        }
         $auditions = ActivityRegistration::query()
             ->with(['activity', 'user'])
-            ->where('status', $status)
-            ->whereHas('activity', function ($query) {
+            ->where('status', $status);
+
+        $auditions = $auditions->whereHas('activity', function ($query) use ($type) {
+            if ($type == '3') {
+                $query->where('type', ActivityType::Competition);
+            } else {
                 $query->where('type', ActivityType::Audition);
-            })
-            ->get();
+            }
+        });
+
+        $auditions = $auditions->get();
 
         // Return view with auditions and the status filter
         return view('adviser.performer-record.index', ['auditions' => $auditions, 'status' => $status]);

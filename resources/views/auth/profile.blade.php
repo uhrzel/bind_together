@@ -2,7 +2,7 @@
 
 @section('content')
 
-    @if ($errors->any())
+    <!-- @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)
@@ -10,7 +10,7 @@
                 @endforeach
             </ul>
         </div>
-    @endif
+    @endif -->
 
     <style>
         /* Custom styling for the active tab */
@@ -43,9 +43,10 @@
                     <div class="row">
                         <div class="col-3 card pb-4">
                             <div class="text-center">
-                            <br>
-                            <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/default.jpg') }}" class="rounded-circle" height="100" width="100" alt="AVATAR">
-                            <br>
+                                <br>
+                                <img src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : asset('images/avatar/default.jpg') }}"
+                                    class="rounded-circle" height="100" width="100" alt="AVATAR">
+                                <br>
                                 <label for="">{{ auth()->user()->firstname }} {{ auth()->user()->lastname }}</label>
                                 <br>
                                 <span
@@ -131,7 +132,24 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            
+                                            @if(auth()->user()->roles[0]->id == 4)
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="text-info">Assigned Organization</th>
+                                                        <th></th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Organization Name:</th>
+                                                        <td></td>
+                                                        <!-- <pre>
+                                                            {{auth()->user() }}
+                                                        </pre> -->
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            @endif
+
                                             <!-- School Information Section -->
                                             {{-- <h5 class="text-primary">School information</h5> --}}
                                             @student
@@ -150,20 +168,20 @@
                                                             <td>{{ auth()->user()->program->name ?? '' }}</td>
                                                         </tr>
                                                         <tr>
-                                                        <th>Year level</th>
-                                                        <td>
-                                                            @if (auth()->user()->year_level == 1)
-                                                                1<sup>st</sup> Year
-                                                            @elseif (auth()->user()->year_level == 2)
-                                                                2<sup>nd</sup> Year
-                                                            @elseif (auth()->user()->year_level == 3)
-                                                                3<sup>rd</sup> Year
-                                                            @elseif (auth()->user()->year_level == 4)
-                                                                4<sup>th</sup> Year
-                                                            @else
-                                                                {{ auth()->user()->year_level ?? '' }} Year
-                                                            @endif
-                                                        </td>
+                                                            <th>Year level</th>
+                                                            <td>
+                                                                @if (auth()->user()->year_level == 1)
+                                                                    1<sup>st</sup> Year
+                                                                @elseif (auth()->user()->year_level == 2)
+                                                                    2<sup>nd</sup> Year
+                                                                @elseif (auth()->user()->year_level == 3)
+                                                                    3<sup>rd</sup> Year
+                                                                @elseif (auth()->user()->year_level == 4)
+                                                                    4<sup>th</sup> Year
+                                                                @else
+                                                                    {{ auth()->user()->year_level ?? '' }} Year
+                                                                @endif
+                                                            </td>
                                                         </tr>
 
                                                     </tbody>
@@ -246,8 +264,8 @@
                                                             number</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text">+63</span>
-                                                            <input type="text" class="form-control" maxlength="10"
-                                                                max="10" id="contact_number" name="contact"
+                                                            <input type="number" class="form-control" maxlength="10"
+                                                                id="contact_number" name="contact"
                                                                 value="{{ auth()->user()->contact }}">
                                                         </div>
                                                     </div>
@@ -257,7 +275,7 @@
                                                             name="email" value="{{ auth()->user()->email }}" readonly>
                                                     </div>
                                                 </div>
-                                                
+
                                                 <!-- School Information Section -->
                                                 @student
                                                     <h5 class="text-primary mt-2">School information</h5>
@@ -353,6 +371,15 @@
                                         </div>
                                         <div class="tab-pane fade" id="account-security" role="tabpanel"
                                             aria-labelledby="account-security-tab">
+                                            @if ($errors->any())
+                                                <div class="alert alert-danger" style="margin-left: 10px; margin-right: 10px;">
+                                                    <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                            <li>{{ $error }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                </div>
+                                            @endif
                                             <div class="container mt-5">
                                                 <!-- Old Password -->
                                                 <div class="row mb-3">

@@ -110,7 +110,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6 mt-2">
                         <label for="campus_id" class="form-label">Campus Name</label>
-                        <select name="campus_id" id="campus_id" class="form-select" >
+                        <select name="campus_id" id="campus_id" class="form-control" >
                             <option value="" selected disabled>Select Campus</option>
                             @foreach ($campuses as $campus)
                                 <option value="{{ $campus->id }}"
@@ -123,7 +123,7 @@
 
                     <div class="col-md-6 mt-2">
                         <label for="program_id" class="form-label">Program Name</label>
-                        <select name="program_id" id="program_id" class="form-select" onchange="toggleOtherProgramInput(this)">
+                        <select name="program_id" id="program_id" class="form-control" onchange="toggleOtherProgramInput(this)">
                             <option value="" selected disabled>Select Program</option>
                             @foreach ($programs as $program)
                                 <option value="{{ $program->id }}"
@@ -142,7 +142,7 @@
 
                     <div class="col mt-2">
                         <label for="year_level" class="form-label">Year Level</label>
-                        <select class="form-select" id="year_level" name="year_level" required>
+                        <select class="form-control" id="year_level" name="year_level" required>
                             <option value="1" {{ auth()->user()->year_level == 1 ? 'selected' : '' }}>1st Year
                             </option>
                             <option value="2" {{ auth()->user()->year_level == 2 ? 'selected' : '' }}>2nd Year

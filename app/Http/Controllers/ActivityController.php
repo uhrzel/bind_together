@@ -17,7 +17,7 @@ class ActivityController extends Controller
     {
         $user = Auth::user()->load('organization');
 
-        if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
+        if ($user->hasRole('super_admin') || $user->hasRole('admin_sport') || $user->hasRole('admin_org')) {
             $activities = Activity::whereIn('status', [0, 1])
                 ->whereIn('type', [ActivityType::Audition, ActivityType::Competition])
                 ->get();
@@ -100,7 +100,7 @@ class ActivityController extends Controller
      */
     public function update(StoreActivityRequest $request, Activity $activity)
     {
-        $activity->update($request->validated() + ['status' => 0]);
+        $activity->update($request->validated());
 
         alert()->success('Activity updated successfully');
         return redirect()->route('activity.index');
@@ -111,7 +111,9 @@ class ActivityController extends Controller
      */
     public function destroy(Activity $activity)
     {
-        $activity->delete();
+        $activity->update([
+            "status" => 2
+        ]);
 
         alert()->success('Activity deleted successfully');
         return redirect()->route('activity.index');

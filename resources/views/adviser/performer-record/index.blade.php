@@ -5,9 +5,9 @@
         <div class="card">
             <div class="card-header">
                 @if ($status == 0)
-                    <h4>Audition List</h4>
+                    <h4>{{ request()->query('type') && request()->query('type') == '3' ? 'Registered Participants' : 'List of Auditionees' }}</h4>
                 @else
-                    <h4>Official Player</h4>
+                    <h4>Official Performers</h4>
                 @endif
             </div>
             <div class="card-body">
@@ -21,7 +21,7 @@
                                 <th>Email</th>
                                 <th>Height</th>
                                 <th>Weight</th>
-                                {{-- <th>Person in Contact</th> --}}
+                                <th>Person in Contact</th> 
                                 <th>Emergency Contact</th>
                                 <th>Relationship</th>
                                 <th>COR</th>
@@ -43,10 +43,11 @@
                                 <tr>
                                     <td>{{ $audition->user->firstname }} {{ $audition->user->lastname }}</td>
                                     <td>{{ $audition->user->year_level }} Year</td>
-                                    <td>{{ $audition->user->campus->name }} Year</td>
-                                    <td>{{ $audition->user->email }} Year</td>
+                                    <td>{{ $audition->user->campus->name }}</td>
+                                    <td>{{ $audition->user->email }}</td>
                                     <td>{{ $audition->height }}</td>
                                     <td>{{ $audition->weight }}</td>
+                                    <td>{{ $audition->person_to_contact ? $audition->person_to_contact : 'N/A' }}</td>
                                     <td>{{ $audition->emergency_contact }}</td>
                                     <td>{{ $audition->relationship }}</td>
                                     <td><img src="{{ asset('storage/' . $audition->certificate_of_registration) }}"
@@ -60,8 +61,8 @@
                                         </td>
                                     @endif
                                     {{-- <td>{{ $audition->type ?? '' }}</td> --}}
-                                    <td>{{ $audition->status == 0 ? 'Pending' : 'Approved' }}</td>
                                     <td>{{ $audition->created_at }}</td>
+                                    <td>{{ $audition->status == 0 ? 'Pending' : 'Approved' }}</td>
                                     @if ($status == 0)
                                         <td>
                                             <button class="btn btn-primary approveBtn" type="button" data-bs-toggle="modal"
