@@ -26,6 +26,7 @@ class Activity extends Model
         'attachment',
         'target_player',
         'status',
+        'is_deleted',
     ];
 
     public function user(): BelongsTo
