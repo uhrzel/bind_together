@@ -29,19 +29,19 @@
         h3 {
             font-size: 16px;
             font-weight: normal;
-            margin: 5px 0;
+            /*    margin: 5px 0; */
         }
 
-        .contact-info {
+        /*  .contact-info {
             margin-top: 5px;
             font-size: 12px;
             text-align: center;
-            color: red;
+            color: #800000;
         }
-
+ */
         .report-info {
-            margin-top: 30px;
-            margin-bottom: 20px;
+            margin-top: 5px;
+            /*   margin-bottom: 20px; */
             text-align: center;
         }
 
@@ -90,43 +90,46 @@
 </head>
 
 <body>
-    <div class="header">
-        <img src="{{ public_path('images/bindtogether-logo.png') }}" alt="University Logo" style="float: left;">
-        <div class="">
-            <h1 style="color: #800000">Bataan Peninsula State University</h1>
-            <h3 style="margin-left: 10px; color: #800000">Bind Together</h3>
-            <div class="contact-info" style="margin-left: 10px; text-align: center">
-                <p>City of Balanga, 2100 Bataan</p>
-                <p style="margin-left: 70px">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com
+    <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+        <!-- Logo -->
+        <img src="{{ public_path('images/bindtogether-logo.png') }}" alt="University Logo" style="width: 100px; margin-left: 100px;">
+
+        <!-- Header Content -->
+        <div class="header" style="text-align: center;">
+            <h1 style="color: #800000; margin: -70px;">Bataan Peninsula State University</h1>
+            <h3 style="color: #800000; margin:  70px">Bind Together</h3>
+            <div class="contact-info" style="color: #800000;">
+                <p style="margin: -65px">City of Balanga, 2100 Bataan</p>
+                <p style="margin-top: 65px;">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
+                <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
+                <p style="font-weight: bold;">
+                    Type of Report <span style="font-weight: normal;">(Practice)</span>
                 </p>
             </div>
         </div>
+
     </div>
 
-    <div class="report-info">
-        <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
-    </div>
 
     <table>
         <thead>
             <tr>
-                <th>User</th>
-                {{-- <th>Sport</th> --}}
-                <th>Title</th>
-                <th>Content</th>
+                <th>Name</th>
+
+                <th>Response</th>
                 <th>Reason</th>
+                <th>Date Registered</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($registrations as $registration)
-                <tr>
-                    <td>{{ $registration->user->firstname }} {{ $registration->user->lastname }}</td>
-                    {{-- <td>{{ $registration->activity->sport->name }}</td> --}}
-                    <td>{{ $registration->activity->title }}</td>
-                    <td>{{ $registration->activity->content }}</td>
-                    <td>{{ $registration->reason ?? '' }}</td>
-                    {{-- <td>{{ $registration->created_at->format('Y-m-d') }}</td> --}}
-                </tr>
+            <tr>
+                <td>{{ $registration->user->firstname }} {{ $registration->user->lastname }}</td>
+                <td>{{ $registration->activity->response  ?? 'N/A'}}</td>
+                <!--    <td>{{ $registration->reason }}</td> -->
+                <td>{{ $registration->reason ?? '' }}</td>
+                <td>{{ $registration->created_at->format('Y-m-d') }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
