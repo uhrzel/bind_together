@@ -17,13 +17,14 @@ class ActivityController extends Controller
     {
         $user = Auth::user()->load('organization');
 
-        if ($user->hasRole('super_admin') || $user->hasRole('admin_org')) {
+        if ($user->hasRole('super_admin') || $user->hasRole('admin_sport')) {
             $activities = Activity::whereIn('status', [0, 1])
-                ->whereIn('type', [ActivityType::Audition, ActivityType::Competition])
+                ->whereIn('status', [0, 1])
                 ->where('is_deleted', 0)
-                ->whereHas('user.roles', function ($query) {
-                    $query->where('roles.id', '!=', 3);
-                })
+                ->whereIn('type', [
+                    ActivityType::Tryout, 
+                    ActivityType::Competition
+                ])
                 ->get();
         } else {
             $activities = Activity::where('user_id', $user->id)

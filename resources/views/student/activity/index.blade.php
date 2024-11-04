@@ -121,7 +121,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="contact_person" class="form-label">Person to Contact</label>
-                            <input type="text" class="form-control" id="contact_person" name="person_to_contact"
+                            <input type="text" class="form-control" id="contact_person" name="contact_person"
                                 placeholder="Enter Name Of Person To Contact" required>
                         </div>
                         <div class="mb-3">
@@ -221,7 +221,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="contact_person" class="form-label">Person to Contact</label>
-                            <input type="text" class="form-control" id="contact_person" name="person_to_contact"
+                            <input type="text" class="form-control" id="contact_person" name="contact_person"
                                 placeholder="Enter Name Of Person To Contact" required>
                         </div>
                         <div class="mb-3">
