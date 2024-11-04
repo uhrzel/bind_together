@@ -73,17 +73,17 @@
                                     </td>
 
                                     <td>
-                                        @if($activity->type != 3)
+                                        @if((auth()->user()->roles[0]->id ==  2) && $activity->type != 3)
+                                            <button type="button" class="btn btn-primary" 
+                                                    {{ $activity->status == 1 ? '' : '' }}>
+                                                    Edit
+                                            </button>
+                                        @else
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                                 data-bs-target="#editCompetitionModal"
                                                 onclick="loadActivityData({{ $activity->id }})"
                                                 {{ $activity->status == 1 ? '' : '' }}>
                                                 Edit
-                                            </button>
-                                        @elseif ($activity->type == 3)
-                                            <button type="button" class="btn btn-primary" 
-                                                    {{ $activity->status == 1 ? '' : '' }}>
-                                                    Edit
                                             </button>
                                         @endif
 
@@ -91,14 +91,14 @@
                                             data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
-                                        @if($activity->type != 3)
-                                            <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
+                                        @if((auth()->user()->roles[0]->id ==  2) && $activity->type != 3)
+                                             <button type="button" class="btn btn-danger deleteBtn"
                                                 {{ $activity->status == 1 ? '' : '' }}>
                                                 Delete
                                             </button>
-                                        @elseif ($activity->type == 3)
-                                            <button type="button" class="btn btn-danger deleteBtn"
+                                        @else
+                                            <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
                                                 {{ $activity->status == 1 ? '' : '' }}>
                                                 Delete
                                             </button>
