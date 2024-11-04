@@ -16,7 +16,7 @@ class ActivityRegistrationController extends Controller
     public function index()
     {
         return view('student.activity.index', [
-            'activities' => Activity::with('sport')->where('status', 1)->get(),
+            'activities' => Activity::with('sport')->where('status', 1)->where('is_deleted', 0)->get(),
         ]);
     }
 
