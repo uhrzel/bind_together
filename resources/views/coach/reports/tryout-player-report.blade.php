@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Player Report</title>
+    <title>Tryout Player Report</title>
     <style>
         body {
             font-family: 'DejaVu Sans', sans-serif;
@@ -103,17 +103,13 @@
                 <p style="margin-top: 65px;">Tel: (047) 237-3309 | www.bpsu.edu.ph | Email: bpsu.bindtogether@gmail.com</p>
                 <h3>Activities Report for {{ $startDate }} - {{ $endDate }}</h3>
                 <p style="font-weight: bold;">
-                    Type of Report <span style="font-weight: normal;">(Official Players)</span>
+                    Type of Report <span style="font-weight: normal;">(Tryout Players)</span>
                 </p>
             </div>
         </div>
 
     </div>
 
-
-    <!-- <div class="report-info">
-     
-    </div> -->
 
     <table>
         <thead>
@@ -129,7 +125,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($official_players as $registration)
+            @foreach ($tryout_players as $registration)
             <tr>
                 <td>{{ $registration->user->firstname }} {{ $registration->user->lastname }}</td>
                 <td>{{ $registration->user->year_level }}</td>

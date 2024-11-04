@@ -33,11 +33,15 @@ class GenerateReportAdviserController extends Controller
         if ($reportType == 1) {  // Practices
             $query = Practice::query();
 
+            /*      Log::info('Query SQL:', ['sql' => $query->toSql()]);
+            Log::info('Query Bindings:', ['bindings' => $query->getBindings()]); */
+
+
             if ($startDate && $endDate) {
                 $query->whereBetween('created_at', [$startDate, $endDate]);
             }
-
-            if ($yearLevel) {
+            $results = $query->with('user')->get();
+            /*  if ($yearLevel) {
                 if (!is_array($yearLevel)) {
                     $yearLevel = [$yearLevel];
                 }
@@ -47,10 +51,12 @@ class GenerateReportAdviserController extends Controller
                         $q->whereIn('year_level', $yearLevel);
                     });
                 }
-            }
+            } */
 
-            $results = $query->get();
-            $results->load('user');
+
+            /*       $results->load('user', 'activity'); */
+
+
 
             if ($fileType == 'pdf') {
                 return $this->generatePracticePDF($results, $startDate, $endDate);
@@ -94,6 +100,8 @@ class GenerateReportAdviserController extends Controller
             } */
 
             $results = $query->get();
+
+            Log::info('Results:', $results->toArray());
 
             // Generate the report based on file type
             if ($fileType === 'pdf') {
@@ -302,9 +310,35 @@ class GenerateReportAdviserController extends Controller
 
         $results = $query->with('user')->get();
 
+        function getActivityType($type)
+        {
+            switch ($type) {
+                case \App\Enums\ActivityType::Audition:
+                    return 'Audition';
+                case \App\Enums\ActivityType::Tryout:
+                    return 'Tryout';
+                case \App\Enums\ActivityType::Practice:
+                    return 'Practice';
+                case \App\Enums\ActivityType::Competition:
+                    return 'Competition';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Helper function to get target player
+        function getTargetPlayer($target)
+        {
+            return $target == 1 ? 'Official Player' : 'All Student';
+        }
+
 
         $phpWord = new PhpWord();
-        $section = $phpWord->addSection();
+        $section = $phpWord->addSection([
+            'orientation' => 'landscape'
+        ]);
+
+
 
         $section->addText("Bataan Peninsula State University", ['bold' => true, 'size' => 16, 'color' => '800000']);
         $section->addText("Bind Together", ['bold' => true, 'size' => 14, 'color' => '800000']);
@@ -314,17 +348,19 @@ class GenerateReportAdviserController extends Controller
         $table = $section->addTable();
         $table->addRow();
         $table->addCell(2000)->addText("Title", ['bold' => true]);
-        $table->addCell(2000)->addText("Type", ['bold' => true]);
-        $table->addCell(2000)->addText("Venue", ['bold' => true]);
+        $table->addCell(2000)->addText("Activity Type", ['bold' => true]);
         $table->addCell(2000)->addText("Target Audience", ['bold' => true]);
+        $table->addCell(2000)->addText("Address", ['bold' => true]);
+        $table->addCell(2000)->addText("Venue", ['bold' => true]);
         $table->addCell(2000)->addText("Activity Duration", ['bold' => true]);
 
         foreach ($results as $activity) {
             $table->addRow();
             $table->addCell(2000)->addText($activity->title);
-            $table->addCell(2000)->addText($activity->type);
+            $table->addCell(2000)->addText(getActivityType($activity->type));
+            $table->addCell(2000)->addText(getTargetPlayer($activity->target_player));
+            $table->addCell(2000)->addText($activity->address);
             $table->addCell(2000)->addText($activity->venue);
-            $table->addCell(2000)->addText($activity->target_player);
             $table->addCell(2000)->addText("{$activity->start_date} to {$activity->end_date}");
         }
 
@@ -357,24 +393,49 @@ class GenerateReportAdviserController extends Controller
         $sheet->getStyle('A1:A3')->getFont()->setBold(true)->setSize(14)->getColor()->setARGB('800000');
         $sheet->getStyle('A3')->getFont()->setSize(12);
 
+        function getActivityTypeExcel($type)
+        {
+            switch ($type) {
+                case \App\Enums\ActivityType::Audition:
+                    return 'Audition';
+                case \App\Enums\ActivityType::Tryout:
+                    return 'Tryout';
+                case \App\Enums\ActivityType::Practice:
+                    return 'Practice';
+                case \App\Enums\ActivityType::Competition:
+                    return 'Competition';
+                default:
+                    return 'Unknown';
+            }
+        }
+
+        // Helper function to get target player
+        function getTargetPlayerExcel($target)
+        {
+            return $target == 1 ? 'Official Player' : 'All Student';
+        }
+
+
 
         $sheet->setCellValue('A5', 'Title')
             ->setCellValue('B5', 'Type')
-            ->setCellValue('C5', 'Venue')
-            ->setCellValue('D5', 'Target Audience')
-            ->setCellValue('E5', 'Activity Duration');
+            ->setCellValue('C5', 'Target Audience')
+            ->setCellValue('D5', 'Venue')
+            ->setCellValue('E5', 'Address')
+            ->setCellValue('F5', 'Activity Duration');
 
 
-        $sheet->getStyle('A5:E5')->getFont()->setBold(true);
+        $sheet->getStyle('A5:F5')->getFont()->setBold(true);
 
 
         $row = 6;
         foreach ($results as $activity) {
             $sheet->setCellValue("A$row", $activity->title);
-            $sheet->setCellValue("B$row", $activity->type);
-            $sheet->setCellValue("C$row", $activity->venue);
-            $sheet->setCellValue("D$row", $activity->target_player);
-            $sheet->setCellValue("E$row", "{$activity->start_date} to {$activity->end_date}");
+            $sheet->setCellValue("B$row", getActivityTypeExcel($activity->type));
+            $sheet->setCellValue("C$row", getTargetPlayerExcel($activity->target_player));
+            $sheet->setCellValue("D$row", $activity->venue);
+            $sheet->setCellValue("E$row", $activity->address);
+            $sheet->setCellValue("F$row", "{$activity->start_date} to {$activity->end_date}");
             $row++;
         }
 
@@ -396,14 +457,25 @@ class GenerateReportAdviserController extends Controller
 
     protected function generatePracticePDF($results, $startDate, $endDate)
     {
+        /* $query = Practice::query();
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+
+        $results = $query->with('user')->get(); */
+
+        log::info('Results:', $results->toArray());
+
         $pdf = Pdf::loadView('adviser.reports.practice-report', [
-            'practice' => $results,
+            'practices' => $results,
             'startDate' => $startDate,
             'endDate' => $endDate
         ])->setPaper('a4', 'landscape');
 
         return $pdf->stream('practices_report_' . now()->format('Y_m_d') . '.pdf');
     }
+
 
 
     /* Practice docs */
@@ -436,10 +508,10 @@ class GenerateReportAdviserController extends Controller
 
         foreach ($results as $practices) {
             $table->addRow();
-            $table->addCell(2000)->addText($practices->name);
-            $table->addCell(2000)->addText($practices->name);
-            $table->addCell(2000)->addText($practices->reason);
-            $table->addCell(2000)->addText($practices->created_at);
+            $table->addCell(2000)->addText($practices->user->firstname . ' ' . $practices->user->lastname ?? 'N/A');
+            $table->addCell(2000)->addText($practices->activity->reponse ?? 'N/A');
+            $table->addCell(2000)->addText($practices->reason ?? 'N/A');
+            $table->addCell(2000)->addText($practices->created_at ?? 'N/A');
         }
 
         $tempFile = tempnam(sys_get_temp_dir(), 'practices_report_') . '.docx';
@@ -450,7 +522,7 @@ class GenerateReportAdviserController extends Controller
     /* Practice Excel */
     protected function generatePracticeExcel($results, $startDate, $endDate)
     {
-        $query = Activity::query();
+        $query = Practice::query();
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -484,15 +556,14 @@ class GenerateReportAdviserController extends Controller
 
         $row = 6;
         foreach ($results as $practices) {
-            $sheet->setCellValue("A$row", $practices->name);
-            $sheet->setCellValue("B$row", $practices->name);
-            $sheet->setCellValue("C$row", $practices->reason);
-            $sheet->setCellValue("D$row", $practices->target_player);
-            $sheet->setCellValue("E$row", "{$practices->created_at}");
+            $sheet->setCellValue("A$row", $practices->user->firstname . ' ' . $practices->user->lastname ?? 'N/A');
+            $sheet->setCellValue("B$row", $practices->activity->response ?? 'N/A');
+            $sheet->setCellValue("C$row", $practices->reason ?? 'N/A');
+            $sheet->setCellValue("D$row", "{$practices->created_at}" ?? 'N/A');
             $row++;
         }
 
-        foreach (range('A', 'E') as $columnID) {
+        foreach (range('A', 'D') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -508,7 +579,8 @@ class GenerateReportAdviserController extends Controller
 
     protected function generateAuditioneePDF($results, $startDate, $endDate)
     {
-        Log::info('Auditionee results:', $results->toArray()); // Log the results
+        $query = ActivityRegistration::query()->where('status', 0);
+        $results = $query->get();
 
         $pdf = Pdf::loadView('adviser.reports.auditionee-report', [
             'auditionee' => $results,
@@ -524,13 +596,14 @@ class GenerateReportAdviserController extends Controller
     /* Auditionee List Docx */
     protected function generateAuditioneeDocx($results, $startDate, $endDate)
     {
-        $query = Practice::query();
+        $query = ActivityRegistration::query()->where('status', 0);
+        $results = $query->get();
 
-        if ($startDate && $endDate) {
+        /*   if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
+        } */
 
-        $results = $query->with('user')->get();
+        /*      $results = $query->with('user')->get(); */
 
         $phpWord = new PhpWord();
 
@@ -556,9 +629,9 @@ class GenerateReportAdviserController extends Controller
 
         foreach ($results as $auditionee) {
             $table->addRow();
-            $table->addCell(2000)->addText($auditionee->name);
-            $table->addCell(2000)->addText($auditionee->year_level);
-            $table->addCell(2000)->addText($auditionee->email);
+            $table->addCell(2000)->addText($auditionee->user->firstname . ' ' . $auditionee->user->lastname);
+            $table->addCell(2000)->addText($auditionee->user->year_level);
+            $table->addCell(2000)->addText($auditionee->user->email);
             $table->addCell(2000)->addText($auditionee->height);
             $table->addCell(2000)->addText($auditionee->weight);
             $table->addCell(2000)->addText($auditionee->relationship);
@@ -577,13 +650,8 @@ class GenerateReportAdviserController extends Controller
 
     protected function generateAuditioneeExcel($results, $startDate, $endDate)
     {
-        $query = Activity::query();
-
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-
-        $results = $query->with('user')->get();
+        $query = ActivityRegistration::query()->where('status', 0);
+        $results = $query->get();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -615,9 +683,9 @@ class GenerateReportAdviserController extends Controller
 
         $row = 6;
         foreach ($results as $auditionee) {
-            $sheet->setCellValue("A$row", $auditionee->name);
-            $sheet->setCellValue("B$row", $auditionee->year_level);
-            $sheet->setCellValue("C$row", $auditionee->email);
+            $sheet->setCellValue("A$row", $auditionee->user->firstname . ' ' . $auditionee->user->lastname);
+            $sheet->setCellValue("B$row", $auditionee->user->year_level);
+            $sheet->setCellValue("C$row", $auditionee->user->email);
             $sheet->setCellValue("D$row", $auditionee->height);
             $sheet->setCellValue("E$row", "{$auditionee->weight}");
             $sheet->setCellValue("F$row", $auditionee->relationship);
@@ -642,7 +710,9 @@ class GenerateReportAdviserController extends Controller
     /* Performer List Pdf */
     protected function generatePerformerPDF($results, $startDate, $endDate)
     {
-        Log::info('Auditionee results:', $results->toArray()); // Log the results
+        $query = ActivityRegistration::query()->where('status', 1);
+        $results = $query->get();
+
         $pdf = Pdf::loadView('adviser.reports.performer-report', [
             'performer' => $results,
             'startDate' => $startDate,
@@ -656,13 +726,14 @@ class GenerateReportAdviserController extends Controller
     /* Performer List Docx */
     protected function generatePerformerDocx($results, $startDate, $endDate)
     {
-        $query = Practice::query();
+        $query = ActivityRegistration::query()->where('status', 1);
+        $results = $query->get();
 
-        if ($startDate && $endDate) {
+        /*    if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $results = $query->with('user')->get();
+        $results = $query->with('user')->get(); */
 
         $phpWord = new PhpWord();
 
@@ -688,9 +759,9 @@ class GenerateReportAdviserController extends Controller
 
         foreach ($results as $auditionee) {
             $table->addRow();
-            $table->addCell(2000)->addText($auditionee->name);
-            $table->addCell(2000)->addText($auditionee->year_level);
-            $table->addCell(2000)->addText($auditionee->email);
+            $table->addCell(2000)->addText($auditionee->user->firstname . ' ' . $auditionee->user->lastname);
+            $table->addCell(2000)->addText($auditionee->user->year_level);
+            $table->addCell(2000)->addText($auditionee->user->email);
             $table->addCell(2000)->addText($auditionee->height);
             $table->addCell(2000)->addText($auditionee->weight);
             $table->addCell(2000)->addText($auditionee->relationship);
@@ -709,13 +780,14 @@ class GenerateReportAdviserController extends Controller
 
     protected function generatePerformerExcel($results, $startDate, $endDate)
     {
-        $query = Activity::query();
+        $query = ActivityRegistration::query()->where('status', 1);
+        $results = $query->get();
 
-        if ($startDate && $endDate) {
+        /*       if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        $results = $query->with('user')->get();
+        $results = $query->with('user')->get(); */
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -747,9 +819,9 @@ class GenerateReportAdviserController extends Controller
 
         $row = 6;
         foreach ($results as $auditionee) {
-            $sheet->setCellValue("A$row", $auditionee->name);
-            $sheet->setCellValue("B$row", $auditionee->year_level);
-            $sheet->setCellValue("C$row", $auditionee->email);
+            $sheet->setCellValue("A$row", $auditionee->user->firstname . ' ' . $auditionee->user->lastname);
+            $sheet->setCellValue("B$row", $auditionee->user->year_level);
+            $sheet->setCellValue("C$row", $auditionee->user->email);
             $sheet->setCellValue("D$row", $auditionee->height);
             $sheet->setCellValue("E$row", "{$auditionee->weight}");
             $sheet->setCellValue("F$row", $auditionee->relationship);
