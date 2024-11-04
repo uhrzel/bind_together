@@ -90,43 +90,41 @@ class ActivityRegistrationController extends Controller
 
         if ((int)$request->status === 1) {
             $user = Auth::user();
-            Mail::send([], [], function ($message) use($act, $user) {
+            Mail::send([], [], function ($message) use ($act, $user) {
                 $htmlContent = '
-                <p>DEAR '.$act["user"]["firstname"] .' '. $act["user"]["lastname"] .',</p>
-                <p>WE ARE PLEASED TO INFORM YOU THAT YOUR REGISTRATION FOR '.$act["activity"]["title"].' HAS BEEN APPROVED! WE ARE EXCITED TO HAVE YOU ON BOARD AND LOOK FORWARD TO SEEING YOU PARTICIPATE.</p>
-                <p>PLEASE STAY TUNED FOR FURTHER UPDATES AND INFORMATION.</p>
-                <p>BEST REGARDS,<br>
-                '.$user["firstname"] .' '. $user["lastname"] .'<br>
-                ADMIN</p>';
-        
+                <p>Dear ' . $act["user"]["firstname"] . ' ' . $act["user"]["lastname"] . ',</p>
+                <p>We are pleased to inform you that your registration for ' . $act["activity"]["title"] . ' has been approved! We are excited to have you on board and look forward to seeing you participate.</p>
+                <p>Please stay tuned for further updates and information.</p>
+                <p>Best regards,<br>
+                ' . $user["firstname"] . ' ' . $user["lastname"] . '<br>
+                Admin</p>';
+
                 $message->to($act["user"]["email"])
-                        ->subject('REGISTRATION APPROVED - WELCOME TO '.$act["activity"]["title"].'!')
-                        ->html($htmlContent); 
+                    ->subject('Registration Approved - Welcome to ' . $act["activity"]["title"] . '!')
+                    ->html($htmlContent);
             });
-
-        }
-
-        if ((int)$request->status === 2) {
+            alert()->success('Approved');
+        } else if ((int)$request->status === 2) {
             $user = Auth::user();
-            Mail::send([], [], function ($message) use($act, $user) {
+            Mail::send([], [], function ($message) use ($act, $user) {
                 $htmlContent = '
-                <p>THANK YOU FOR YOUR INTEREST IN PARTICIPATING IN '.$act["activity"]["title"].'.</p>
-                <p>UNFORTUNATELY, WE REGRET TO INFORM YOU THAT YOUR REGISTRATION HAS NOT BEEN APPROVED AT THIS TIME.</p>
-                <p><strong>REASON FOR DECLINING:</strong><br>
-                WE OBSERVE THAT YOUR HEIGHT AND WEIGHT DID NOT MEET OUR CRITERIA TO JOIN THE COMPETITION.</p>
-                <p>WE APPRECIATE YOUR ENTHUSIASM AND ENCOURAGE YOU TO APPLY FOR FUTURE ACTIVITIES. IF YOU HAVE ANY QUESTIONS OR WOULD LIKE FEEDBACK, PLEASE FEEL FREE TO REACH OUT.</p>
-                <p>BEST REGARDS,<br>
-                '.$user["firstname"].' '.$user["lastname"].'<br>
-                ADMIN</p>';
-                
-                $message->to($act["user"]["email"])
-                        ->subject('REGISTRATION STATUS - WELCOME TO '.$act["activity"]["title"].'!')
-                        ->html($htmlContent); 
-            });
+                <p>Thank you for your interest in participating in ' . $act["activity"]["title"] . '.</p>
+                <p>Unfortunately, we regret to inform you that your registration has not been approved at this time.</p>
+                <p><strong>Reason for declining:</strong><br>
+                We observe that your height and weight did not meet our criteria to join the competition.</p>
+                <p>We appreciate your enthusiasm and encourage you to apply for future activities. If you have any questions or would like feedback, please feel free to reach out.</p>
+                <p>Best regards,<br>
+                ' . $user["firstname"] . ' ' . $user["lastname"] . '<br>
+                Admin</p>';
 
+                $message->to($act["user"]["email"])
+                    ->subject('Registration Status - Welcome to ' . $act["activity"]["title"] . '!')
+                    ->html($htmlContent);
+            });
+            alert()->success('Declined');
+        } else {
+            alert()->success('Updated successfully');
         }
-        
-        alert()->success('Updated successfully');
         return redirect()->back();
     }
 
