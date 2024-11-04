@@ -73,23 +73,36 @@
                                     </td>
 
                                     <td>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#editCompetitionModal"
-                                            onclick="loadActivityData({{ $activity->id }})"
-                                            {{ $activity->status == 1 ? '' : '' }}>
-                                            Edit
-                                        </button>
+                                        @if($activity->type != 3)
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#editCompetitionModal"
+                                                onclick="loadActivityData({{ $activity->id }})"
+                                                {{ $activity->status == 1 ? '' : '' }}>
+                                                Edit
+                                            </button>
+                                        @elseif ($activity->type == 3)
+                                            <button type="button" class="btn btn-primary" 
+                                                    {{ $activity->status == 1 ? '' : '' }}>
+                                                    Edit
+                                            </button>
+                                        @endif
 
                                         <button type="button" class="btn btn-info viewBtn" data-bs-toggle="modal"
                                             data-bs-target="#viewActivityModal" data-id="{{ $activity->id }}">
                                             View
                                         </button>
-
-                                        <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
-                                            {{ $activity->status == 1 ? '' : '' }}>
-                                            Delete
-                                        </button>
+                                        @if($activity->type != 3)
+                                            <button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal" data-id="{{ $activity->id }}"
+                                                {{ $activity->status == 1 ? '' : '' }}>
+                                                Delete
+                                            </button>
+                                        @elseif ($activity->type == 3)
+                                            <button type="button" class="btn btn-danger deleteBtn"
+                                                {{ $activity->status == 1 ? '' : '' }}>
+                                                Delete
+                                            </button>
+                                        @endif
 
                                         @if (auth()->user()->hasRole('admin_sport'))
                                             <form action="{{ route('approve', $activity->id) }}" method="POST"
