@@ -277,6 +277,16 @@
                     <div class="modal-body">
                         <input type="hidden" id="editUserId" name="id">
                         <div class="row">
+                            @if($role == 'student')
+                            <div class="col-md-6">
+                                <label for="editFirstname" class="form-label">Student Number</label>
+                                <input type="text" class="form-control" id="editStudentNumber" name="student_number"
+                                    placeholder="Enter First Name" required>
+                                @error('student_number')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            @endif
                             <div class="col-md-6">
                                 <label for="editFirstname" class="form-label">First Name</label>
                                 <input type="text" class="form-control" id="editFirstname" name="firstname"
@@ -573,13 +583,15 @@
         function editUser(id) {
             $.get('/users/' + id, function(user) {
                 $('#editUserId').val(user.user.id);
+                $('')
                 $('#viewFullname').text(user.user.firstname + user.user.lastname);
+                $('#editStudentNumber').val(user.user.student_number);
                 $('#editFirstname').val(user.user.firstname);
                 $('#editMiddlename').val(user.user.middlename);
                 $('#editLastname').val(user.user.lastname);
                 $('#editSuffix').val(user.user.suffix);
                 $('#roleId').val(user.roles[0]);
-                const birthdate = user.user.birthdate.split(' ')[0]; // Extracts "2024-05-03"
+                const birthdate = user.user.birthdate.split(' ')[0];
                 $('#editBirthdate').val(birthdate);
                 $('#editEmail').val(user.user.email);
                 $('#editGender').val(user.user.gender);

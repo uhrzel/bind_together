@@ -102,7 +102,7 @@ class UserController extends Controller
         // Update other fields that don't include password
         $user->update($request->except(['password', 'password_confirmation']));
 
-        return redirect()->route('users.index', ['role' => $user->getRoleNames()->first()]);
+        return redirect()->back();
     }
 
     public function destroy(User $user)
