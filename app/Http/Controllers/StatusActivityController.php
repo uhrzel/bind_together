@@ -12,7 +12,7 @@ class StatusActivityController extends Controller
      */
     public function __invoke(Request $request, int $activityId)
     {
-        Activity::find($activityId)->update(['status' => $request->status]);
+        Activity::find($activityId)->update(['is_deleted' => 0]);
 
         alert()->success('Activity has been updated');
         return redirect()->back();

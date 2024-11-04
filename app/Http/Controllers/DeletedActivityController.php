@@ -15,10 +15,10 @@ class DeletedActivityController extends Controller
     {
         if (auth()->user()->hasRole('admin_sport') || auth()->user()->hasRole('admin_org') || auth()->user()->hasRole('super_admin'))
         {
-            $activities = Activity::where('status', 2)->get();
+            $activities = Activity::where('is_deleted', 1)->get();
         } else {
             $activities = Activity::where('user_id', Auth::id())
-                ->where('status', 2)->get();
+                ->where('is_deleted', 1)->get();
         }
 
         return view('admin-sport.activity.deleted', [
