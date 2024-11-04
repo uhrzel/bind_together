@@ -60,6 +60,16 @@
                                         {{ \Carbon\Carbon::parse($activity->end_date)->format('F d, Y h:i A') }}
                                     </td>
                                     <td>
+                                        @if ($activity->status == 1)
+                                            <span class="badge bg-success">Approved</span>
+                                        @elseif ($activity->status == 0)
+                                            <span class="badge text-black" style="background: yellow">Pending</span>
+                                        @elseif ($activity->status == 2)
+                                            <span class="badge bg-danger">Declined</span>
+                                        @endif
+                                    </td>
+                        
+                                    <td>
                                         @if (auth()->user()->hasRole('admin_sport'))
                                             @if ($activity->type == \App\Enums\ActivityType::Competition)
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
