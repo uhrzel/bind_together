@@ -100,7 +100,7 @@ class ActivityController extends Controller
      */
     public function update(StoreActivityRequest $request, Activity $activity)
     {
-        $activity->update($request->validated() + ['status' => 0]);
+        $activity->update($request->validated());
 
         alert()->success('Activity updated successfully');
         return redirect()->route('activity.index');
